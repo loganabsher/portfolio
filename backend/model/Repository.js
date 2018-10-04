@@ -8,6 +8,7 @@ const repoSchema = Schema ({
   name: {type: String},
   size: {type: Number},
   created_at: {type: String},
+  updated_at: {type: String}
 });
 
 const Repository = module.exports = mongoose.model('repositories', repoSchema);

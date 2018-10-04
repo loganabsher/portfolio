@@ -16,8 +16,21 @@ const loader = function () {
       res.body.forEach((ele) => {
         Repository.findOne({'name': ele.name})
           .then((repo) => {
-            console.log(ele.name);
-            if(!repo) new Repository(ele).save();
+            if(!repo) {
+              new Repository(ele).save();
+              return;
+            }
+            if(repo.updated_at !== ele.updated_at) {
+              console.log(ele.name);
+              console.log(ele.updated_at);
+              console.log(repo.updated_at);
+              console.log('changes noticed');
+              let newRepo = new Repository(ele);
+              Repository.replaceOne({'name': ele.name}, newRepo)
+              .then((res) => {
+                console.log(res);
+              })
+            }
           });
       });
     });
