@@ -6,9 +6,8 @@ const Schema = mongoose.Schema;
 
 const repoSchema = Schema ({
   name: {type: String},
-  full_name: {type: String},
-  forks: {type: Array},
-  watchers: {type: Array},
+  size: {type: Number},
+  created_at: {type: String},
 });
 
-const Repository = module.exports = mongoose.model('Repository', repoSchema);
+const Repository = module.exports = mongoose.model('repositories', repoSchema);
