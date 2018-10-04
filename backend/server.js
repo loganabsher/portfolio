@@ -2,12 +2,12 @@
 
 require('dotenv').config();
 const express = require('express');
-const request = require('superagent');
+// const request = require('superagent');
 const mongoose = require('mongoose');
 
 mongoose.Promise = require('bluebird');
 
-const repository = require('./lib/load.js');
+const repository = require('./route/repo-route.js');
 
 const app = express();
 // NOTE: need to remove process.env
