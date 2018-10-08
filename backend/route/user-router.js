@@ -40,10 +40,22 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
     .then((user) => {
       user.generateToken()
         .then((token) => {
-          let cookieOptions = {maxAge: 900000000}
+          let cookieOptions = {maxAge: 900000000};
           res.cookie('login-token', token, cookieOptions);
           res.json(token);
         });
+    })
+    .catch(next);
+});
+
+userRouter.get('/api/allaccounts', (req, res, next) => {
+  debug('GET: /api/allaccounts');
+
+  User.find({})
+    .then((all) => {
+      let tempArr = [];
+      all.forEach((ele) => tempArr.push(ele.username));
+      res.json(tempArr);
     })
     .catch(next);
 });
