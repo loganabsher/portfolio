@@ -1,27 +1,13 @@
 # **backend api guide**
 ### **Note** I am using httpie to make all backend calls, you can find a download here: // NOTE: add link
 
-##### repositories/all
-
-## collapsible markdown?
-
-<details><summary>CLICK ME</summary>
+<details><summary>repositories/all</summary>
 <p>
 
-#### yes, even hidden code blocks!
+#### http GET localhost:8080/api/repositories/all
 
-```python
-print("hello world!")
 ```
-
-</p>
-</details>
-
-### testing
-
-http GET localhost:8080/api/repositories/all
-
-```HTTP/1.1 200 OK
+HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 12061
 Content-Type: application/json; charset=utf-8
@@ -670,4 +656,8 @@ X-Powered-By: Express
         "size": 425,
         "updated_at": "2017-03-21T23:24:46Z"
     }
-]```
+]
+```
+
+</p>
+</details>
