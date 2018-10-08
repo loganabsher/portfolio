@@ -1,7 +1,33 @@
 # **backend api guide**
 ### **Note** I am using httpie to make all backend calls, you can find a download here: // NOTE: add link
 
-### Repository Routes
+### User Routes:
+
+<details><summary>signup</summary>
+<p>
+
+#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 207
+Content-Type: application/json; charset=utf-8
+Date: Mon, 08 Oct 2018 21:02:32 GMT
+ETag: W/"cf-9JII08DA9AtbtFnYLYjoXs9JDjo"
+Set-Cookie: Special-Cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw; Max-Age=900000; Path=/; Expires=Fri, 19 Oct 2018 07:02:32 GMT
+X-Powered-By: Express
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw"
+```
+
+</p>
+</details>
+
+
+
+
+### Repository Routes:
 
 <details><summary>repositories/all</summary>
 <p>
@@ -79,6 +105,8 @@ X-Powered-By: Express
 
 </p>
 </details>
+
+
 <details><summary>repositories/:id</summary>
 <p>
 

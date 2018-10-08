@@ -1,10 +1,11 @@
 'use strict';
 
+const debug = require('debug')('Portfolio:repo-router.js');
 const request = require('superagent');
 const Router = require('express').Router;
 
 const Repository = require('../model/Repository.js');
-const repositoryRoute = module.exports = Router();
+const repositoryRouter = module.exports = Router();
 
 
 // NOTE: add checker to see if the repo exists, if it does, check the updated at and see if it is the same as what was returned
@@ -35,7 +36,7 @@ const loader = function () {
     });
 }();
 
-repositoryRoute.get('/api/repositories/:id', (req, res, next) => {
+repositoryRouter.get('/api/repositories/:id', (req, res, next) => {
   Repository.findById(req.params.id)
     .then((repo) => {
       res.json(repo);
@@ -43,7 +44,7 @@ repositoryRoute.get('/api/repositories/:id', (req, res, next) => {
     .catch(next);
 });
 
-repositoryRoute.get('/api/repositories/all', (req, res, next) => {
+repositoryRouter.get('/api/repositories/all', (req, res, next) => {
   Repository.find({})
     .then((repos) => {
       res.json(repos);
