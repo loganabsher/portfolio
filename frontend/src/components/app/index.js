@@ -2,6 +2,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 
+import RepositoryContainer from '../repository-container'
+
 class App extends React.Component {
 
   render() {
@@ -10,6 +12,7 @@ class App extends React.Component {
         <BrowserRouter>
           <section>
             <button>test</button>
+            <Route exact path='/repository' component='RepositoryContainer' />
           </section>
         </BrowserRouter>
       </div>
