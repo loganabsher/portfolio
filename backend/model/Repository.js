@@ -12,4 +12,4 @@ const repoSchema = Schema ({
   updated_at: {type: String}
 });
 
-const Repository = module.exports = mongoose.model('repositories', repoSchema);
+module.exports = mongoose.model('repositories', repoSchema);

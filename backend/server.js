@@ -23,4 +23,4 @@ app.use(morgan('dev'));
 app.use(user);
 app.use(repository);
 
-app.listen(PORT, () => console.log('portfolio --BACKEND-- running on port: ' + PORT));
+app.listen(PORT, () => debug('running on port: ' + PORT));

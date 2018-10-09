@@ -13,6 +13,69 @@ HTTP/1.1 200 OK
 Connection: keep-alive
 Content-Length: 207
 Content-Type: application/json; charset=utf-8
+Date: Tue, 09 Oct 2018 20:32:16 GMT
+ETag: W/"cf-j0f4nsY/RiDdqEsv3CVp111Phh4"
+Set-Cookie: login-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjIyMGFmNmMwMjc4MjdhZjcxZTk1YTgwNTJmOGVhNDQ5NzlhODM0NGRkZWM1OWFkZTMzYjE1ZDAzNjhkZGU1YzYiLCJpYXQiOjE1MzkxMTcxMzZ9.OxesvIKJpOiNgZsSZtScvC_KzAY_-49dR12qJyHOvTI; Max-Age=900000; Path=/; Expires=Sat, 20 Oct 2018 06:32:16 GMT
+X-Powered-By: Express
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjIyMGFmNmMwMjc4MjdhZjcxZTk1YTgwNTJmOGVhNDQ5NzlhODM0NGRkZWM1OWFkZTMzYjE1ZDAzNjhkZGU1YzYiLCJpYXQiOjE1MzkxMTcxMzZ9.OxesvIKJpOiNgZsSZtScvC_KzAY_-49dR12qJyHOvTI"
+```
+
+</p>
+</details>
+
+<details><summary>login</summary>
+<p>
+
+#### http -a absherlogan@gmail.com:123 GET localhost:8080/api/login
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 207
+Content-Type: application/json; charset=utf-8
+Date: Tue, 09 Oct 2018 20:45:09 GMT
+ETag: W/"cf-r3JL2m//KpuN3zK0CFhXpx96k18"
+Set-Cookie: login-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFmMzZjOTNjMTY3MDlmMDNmNWRkNTQ4ZTk1ODJhZjRkZGQxMGQ5YzdhMzFlYmMzYzY5ZWZmZGJhZjk0NTMzNTciLCJpYXQiOjE1MzkxMTc5MDl9.qIXz84-rHP9Trqw8V7vVtv9DxFGGeYaTk39DZIvZtaY; Max-Age=900000; Path=/; Expires=Sat, 20 Oct 2018 06:45:09 GMT
+X-Powered-By: Express
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFmMzZjOTNjMTY3MDlmMDNmNWRkNTQ4ZTk1ODJhZjRkZGQxMGQ5YzdhMzFlYmMzYzY5ZWZmZGJhZjk0NTMzNTciLCJpYXQiOjE1MzkxMTc5MDl9.qIXz84-rHP9Trqw8V7vVtv9DxFGGeYaTk39DZIvZtaY"
+```
+
+</p>
+</details>
+
+<details><summary>signup</summary>
+<p>
+
+#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 207
+Content-Type: application/json; charset=utf-8
+Date: Mon, 08 Oct 2018 21:02:32 GMT
+ETag: W/"cf-9JII08DA9AtbtFnYLYjoXs9JDjo"
+Set-Cookie: Special-Cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw; Max-Age=900000; Path=/; Expires=Fri, 19 Oct 2018 07:02:32 GMT
+X-Powered-By: Express
+
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw"
+```
+
+</p>
+</details>
+
+<details><summary>signup</summary>
+<p>
+
+#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 207
+Content-Type: application/json; charset=utf-8
 Date: Mon, 08 Oct 2018 21:02:32 GMT
 ETag: W/"cf-9JII08DA9AtbtFnYLYjoXs9JDjo"
 Set-Cookie: Special-Cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw; Max-Age=900000; Path=/; Expires=Fri, 19 Oct 2018 07:02:32 GMT

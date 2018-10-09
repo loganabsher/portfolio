@@ -34,9 +34,13 @@ const loader = function () {
           });
       });
     });
-}();
+};
+
+loader();
 
 repositoryRouter.get('/api/repositories/:id', (req, res, next) => {
+  debug('GET: /api/repositories/:id');
+
   Repository.findById(req.params.id)
     .then((repo) => {
       res.json(repo);
@@ -45,6 +49,8 @@ repositoryRouter.get('/api/repositories/:id', (req, res, next) => {
 });
 
 repositoryRouter.get('/api/repositories/all', (req, res, next) => {
+  debug('GET: /api/repositories/all');
+
   Repository.find({})
     .then((repos) => {
       res.json(repos);

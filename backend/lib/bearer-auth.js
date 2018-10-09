@@ -2,12 +2,12 @@
 
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
-const debug = require('debug')('credibleEdibles:bearerAuth');
+const debug = require('debug')('Portfolio:bearer-auth.js');
 
-const User = require('../model/user.js');
+const User = require('../model/User.js');
 
 module.exports = (req, res, next) => {
-  debug('bearer auth');
+  debug('bearer-auth');
 
   let authHeader = req.headers.authorization;
   console.log(authHeader);
@@ -20,10 +20,10 @@ module.exports = (req, res, next) => {
     if(err) return next(err);
 
     User.findOne({ findHash: decoded.token })
-    .then((user) => {
-      req.user = user;
-      next();
-    })
-    .catch((err) => next(createError(401, err.message)));
+      .then((user) => {
+        req.user = user;
+        next();
+      })
+      .catch((err) => next(createError(401, err.message)));
   });
 };

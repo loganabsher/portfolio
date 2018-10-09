@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
 
@@ -16,11 +17,23 @@ const userSchema = Schema({
 });
 
 userSchema.methods.generatePasswordHash = function (password) {
-  debug('User.js: generatePasswordHash');
+  debug('generatePasswordHash');
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, 10, (err, hash) => {
       if(err) return reject(err);
       this.password = hash;
+      resolve(this);
+    });
+  });
+};
+
+userSchema.methods.comparePasswordHash = function(password){
+  debug('comparePasswordHash');
+
+  return new Promise((resolve, reject) => {
+    bcrypt.compare(password, this.password, (err, valid) => {
+      if (err) return reject(err);
+      if (!valid) return reject(createError(401, 'unauthorized'));
       resolve(this);
     });
   });
@@ -38,7 +51,7 @@ userSchema.methods.generateFindHash = function(){
 };
 
 userSchema.methods.generateToken = function(){
-  debug('User.js: generateToken');
+  debug('generateToken');
 
   return new Promise((resolve, reject) => {
     this.generateFindHash()
@@ -47,4 +60,4 @@ userSchema.methods.generateToken = function(){
   });
 };
 
-const User = module.exports = mongoose.model('users', userSchema);
+module.exports = mongoose.model('users', userSchema);
