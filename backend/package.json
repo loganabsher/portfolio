@@ -4,9 +4,9 @@
   "description": "react web app leveraging github's API",
   "main": "server.js",
   "scripts": {
-    "test": "DEBUG='Portfolio*' mocha ",
-    "nodemon": "DEBUG='Portfolio*' node server.js",
-    "start": "DEBUG='Portfolio*' node server.js",
+    "test": "DEBUG='Backend-Portfolio*' mocha ",
+    "nodemon": "DEBUG='Backend-Portfolio*' node server.js",
+    "start": "DEBUG='Backend-Portfolio*' node server.js",
     "build": "",
     "coveralls": ""
   },

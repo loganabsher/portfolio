@@ -6,7 +6,8 @@
 <details><summary>signup</summary>
 <p>
 
-#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+## POST: /api/signup
+#### http POST localhost:8000/api/signup  password=123 email=absherlogan@gmail.com
 
 ```
 HTTP/1.1 200 OK
@@ -27,61 +28,113 @@ X-Powered-By: Express
 <details><summary>login</summary>
 <p>
 
-#### http -a absherlogan@gmail.com:123 GET localhost:8080/api/login
+## GET: /api/login
+#### http -a absherlogan@gmail.com:123 GET localhost:8000/api/login
 
 ```
 HTTP/1.1 200 OK
 Connection: keep-alive
-Content-Length: 207
+Content-Length: 226
 Content-Type: application/json; charset=utf-8
-Date: Tue, 09 Oct 2018 20:45:09 GMT
-ETag: W/"cf-r3JL2m//KpuN3zK0CFhXpx96k18"
-Set-Cookie: login-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFmMzZjOTNjMTY3MDlmMDNmNWRkNTQ4ZTk1ODJhZjRkZGQxMGQ5YzdhMzFlYmMzYzY5ZWZmZGJhZjk0NTMzNTciLCJpYXQiOjE1MzkxMTc5MDl9.qIXz84-rHP9Trqw8V7vVtv9DxFGGeYaTk39DZIvZtaY; Max-Age=900000; Path=/; Expires=Sat, 20 Oct 2018 06:45:09 GMT
+Date: Tue, 09 Oct 2018 20:52:38 GMT
+ETag: W/"e2-Ua/tX3cU0Ed06ScvrZiI+GlrQnw"
+Set-Cookie: login-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE0MDJlNWZhYWMxZTZiYWI2NDQyM2MyYzZkZjI0ODY3MjUyZDEyZTM2YTBjMDNkOThmYTE3YzI2NmRiNjQwZjIiLCJpYXQiOjE1MzkxMTgzNTh9.TEXsbn2VaBRZJ8hIrUQ6r3MY33esJshWQ12mZWlVf2o; Max-Age=900000; Path=/; Expires=Sat, 20 Oct 2018 06:52:38 GMT
 X-Powered-By: Express
 
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImFmMzZjOTNjMTY3MDlmMDNmNWRkNTQ4ZTk1ODJhZjRkZGQxMGQ5YzdhMzFlYmMzYzY5ZWZmZGJhZjk0NTMzNTciLCJpYXQiOjE1MzkxMTc5MDl9.qIXz84-rHP9Trqw8V7vVtv9DxFGGeYaTk39DZIvZtaY"
+{
+    "__v": 0,
+    "_id": "5bbd104f61fdf30d00163d77",
+    "email": "absherlogan@gmail.com",
+    "findHash": "1402e5faac1e6bab64423c2c6df24867252d12e36a0c03d98fa17c266db640f2",
+    "password": "$2b$10$tH45HtJ4By.jIn.F9LokY.1iIHDIgBrcUxVI3b/qFLP6Oppuo3j3a"
+}
 ```
 
 </p>
 </details>
 
-<details><summary>signup</summary>
+<details><summary>all accounts</summary>
 <p>
 
-#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+## GET: /api/allaccounts
+#### http GET localhost:8000/api/allaccounts
 
 ```
 HTTP/1.1 200 OK
 Connection: keep-alive
-Content-Length: 207
+Content-Length: 25
 Content-Type: application/json; charset=utf-8
-Date: Mon, 08 Oct 2018 21:02:32 GMT
-ETag: W/"cf-9JII08DA9AtbtFnYLYjoXs9JDjo"
-Set-Cookie: Special-Cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw; Max-Age=900000; Path=/; Expires=Fri, 19 Oct 2018 07:02:32 GMT
+Date: Tue, 09 Oct 2018 20:48:33 GMT
+ETag: W/"19-4pue+lS8iqXKAMmRQun4UZijiQE"
 X-Powered-By: Express
 
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw"
+[
+    "absherlogan@gmail.com"
+]
 ```
 
 </p>
 </details>
 
-<details><summary>signup</summary>
+<details><summary>edit account</summary>
 <p>
 
-#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+## PUT: /api/editaccount/:id
+#### http -a absherlogan@gmail.com:123 PUT localhost:8000/api/editaccount/5bbd104f61fdf30d00163d77 email=newuser@new.com password=321
 
 ```
 HTTP/1.1 200 OK
 Connection: keep-alive
-Content-Length: 207
+Content-Length: 163
 Content-Type: application/json; charset=utf-8
-Date: Mon, 08 Oct 2018 21:02:32 GMT
-ETag: W/"cf-9JII08DA9AtbtFnYLYjoXs9JDjo"
-Set-Cookie: Special-Cookie=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw; Max-Age=900000; Path=/; Expires=Fri, 19 Oct 2018 07:02:32 GMT
+Date: Tue, 09 Oct 2018 20:54:56 GMT
+ETag: W/"a3-Yy1RCDkTOvD+s24aFE5fX3C7rpU"
 X-Powered-By: Express
 
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6ImYzZTFlNGY0NWUwYzE5ZmU3ZTg5MjgxOTFiMjFlNTczOTFhNzliYzNjYTI3NmFmMzkxZGNlOGM4MzIxMjRhMTgiLCJpYXQiOjE1MzkwMzI1NTJ9.kRHurt8XhS-dAeonmmEQzkjBE06W-EMiDR8aBcPEvLw"
+{
+    "__v": 0,
+    "_id": "5bbd104f61fdf30d00163d77",
+    "email": "newuser@new.com",
+    "findHash": "1402e5faac1e6bab64423c2c6df24867252d12e36a0c03d98fa17c266db640f2",
+    "password": "321"
+}
+```
+
+</p>
+</details>
+
+<details><summary>delete account</summary>
+<p>
+
+## DELETE: /api/deleteaccount/:id
+#### http -a newuser@new.com:321 DELETE localhost:8000/api/deleteaccount/5bbd104f61fdf30d00163d77
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 271
+Content-Type: application/json; charset=utf-8
+Date: Tue, 09 Oct 2018 21:06:30 GMT
+ETag: W/"10f-Hwtvn8EOLbswQsW4xNao1iue5nc"
+X-Powered-By: Express
+
+{
+    "$clusterTime": {
+        "clusterTime": "6610466581401042945",
+        "signature": {
+            "hash": "l1pLszrCDncmLfpFHhGq0xGRFhg=",
+            "keyId": "6609980859254571009"
+        }
+    },
+    "electionId": "7fffffff0000000000000001",
+    "n": 1,
+    "ok": 1,
+    "opTime": {
+        "t": 1,
+        "ts": "6610466581401042945"
+    },
+    "operationTime": "6610466581401042945"
+}
 ```
 
 </p>
@@ -95,7 +148,9 @@ X-Powered-By: Express
 <details><summary>repositories/all</summary>
 <p>
 
-#### http GET localhost:8080/api/repositories/all
+
+## GET: /api/repositories/all
+#### http GET localhost:8000/api/repositories/all
 
 ```
 HTTP/1.1 200 OK
@@ -173,7 +228,8 @@ X-Powered-By: Express
 <details><summary>repositories/:id</summary>
 <p>
 
-#### http GET localhost:8080/api/repositories/5bbbae83841a2339b3f2d06f/
+## GET: /api/repositories/:id
+#### http GET localhost:8000/api/repositories/5bbbae83841a2339b3f2d06f/
 
 ```
 HTTP/1.1 200 OK

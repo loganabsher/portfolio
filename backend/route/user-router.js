@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('Portfolio:user-router.js');
+const debug = require('debug')('Backend-Portfolio:user-router.js');
 const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
@@ -44,7 +44,7 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
         .then((token) => {
           let cookieOptions = {maxAge: 900000000};
           res.cookie('login-token', token, cookieOptions);
-          res.json(token);
+          res.json(user);
         });
     })
     .catch(next);
@@ -56,7 +56,7 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
   User.find({})
     .then((all) => {
       let tempArr = [];
-      all.forEach((ele) => tempArr.push(ele.username));
+      all.forEach((ele) => tempArr.push(ele.email));
       res.json(tempArr);
     })
     .catch(next);
@@ -79,12 +79,14 @@ userRouter.put('/api/editaccount/:id', basicAuth, jsonParser, (req, res, next) =
 userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
   debug('DELETE: /api/deleteaccount/:id');
 
-  User.findById(req.params.id)
+  let id = {'_id': req.params.id};
+  console.log(id);
+  User.findById(id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
     })
     .then(() => {
-      User.deleteOne(req.params.id)
+      User.deleteOne(id)
         .then((token) => res.json(token));
     })
     .catch(next);

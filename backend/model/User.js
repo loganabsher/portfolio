@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('Portfolio:User.js');
+const debug = require('debug')('Backend-Portfolio:User.js');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
