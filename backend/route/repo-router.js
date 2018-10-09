@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('Portfolio:repo-router.js');
+const debug = require('debug')('Backend-Portfolio:repo-router.js');
 const request = require('superagent');
 const Router = require('express').Router;
 

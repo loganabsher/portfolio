@@ -1,7 +1,7 @@
 'use strict';
 
 const createError = require('http-errors');
-const debug = require('debug')('Portfolio:error-middleware.js');
+const debug = require('debug')('Backend-Portfolio:error-middleware.js');
 
 module.exports = function(err, req, res, next) {
   debug('error-middleware');

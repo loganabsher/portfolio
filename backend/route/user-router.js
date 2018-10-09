@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('Portfolio:user-router.js');
+const debug = require('debug')('Backend-Portfolio:user-router.js');
 const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');

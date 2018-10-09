@@ -7,7 +7,7 @@
 <p>
 
 ## POST: /api/signup
-#### http POST localhost:8080/api/signup  password=123 email=absherlogan@gmail.com
+#### http POST localhost:8000/api/signup  password=123 email=absherlogan@gmail.com
 
 ```
 HTTP/1.1 200 OK
@@ -29,7 +29,7 @@ X-Powered-By: Express
 <p>
 
 ## GET: /api/login
-#### http -a absherlogan@gmail.com:123 GET localhost:8080/api/login
+#### http -a absherlogan@gmail.com:123 GET localhost:8000/api/login
 
 ```
 HTTP/1.1 200 OK
@@ -57,7 +57,7 @@ X-Powered-By: Express
 <p>
 
 ## GET: /api/allaccounts
-#### http GET localhost:8080/api/allaccounts
+#### http GET localhost:8000/api/allaccounts
 
 ```
 HTTP/1.1 200 OK
@@ -80,7 +80,7 @@ X-Powered-By: Express
 <p>
 
 ## PUT: /api/editaccount/:id
-#### http -a absherlogan@gmail.com:123 PUT localhost:8080/api/editaccount/5bbd104f61fdf30d00163d77 email=newuser@new.com password=321
+#### http -a absherlogan@gmail.com:123 PUT localhost:8000/api/editaccount/5bbd104f61fdf30d00163d77 email=newuser@new.com password=321
 
 ```
 HTTP/1.1 200 OK
@@ -107,7 +107,7 @@ X-Powered-By: Express
 <p>
 
 ## DELETE: /api/deleteaccount/:id
-#### http -a newuser@new.com:321 DELETE localhost:8080/api/deleteaccount/5bbd104f61fdf30d00163d77
+#### http -a newuser@new.com:321 DELETE localhost:8000/api/deleteaccount/5bbd104f61fdf30d00163d77
 
 ```
 HTTP/1.1 200 OK
@@ -150,7 +150,7 @@ X-Powered-By: Express
 
 
 ## GET: /api/repositories/all
-#### http GET localhost:8080/api/repositories/all
+#### http GET localhost:8000/api/repositories/all
 
 ```
 HTTP/1.1 200 OK
@@ -229,7 +229,7 @@ X-Powered-By: Express
 <p>
 
 ## GET: /api/repositories/:id
-#### http GET localhost:8080/api/repositories/5bbbae83841a2339b3f2d06f/
+#### http GET localhost:8000/api/repositories/5bbbae83841a2339b3f2d06f/
 
 ```
 HTTP/1.1 200 OK

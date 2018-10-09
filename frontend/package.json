@@ -1,0 +1,22 @@
+{
+  "name": "frontend",
+  "version": "1.0.0",
+  "description": "webpack, react + redux frontend",
+  "main": "server.js",
+  "scripts": {
+    "test": "DEBUG='Frontend-Portfolio*' jest",
+    "build": "DEBUG='Frontend-Portfolio*' webpack",
+    "watch": "DEBUG='Frontend-Portfolio*' webpack-dev-server --inline --hot",
+    "start": "DEBUG='Frontend-Portfolio*' node server.js"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Logan Absher",
+  "license": "MIT",
+  "dependencies": {
+    "debug": "^4.1.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.1"
+  }
+}
