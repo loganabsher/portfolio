@@ -63,7 +63,7 @@ userSchema.methods.generateToken = function(){
 
 const User = module.exports = mongoose.model('users', userSchema);
 
-userSchema.handleOAUTH = function(data) {
+User.handleOAUTH = function(data) {
   debug('googleOauth');
 
   if(!data || !data.email) return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));
@@ -77,6 +77,6 @@ userSchema.handleOAUTH = function(data) {
     })
     .catch(() => {
       console.log('___DATA___', data);
-      return new User({email: data.email}).save();
+      return new User({email: data.email, password: data.sub}).save();
     });
 };

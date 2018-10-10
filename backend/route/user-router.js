@@ -13,9 +13,11 @@ const User = require('../model/User.js');
 const userRouter = module.exports = Router();
 
 userRouter.get('/oauth/google/code', (req, res) => {
+  debug('GET: /oauth/google/code');
   if(!req.query.code) {
     res.redirect(process.env.CLIENT_URL);
   }else{
+    debug('POST: /oauth2/v4/token');
     superagent.post('https://www.googleapis.com/oauth2/v4/token')
       .type('form')
       .send({
@@ -26,15 +28,16 @@ userRouter.get('/oauth/google/code', (req, res) => {
         redirect_uri: `${process.env.API_URL}/oauth/google/code`
       })
       .then((res) => {
+        debug('GET: /plus/v1/people/me/openIdConnect');
         return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
           .set('Authorization', `Bearer ${res.body.access_token}`);
       })
       .then((res) => {
         return User.handleOAUTH(res.body);
       })
-      .then((user) => user.tokenCreate())
+      .then((user) => user.generateToken())
       .then((token) => {
-        res.cookie('Special-Cookie', token);
+        res.cookie('portfolio-login-token', token);
         res.redirect(process.env.CLIENT_URL);
       })
       .catch((error) => {
@@ -56,7 +59,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
     .then((user) => user.save())
     .then((user) => user.generateToken())
     .then((token) => {
-      res.cookie('login-token', token, {maxAge: 900000000});
+      res.cookie('portfolio-login-token', token, {maxAge: 900000000});
       res.json(token);
     })
     .catch(next);
@@ -76,7 +79,8 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
       user.generateToken()
         .then((token) => {
           let cookieOptions = {maxAge: 900000000};
-          res.cookie('login-token', token, cookieOptions);
+          res.cookie('portfolio-login-token', token, cookieOptions);
+          // NOTE: this needs to be removed for production
           res.json(user);
         });
     })
