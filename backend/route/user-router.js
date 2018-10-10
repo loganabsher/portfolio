@@ -13,9 +13,9 @@ const User = require('../model/User.js');
 const userRouter = module.exports = Router();
 
 userRouter.get('/oauth/google/code', (req, res) => {
-  if (!req.query.code) {
+  if(!req.query.code) {
     res.redirect(process.env.CLIENT_URL);
-  } else {
+  }else{
     superagent.post('https://www.googleapis.com/oauth2/v4/token')
       .type('form')
       .send({
