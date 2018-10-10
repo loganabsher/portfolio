@@ -6,6 +6,7 @@ const Schema = mongoose.Schema;
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
+const faker = require('faker');
 const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
@@ -60,4 +61,25 @@ userSchema.methods.generateToken = function(){
   });
 };
 
-module.exports = mongoose.model('users', userSchema);
+const User = module.exports = mongoose.model('users', userSchema);
+
+userSchema.handleOAUTH = function(data) {
+  debug('googleOauth');
+
+  if (!data || !data.email) {
+    return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));
+  }
+
+  return User.findOne({email: data.email})
+    .then((user) => {
+      console.log('%%%%%%%%%%%%%%%%%%', user);
+      if(!user) {
+        throw new Error('not found - create a user');
+      }
+      return user;
+    })
+    .catch(() => {
+      console.log('___DATA___', data);
+      return new User({email: data.email}).save();
+    });
+};

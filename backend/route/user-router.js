@@ -5,11 +5,44 @@ const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
 const createError = require('http-errors');
+const superagent = require('superagent');
 
 const basicAuth = require('../lib/basic-auth.js');
 
 const User = require('../model/User.js');
 const userRouter = module.exports = Router();
+
+userRouter.get('/oauth/google/code', (req, res) => {
+  if (!req.query.code) {
+    res.redirect(process.env.CLIENT_URL);
+  } else {
+    superagent.post('https://www.googleapis.com/oauth2/v4/token')
+      .type('form')
+      .send({
+        code: req.query.code,
+        grant_type: 'authorization_code',
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: `${process.env.API_URL}/oauth/google/code`
+      })
+      .then((res) => {
+        return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
+          .set('Authorization', `Bearer ${res.body.access_token}`);
+      })
+      .then((res) => {
+        return User.handleOAUTH(res.body);
+      })
+      .then((user) => user.tokenCreate())
+      .then((token) => {
+        res.cookie('Special-Cookie', token);
+        res.redirect(process.env.CLIENT_URL);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.redirect(process.env.CLIENT_URL);
+      });
+  }
+});
 
 userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   debug('POST: /api/signup');
