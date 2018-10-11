@@ -1,9 +1,15 @@
+'use strict';
+
+const debug = require('debug')('Frontend-Portfolio:app.js');
+
 import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 
 import AuthContainer from '../auth-container';
 import RepositoryContainer from '../repository-container';
+
+console.log('yes');
 
 class App extends React.Component {
   constructor(props){
@@ -25,13 +31,4 @@ class App extends React.Component {
   }
 }
 
-let mapStateToProps = (state) => ({
-  profile: state.profile,
-})
-
-let mapDispatchToProps = (dispatch) => ({
-  tokenSet: (token) => dispatch(tokenSet(token)),
-  profileFetch: () => dispatch(profileFetchRequest()),
-})
-
-export default connect(mapStateToProps, mapDispatchToProps)(App)
+export default App;
