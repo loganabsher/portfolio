@@ -5,11 +5,47 @@ const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
 const createError = require('http-errors');
+const superagent = require('superagent');
 
 const basicAuth = require('../lib/basic-auth.js');
 
 const User = require('../model/User.js');
 const userRouter = module.exports = Router();
+
+userRouter.get('/oauth/google/code', (req, res) => {
+  debug('GET: /oauth/google/code');
+  if(!req.query.code) {
+    res.redirect(process.env.CLIENT_URL);
+  }else{
+    debug('POST: /oauth2/v4/token');
+    superagent.post('https://www.googleapis.com/oauth2/v4/token')
+      .type('form')
+      .send({
+        code: req.query.code,
+        grant_type: 'authorization_code',
+        client_id: process.env.GOOGLE_CLIENT_ID,
+        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        redirect_uri: `${process.env.API_URL}/oauth/google/code`
+      })
+      .then((res) => {
+        debug('GET: /plus/v1/people/me/openIdConnect');
+        return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
+          .set('Authorization', `Bearer ${res.body.access_token}`);
+      })
+      .then((res) => {
+        return User.handleOAUTH(res.body);
+      })
+      .then((user) => user.generateToken())
+      .then((token) => {
+        res.cookie('portfolio-login-token', token);
+        res.redirect(process.env.CLIENT_URL);
+      })
+      .catch((error) => {
+        console.error(error);
+        res.redirect(process.env.CLIENT_URL);
+      });
+  }
+});
 
 userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   debug('POST: /api/signup');
@@ -23,7 +59,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
     .then((user) => user.save())
     .then((user) => user.generateToken())
     .then((token) => {
-      res.cookie('login-token', token, {maxAge: 900000000});
+      res.cookie('portfolio-login-token', token, {maxAge: 900000000});
       res.json(token);
     })
     .catch(next);
@@ -43,7 +79,8 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
       user.generateToken()
         .then((token) => {
           let cookieOptions = {maxAge: 900000000};
-          res.cookie('login-token', token, cookieOptions);
+          res.cookie('portfolio-login-token', token, cookieOptions);
+          // NOTE: this needs to be removed for production
           res.json(user);
         });
     })

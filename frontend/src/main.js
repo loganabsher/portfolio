@@ -12,6 +12,7 @@ let AppContainer = () => {
   return(
     <Provider store={store}>
       <App />
+      <p>things</p>
     </Provider>
   )
 };
