@@ -2,9 +2,13 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 
-import RepositoryContainer from '../repository-container'
+import AuthContainer from '../auth-container';
+import RepositoryContainer from '../repository-container';
 
 class App extends React.Component {
+  constructor(props){
+    super(props);
+  }
 
   render() {
     return(
@@ -12,6 +16,7 @@ class App extends React.Component {
         <BrowserRouter>
           <section>
             <button>test</button>
+            <Route exact path='/login' component='AuthContainer' />
             <Route exact path='/repository' component='RepositoryContainer' />
           </section>
         </BrowserRouter>
