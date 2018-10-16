@@ -6,6 +6,7 @@ const Router = require('express').Router;
 const Promise = require('bluebird');
 const createError = require('http-errors');
 const superagent = require('superagent');
+const passport = require('passport');
 
 const basicAuth = require('../lib/basic-auth.js');
 
@@ -23,8 +24,8 @@ userRouter.get('/oauth/google/code', (req, res) => {
       .send({
         code: req.query.code,
         grant_type: 'authorization_code',
-        client_id: process.env.GOOGLE_CLIENT_ID,
-        client_secret: process.env.GOOGLE_CLIENT_SECRET,
+        client_id: process.env.GOOGLE_APP_ID,
+        client_secret: process.env.GOOGLE_APP_SECRET,
         redirect_uri: `${process.env.API_URL}/oauth/google/code`
       })
       .then((res) => {
@@ -47,6 +48,17 @@ userRouter.get('/oauth/google/code', (req, res) => {
   }
 });
 
+userRouter.get('/auth/facebook',
+  passport.authenticate('facebook', {scope: ['email']}));
+
+userRouter.get('/auth/facebook/callback',
+  passport.authenticate('facebook', {failureRedirect: '/login'}),
+  function(req, res) {
+    console.log(res.body);
+    // Successful authentication, redirect home.
+    res.redirect('/');
+  });
+
 userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   debug('POST: /api/signup');
 
@@ -68,6 +80,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 userRouter.get('/api/login', basicAuth, (req, res, next) => {
   debug('GET: /api/login');
 
+  // NOTE: this needs to be removed
   console.log(req.auth.password);
   console.log(req.auth.email);
   User.findOne({email: req.auth.email})
