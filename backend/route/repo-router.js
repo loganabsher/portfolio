@@ -38,7 +38,7 @@ const loader = function () {
 
 loader();
 
-repositoryRouter.get('/api/repositories/:id', (req, res, next) => {
+repositoryRouter.get('/api/repository/:id', (req, res, next) => {
   debug('GET: /api/repositories/:id');
 
   Repository.findById(req.params.id)
