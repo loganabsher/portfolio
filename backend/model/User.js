@@ -10,6 +10,8 @@ const crypto = require('crypto');
 const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook');
 
 const userSchema = Schema({
   email: {type: String, required: true, unique: true},
@@ -80,3 +82,26 @@ User.handleOAUTH = function(data) {
       return new User({email: data.email, password: data.sub}).save();
     });
 };
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_APP_ID,
+  clientSecret: process.env.FACEBOOK_APP_SECRET,
+  callbackURL: 'http://localhost:8000/auth/facebook/callback'
+},
+function(accessToken, refreshToken, profile, cb){
+  console.log(profile);
+  User.findOneAndUpdate({email: profile.displayName}, {$setOnInsert: {email: profile.displayName, password: profile.id}},
+    {
+      returnOriginal: false,
+      upsert: true
+    },
+    function(err, user) {
+      return cb(err, user);
+    }
+  );
+}
+));
