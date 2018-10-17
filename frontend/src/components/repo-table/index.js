@@ -9,9 +9,11 @@ import {Redirect} from 'react-router';
 class RepoTable extends React.Component {
   constructor(props){
     super(props);
-    this.state = {
-      repos: this.props.repos
-    }
+  }
+
+  componentWillReceiveProps(nextProps){
+    this.setState({repos: nextProps.repos, loading: false});
+    console.log(this.state.repos);
   }
 
   render(){
@@ -27,7 +29,6 @@ class RepoTable extends React.Component {
             </tr>
           </thead>
           <tbody id='repo-table-body'>
-          {console.log(this.state)}
           {this.state.repos.map((ele, index) => {
             return(
               <tr key={index} style={{background: index % 2 === 0 ? '#F0F0F0' : '#F7F7F7'}}>

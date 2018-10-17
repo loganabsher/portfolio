@@ -5,7 +5,7 @@ import {connect} from 'react-redux';
 import superagent from 'superagent';
 
 import * as util from '../../../lib/util.js';
-import * as repoActions from '../../../actions/repo-actions.js';
+import {allRepositoriesRequest} from '../../../actions/repo-actions.js';
 
 import RepoTable from '../repo-table';
 
@@ -13,34 +13,31 @@ class RepositoryContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      repos: []
+      repos: null
     }
   }
 
   componentDidMount(){
     console.log('loading repos');
-    return this.props.allRepositories(repos)
-    .then((repo) => {
-      console.log('repos', repo);
-    });
+    this.props.allRepositories()
   }
 
   render() {
     return(
       <div className='repository-container'>
-        <p>the is the repo page</p>
-        <RepoTable dataArr={this.state.repos} />
+        <p>thi is the repo page</p>
+        {!this.state.repos ? <p>...loading</p> : <RepoTable />}
       </div>
     )
   }
 }
 
 let mapStateToProps = (state) => ({
-  repos: state.repos
+  repos: state.repos,
 });
+
 let mapDispatchToProps = (dispatch) => ({
-  allRepositories: (repos) => dispatch(repoActions.allRepositoriesRequest()),
+  allRepositories: () => dispatch(allRepositoriesRequest())
 });
 
 export default connect(

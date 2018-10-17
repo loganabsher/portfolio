@@ -6,10 +6,10 @@ import superagent from 'superagent';
 
 export const repoSet = (repos) => ({
   type: 'REPOS_SET',
-  payload: repos,
+  payload: repos
 })
 
-export const allRepositoriesRequest = () => (dispatch, getState) => {
+export const allRepositoriesRequest = () => (dispatch) => {
   return superagent.get(`${API_URL}/api/repositories/all`)
     .then((res) => {
       console.log('finding repos', res);
