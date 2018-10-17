@@ -13,7 +13,7 @@ class RepositoryContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      repos: null
+      loading: true
     }
   }
 
@@ -22,22 +22,28 @@ class RepositoryContainer extends React.Component {
     this.props.allRepositories()
   }
 
+  componentWillReceiveProps(nextProps){
+    console.log('props recieved', nextProps);
+    this.setState({repo: nextProps.repo, loading: false});
+  }
+
   render() {
     return(
       <div className='repository-container'>
+        {console.log('repos', this.props.repo)}
         <p>thi is the repo page</p>
-        {!this.state.repos ? <p>...loading</p> : <RepoTable />}
+        {this.state.loading ? <p>...waiting for repos</p> : <RepoTable repos={this.props.repo} />}
       </div>
     )
   }
 }
 
 let mapStateToProps = (state) => ({
-  repos: state.repos,
+  repo: state.repo
 });
 
 let mapDispatchToProps = (dispatch) => ({
-  allRepositories: () => dispatch(allRepositoriesRequest())
+  allRepositories: (repo) => dispatch(allRepositoriesRequest())
 });
 
 export default connect(

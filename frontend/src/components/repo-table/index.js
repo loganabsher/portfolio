@@ -9,11 +9,9 @@ import {Redirect} from 'react-router';
 class RepoTable extends React.Component {
   constructor(props){
     super(props);
-  }
-
-  componentWillReceiveProps(nextProps){
-    this.setState({repos: nextProps.repos, loading: false});
-    console.log(this.state.repos);
+    this.state = {
+      repos: this.props.repos
+    }
   }
 
   render(){
