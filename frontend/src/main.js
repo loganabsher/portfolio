@@ -17,7 +17,7 @@ let AppContainer = () => {
     <Provider store={store}>
       <App />
     </Provider>
-  )
+  );
 };
 
 ReactDom.render(<AppContainer/>,  document.getElementById('root'));
