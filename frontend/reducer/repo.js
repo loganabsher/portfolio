@@ -1,7 +1,7 @@
 'use strict';
 
 // NOTE: this may be unnessessary
-export default (state=[], action) => {
+export default (state=null, action) => {
   let {type, payload} = action;
   console.log(`PAYLOAD ${payload}`);
   switch(type){

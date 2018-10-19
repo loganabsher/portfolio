@@ -7,9 +7,13 @@ const Schema = mongoose.Schema;
 
 const repoSchema = Schema ({
   name: {type: String},
+  language: {type: String},
+  forks: {type: Number},
+  watchers: {type: Number},
   size: {type: Number},
   created_at: {type: String},
-  updated_at: {type: String}
+  updated_at: {type: String},
+  branches_url: {type: String}
 });
 
 module.exports = mongoose.model('repositories', repoSchema);

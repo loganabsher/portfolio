@@ -1,4 +1,7 @@
 {
+  "parserOptions": {
+    "sourceType": "module",
+  },
   "rules": {
     "no-console": "off",
     "indent": ["error", 2],
@@ -8,6 +11,7 @@
   },
   "env": {
     "es6": true,
+    "browser": true,
     "node": true,
     "mocha": true,
     "jasmine": true
@@ -17,5 +21,11 @@
     "experimentalObjectRestSpread": true,
     "impliedStrict": true
   },
-  "extends": "eslint:recommended"
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "eslint:recommended",
+    "plugin:react/recommended"
+  ]
 }
