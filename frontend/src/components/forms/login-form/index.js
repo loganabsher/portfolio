@@ -59,7 +59,7 @@ class LoginForm extends React.Compenent{
           value={this.state.password}
           onChange={this.handleChange}
         />
-        <button type='submit'>{this.props.handleSubmit}</button>
+        <button type='submit'>Login</button>
       </form>
     );
   }

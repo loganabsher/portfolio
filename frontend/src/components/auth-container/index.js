@@ -5,7 +5,9 @@ import {connect} from 'react-redux';
 import {BrowserRouter, Route, Link} from 'react-router-dom';
 
 import {signupRequest, loginRequest} from '../../../actions/auth-actions.js';
-import LoginForm from '../forms/login-form.js';
+import * as util from '../../../lib/util.js'
+import LoginForm from '../forms/login-form';
+import SignupForm from '../forms/signup-form';
 
 class AuthContainer extends React.Component{
   constructor(props){
@@ -15,19 +17,20 @@ class AuthContainer extends React.Component{
     this.handleSignup = this.handleSignup.bind(this);
   }
 
-  handleLogin(e){
-
+  handleLogin(user){
+    return this.props.login(user);
   }
 
-  handleSignup(e){
-
+  handleSignup(user){
+    return this.props.signup(user);
   }
 
   render(){
     return(
       <div className='auth-container'>
         <p>forms go here</p>
-        <LoginForm />
+        <LoginForm onComplete={this.handleLogin} />
+        <SignupForm onComplete={this.handleSignup} />
       </div>
     );
   }

@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-import * as util from '../../../lib/util'
+import * as util from '../../../../lib/util'
 import {connect} from 'react-redux';
 import {Redirect} from 'react-router';
 
