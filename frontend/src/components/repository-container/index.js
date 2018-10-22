@@ -4,10 +4,9 @@ import React from 'react';
 import {connect} from 'react-redux';
 import superagent from 'superagent';
 
-import * as util from '../../../lib/util.js';
 import {allRepositoriesRequest} from '../../../actions/repo-actions.js';
 
-import RepoTable from '../repo-table';
+import RepoTable from '../tables/repo-table';
 
 class RepositoryContainer extends React.Component {
   constructor(props) {

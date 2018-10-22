@@ -1,14 +1,15 @@
 'use strict';
 
-require('dotenv').config();
 const production = process.env.NODE_ENV === 'production';
 const {DefinePlugin, EnvironmentPlugin} = require('webpack');
+const Dotenv = require('dotenv-webpack');
 const HTMLPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
 const UglifyPlugin = require('uglifyjs-webpack-plugin');
 const ExtractPlugin = require('extract-text-webpack-plugin');
 
 let plugins = [
+  new Dotenv(),
   new EnvironmentPlugin(['NODE_ENV']),
   new ExtractPlugin('bundle-[hash].css'),
   new HTMLPlugin({template: `${__dirname}/src/index.html`}),
