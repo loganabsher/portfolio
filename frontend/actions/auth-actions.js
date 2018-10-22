@@ -17,8 +17,6 @@ export const logout = () => {
 };
 
 export const signupRequest =  (user) => (dispatch) => {
-  console.log('got here signup');
-  console.log(process.env.API_URL)
   return superagent.post(`${process.env.API_URL}/api/signup`)
     .withCredentials()
     .send(user)
