@@ -12,9 +12,14 @@ class AuthContainer extends React.Component{
     super(props);
 
     this.handleLogin = this.handleLogin.bind(this);
+    this.handleSignup = this.handleSignup.bind(this);
   }
 
   handleLogin(e){
+
+  }
+
+  handleSignup(e){
 
   }
 
@@ -40,4 +45,4 @@ let mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default (mapStateToProps, mapDispatchToProps)(AuthContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(AuthContainer);
