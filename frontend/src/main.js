@@ -1,7 +1,5 @@
 'use strict';
 
-const debug = require('debug')('Frontend-Portfolio:main.js');
-
 import React from 'react';
 import ReactDom from 'react-dom';
 import {Provider} from 'react-redux';

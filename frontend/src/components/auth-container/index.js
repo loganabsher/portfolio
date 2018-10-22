@@ -2,10 +2,8 @@
 
 import React from 'react';
 import {connect} from 'react-redux';
-// import {BrowserRouter, Route, Link} from 'react-router-dom';
 
 import {signupRequest, loginRequest} from '../../../actions/auth-actions.js';
-// import * as util from '../../../lib/util.js'
 import AuthForm from '../forms/auth-form';
 
 class AuthContainer extends React.Component{

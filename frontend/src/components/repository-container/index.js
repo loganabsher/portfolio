@@ -4,7 +4,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 import superagent from 'superagent';
 
-import * as util from '../../../lib/util.js';
 import {allRepositoriesRequest} from '../../../actions/repo-actions.js';
 
 import RepoTable from '../tables/repo-table';

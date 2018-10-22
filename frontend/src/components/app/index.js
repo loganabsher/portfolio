@@ -1,12 +1,9 @@
 'use strict';
 
-const debug = require('debug')('Frontend-Portfolio:app.js');
-
 import React from 'react';
 import {connect} from 'react-redux';
-import {BrowserRouter, Route, Link} from 'react-router-dom';
+import {BrowserRouter, Route} from 'react-router-dom';
 
-import * as util from '../../../lib/util.js';
 import AuthContainer from '../auth-container';
 import RepositoryContainer from '../repository-container';
 

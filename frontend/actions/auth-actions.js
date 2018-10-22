@@ -1,10 +1,10 @@
 'use strict';
 
 import superagent from 'superagent';
-import * as util from '../lib/util';
+import {createCookie, deleteCookie} from '../lib/util';
 
 export const tokenSet = (token) => {
-  util.createCookie('Special-Cookie', token, 8);
+  createCookie('Special-Cookie', token, 8);
   return {
     type: 'TOKEN_SET',
     payload: token
@@ -12,7 +12,7 @@ export const tokenSet = (token) => {
 };
 
 export const logout = () => {
-  util.deleteCookie('Special-Cookie');
+  deleteCookie('Special-Cookie');
   return { type: 'LOGOUT' };
 };
 

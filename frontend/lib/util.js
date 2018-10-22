@@ -1,4 +1,5 @@
 'use strict';
+
 export const photoToDataURL = (file) => {
   return new Promise((resolve, reject) => {
     let reader = new FileReader();
