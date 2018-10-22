@@ -11,6 +11,7 @@ const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
 const passport = require('passport');
 const FacebookStrategy = require('passport-facebook');
+const TwitterStrategy = require('passport-twitter');
 
 const userSchema = Schema({
   email: {type: String, required: true, unique: true},
@@ -106,4 +107,16 @@ function(accessToken, refreshToken, profile, cb){
     }
   );
 }
+));
+
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_APP_ID,
+    consumerSecret: process.env.TWITTER_APP_SECRET,
+    callbackURL: "http://127.0.0.1:3000/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, cb) {
+    User.findOrCreate({ twitterId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
 ));

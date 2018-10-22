@@ -55,11 +55,21 @@ userRouter.get('/auth/facebook',
 );
 
 userRouter.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {failureRedirect: '/login'}),
+  passport.authenticate('facebook', {failureRedirect: '/auth'}),
   function(req, res) {
     // Successful authentication, redirect home.
     // NOTE: need to set a token after user create / find
     // NOTE: redirect needs to go to main page (it doesn't exist yet)
+    res.redirect('/');
+  });
+
+userRouter.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+userRouter.get('/auth/twitter/callback',
+  passport.authenticate('twitter', {failureRedirect: '/auth'}),
+  function(req, res) {
+    // Successful authentication, redirect home.
     res.redirect('/');
   });
 
