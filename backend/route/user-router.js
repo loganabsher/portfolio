@@ -1,6 +1,7 @@
 'use strict';
 
 const debug = require('debug')('Backend-Portfolio:user-router.js');
+
 const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
@@ -15,6 +16,7 @@ const userRouter = module.exports = Router();
 
 userRouter.get('/oauth/google/code', (req, res) => {
   debug('GET: /oauth/google/code');
+
   if(!req.query.code) {
     res.redirect(process.env.CLIENT_URL);
   }else{
@@ -49,14 +51,15 @@ userRouter.get('/oauth/google/code', (req, res) => {
 });
 
 userRouter.get('/auth/facebook',
-  passport.authenticate('facebook', {scope: ['email']}));
+  passport.authenticate('facebook', {scope: ['email']})
+);
 
 userRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: '/login'}),
   function(req, res) {
-    // NOTE: this needs to be removed
-    console.log(res.body);
     // Successful authentication, redirect home.
+    // NOTE: need to set a token after user create / find
+    // NOTE: redirect needs to go to main page (it doesn't exist yet)
     res.redirect('/');
   });
 
@@ -91,7 +94,7 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
         .then((token) => {
           let cookieOptions = {maxAge: 900000000};
           res.cookie('portfolio-login-token', token, cookieOptions);
-          // NOTE: this needs to be removed for production
+          // NOTE: this needs to be removed for production, changed return to token
           res.json(user);
         });
     })

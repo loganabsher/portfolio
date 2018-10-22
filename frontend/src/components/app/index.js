@@ -4,17 +4,18 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route} from 'react-router-dom';
 
+import {tokenSet} from '../../../actions/auth-actions';
+
 import AuthContainer from '../auth-container';
 import RepositoryContainer from '../repository-container';
 
 class App extends React.Component {
-
   render() {
     return(
       <div className='app'>
         <BrowserRouter>
           <section>
-            <Route exact path='/login' component={AuthContainer} />
+            <Route exact path='/auth' component={AuthContainer} />
             <Route exact path='/repository' component={RepositoryContainer} />
           </section>
         </BrowserRouter>
@@ -25,4 +26,8 @@ class App extends React.Component {
 
 let mapStateToProps = (state) => ({auth: state.auth});
 
-export default connect(mapStateToProps)(App);
+let mapDispatchToProps = (dispatch) => ({
+  tokenSet: (token) => dispatch(tokenSet(token))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);

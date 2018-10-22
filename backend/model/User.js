@@ -6,7 +6,6 @@ const Schema = mongoose.Schema;
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-// const faker = require('faker');
 const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
@@ -21,7 +20,7 @@ const userSchema = Schema({
 
 userSchema.methods.generatePasswordHash = function (password) {
   debug('generatePasswordHash');
-  
+
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, 10, (err, hash) => {
       if(err) return reject(err);
@@ -91,11 +90,13 @@ passport.serializeUser((user, done) => {
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: 'http://localhost:8000/auth/facebook/callback'
+  callbackURL: 'http://localhost:8000/auth/facebook/callback',
+  profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, cb){
   console.log(profile);
-  User.findOneAndUpdate({email: profile.displayName}, {$setOnInsert: {email: profile.displayName, password: profile.id}},
+  console.log(profile.emails[0].value);
+  User.findOneAndUpdate({email: profile.emails[0].value}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
     {
       returnOriginal: false,
       upsert: true
