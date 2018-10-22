@@ -12,7 +12,6 @@ class AuthForm extends React.Component{
       error: false,
       emailError: false,
       passwordError: false,
-      submitted: false
     };
 
     this.handleTypeChange = this.handleTypeChange.bind(this);
@@ -21,8 +20,8 @@ class AuthForm extends React.Component{
   }
   // NOTE: the differences between signup and login will become more apparent when the schema is changed, but for now they are pretty much the same in terms of feilds requried
   handleTypeChange(){
-    if(this.state.type === 'submit') this.setState({type: 'login'});
-    if(this.state.type === 'login') this.setState({type: 'submit'});
+    if(this.state.type === 'signup') this.setState({type: 'login'});
+    if(this.state.type === 'login') this.setState({type: 'signup'});
   }
 
   handleChange(e){
@@ -39,12 +38,10 @@ class AuthForm extends React.Component{
           console.error(error);
           this.setState({
             error,
-            submitted: true,
           });
         });
     }
     this.setState((state) => ({
-      submitted: true,
       emailError: state.emailError || state.email ? null : 'required',
       passwordError: state.passwordError || state.password ? null : 'required',
     }));
@@ -68,7 +65,7 @@ class AuthForm extends React.Component{
             value={this.state.password}
             onChange={this.handleChange}
           />
-          <button type='submit'>Submit</button>
+          <button type='submit' onClick={this.handleSubmit}>Submit</button>
         </form>
         <button onClick={this.handleTypeChange}>{this.state.type}</button>
       </div>

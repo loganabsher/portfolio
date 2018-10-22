@@ -17,6 +17,8 @@ export const logout = () => {
 };
 
 export const signupRequest =  (user) => (dispatch) => {
+  console.log('got here signup');
+  console.log(process.env.API_URL)
   return superagent.post(`${process.env.API_URL}/api/signup`)
     .withCredentials()
     .send(user)
@@ -28,6 +30,7 @@ export const signupRequest =  (user) => (dispatch) => {
 };
 
 export const loginRequest = (user) => (dispatch) => {
+  console.log('got here login');
   return superagent.get(`${process.env.API_URL}/api/login`)
     .withCredentials()
     .auth(user.username, user.password)

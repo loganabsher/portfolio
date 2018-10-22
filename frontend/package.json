@@ -29,6 +29,7 @@
     "css-loader": "^0.28.4",
     "debug": "^4.1.0",
     "dotenv": "^4.0.0",
+    "dotenv-webpack": "^1.5.7",
     "enzyme": "^2.9.1",
     "eslint": "^4.2.0",
     "eslint-plugin-react": "^7.1.0",

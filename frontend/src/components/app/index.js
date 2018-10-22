@@ -22,12 +22,10 @@ class App extends React.Component {
           </section>
         </BrowserRouter>
       </div>
-    )
+    );
   }
 }
 
-let mapStateToProps = (state) => ({
-  profile: state.profile,
-})
+let mapStateToProps = (state) => ({auth: state.auth});
 
 export default connect(mapStateToProps)(App);

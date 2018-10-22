@@ -1,6 +1,5 @@
 'use strict';
 
-require('dotenv').config();
 const debug = require('debug')('Frontend-Portfolio:server.js');
 const morgan = require('morgan');
 const express = require('express');
