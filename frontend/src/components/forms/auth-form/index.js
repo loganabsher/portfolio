@@ -2,16 +2,27 @@
 
 import React from 'react';
 
-class SignupForm extends React.Component{
+class AuthForm extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       email: '',
       password: '',
-      error: false
+      type: 'login',
+      error: false,
+      emailError: false,
+      passwordError: false,
+      submitted: false
     };
 
+    this.handleTypeChange = this.handleTypeChange.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+  // NOTE: the differences between signup and login will become more apparent when the schema is changed, but for now they are pretty much the same in terms of feilds requried
+  handleTypeChange(){
+    if(this.state.type === 'submit') this.setState({type: 'login'});
+    if(this.state.type === 'login') this.setState({type: 'submit'});
   }
 
   handleChange(e){
@@ -23,9 +34,9 @@ class SignupForm extends React.Component{
     e.preventDefault();
     if(!this.state.error){
       this.props.onComplete(this.state)
-        .then(() => this.setState({username: '', email: '', password: ''}))
-        .catch((err) => {
-          console.error(err);
+        .then(() => this.setState({email: '', password: ''}))
+        .catch((error) => {
+          console.error(error);
           this.setState({
             error,
             submitted: true,
@@ -34,7 +45,6 @@ class SignupForm extends React.Component{
     }
     this.setState((state) => ({
       submitted: true,
-      usernameError: state.usernameError || state.username ? null : 'required',
       emailError: state.emailError || state.email ? null : 'required',
       passwordError: state.passwordError || state.password ? null : 'required',
     }));
@@ -42,31 +52,29 @@ class SignupForm extends React.Component{
 
   render(){
     return(
-      <form onSubmit={this.handleSubmit}>
-        <section>
-          <h2>signup</h2>
+      <div className='auth-form'>
+        <form>
           <input
+            className='login'
             type='text'
             name='email'
-            placeholder='email'
             value={this.state.email}
             onChange={this.handleChange}
           />
-
           <input
-            type='password'
+            className='login'
+            type='text'
             name='password'
-            placeholder='password'
             value={this.state.password}
             onChange={this.handleChange}
           />
-        </section>
-        <button type='submit'>Signup</button>
-      </form>
+          <button type='submit'>Submit</button>
+        </form>
+        <button onClick={this.handleTypeChange}>{this.state.type}</button>
+      </div>
     );
   }
+
 }
 
-
-
-export default SignupForm;
+export default AuthForm;
