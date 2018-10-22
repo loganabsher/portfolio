@@ -28,10 +28,9 @@ export const signupRequest =  (user) => (dispatch) => {
 };
 
 export const loginRequest = (user) => (dispatch) => {
-  console.log('got here login');
   return superagent.get(`${process.env.API_URL}/api/login`)
     .withCredentials()
-    .auth(user.username, user.password)
+    .auth(user.email, user.password)
     .then((res) => {
       dispatch(tokenSet(res.text));
       return res;

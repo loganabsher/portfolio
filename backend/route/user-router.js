@@ -54,6 +54,7 @@ userRouter.get('/auth/facebook',
 userRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: '/login'}),
   function(req, res) {
+    // NOTE: this needs to be removed
     console.log(res.body);
     // Successful authentication, redirect home.
     res.redirect('/');
@@ -66,8 +67,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   delete req.body.password;
 
   let user = new User(req.body);
-  console.log(password);
-  console.log(user.email);
+
   user.generatePasswordHash(password)
     .then((user) => user.save())
     .then((user) => user.generateToken())
@@ -81,9 +81,6 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 userRouter.get('/api/login', basicAuth, (req, res, next) => {
   debug('GET: /api/login');
 
-  // NOTE: this needs to be removed
-  console.log(req.auth.password);
-  console.log(req.auth.email);
   User.findOne({email: req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(401, 'user not found'));
