@@ -1,6 +1,7 @@
 'use strict';
 
 const debug = require('debug')('Backend-Portfolio:user-router.js');
+
 const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
@@ -15,6 +16,7 @@ const userRouter = module.exports = Router();
 
 userRouter.get('/oauth/google/code', (req, res) => {
   debug('GET: /oauth/google/code');
+
   if(!req.query.code) {
     res.redirect(process.env.CLIENT_URL);
   }else{
@@ -49,12 +51,24 @@ userRouter.get('/oauth/google/code', (req, res) => {
 });
 
 userRouter.get('/auth/facebook',
-  passport.authenticate('facebook', {scope: ['email']}));
+  passport.authenticate('facebook', {scope: ['email']})
+);
 
 userRouter.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {failureRedirect: '/login'}),
+  passport.authenticate('facebook', {failureRedirect: '/auth'}),
   function(req, res) {
-    console.log(res.body);
+    // Successful authentication, redirect home.
+    // NOTE: need to set a token after user create / find
+    // NOTE: redirect needs to go to main page (it doesn't exist yet)
+    res.redirect('/');
+  });
+
+userRouter.get('/auth/twitter',
+  passport.authenticate('twitter'));
+
+userRouter.get('/auth/twitter/callback',
+  passport.authenticate('twitter', {failureRedirect: '/auth'}),
+  function(req, res) {
     // Successful authentication, redirect home.
     res.redirect('/');
   });
@@ -80,9 +94,6 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 userRouter.get('/api/login', basicAuth, (req, res, next) => {
   debug('GET: /api/login');
 
-  // NOTE: this needs to be removed
-  console.log(req.auth.password);
-  console.log(req.auth.email);
   User.findOne({email: req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(401, 'user not found'));
@@ -93,7 +104,7 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
         .then((token) => {
           let cookieOptions = {maxAge: 900000000};
           res.cookie('portfolio-login-token', token, cookieOptions);
-          // NOTE: this needs to be removed for production
+          // NOTE: this needs to be removed for production, changed return to token
           res.json(user);
         });
     })
