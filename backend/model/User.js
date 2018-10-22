@@ -6,10 +6,12 @@ const Schema = mongoose.Schema;
 
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-// const faker = require('faker');
 const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
+const passport = require('passport');
+const FacebookStrategy = require('passport-facebook');
+const TwitterStrategy = require('passport-twitter');
 
 const userSchema = Schema({
   email: {type: String, required: true, unique: true},
@@ -19,6 +21,7 @@ const userSchema = Schema({
 
 userSchema.methods.generatePasswordHash = function (password) {
   debug('generatePasswordHash');
+
   return new Promise((resolve, reject) => {
     bcrypt.hash(password, 10, (err, hash) => {
       if(err) return reject(err);
@@ -80,3 +83,40 @@ User.handleOAUTH = function(data) {
       return new User({email: data.email, password: data.sub}).save();
     });
 };
+
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_APP_ID,
+  clientSecret: process.env.FACEBOOK_APP_SECRET,
+  callbackURL: 'http://localhost:8000/auth/facebook/callback',
+  profileFields: ['id', 'email']
+},
+function(accessToken, refreshToken, profile, cb){
+  console.log(profile);
+  console.log(profile.emails[0].value);
+  User.findOneAndUpdate({email: profile.emails[0].value}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
+    {
+      returnOriginal: false,
+      upsert: true
+    },
+    function(err, user) {
+      return cb(err, user);
+    }
+  );
+}
+));
+
+passport.use(new TwitterStrategy({
+    consumerKey: process.env.TWITTER_APP_ID,
+    consumerSecret: process.env.TWITTER_APP_SECRET,
+    callbackURL: "http://127.0.0.1:3000/auth/twitter/callback"
+  },
+  function(token, tokenSecret, profile, cb) {
+    User.findOrCreate({ twitterId: profile.id }, function (err, user) {
+      return cb(err, user);
+    });
+  }
+));

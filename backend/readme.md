@@ -225,11 +225,11 @@ X-Powered-By: Express
 </details>
 
 
-<details><summary>repositories/:id</summary>
+<details><summary>repository/:id</summary>
 <p>
 
 ## GET: /api/repositories/:id
-#### http GET localhost:8000/api/repositories/5bbbae83841a2339b3f2d06f/
+#### http GET localhost:8000/api/repository/5bbbae83841a2339b3f2d06f/
 
 ```
 HTTP/1.1 200 OK
