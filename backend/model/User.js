@@ -86,7 +86,7 @@ User.handleOAUTH = function(data) {
 };
 
 passport.serializeUser((user, done) => {
-  console.log(user)
+  // console.log('------------------------------', user)
   done(null, user.id);
 });
 
@@ -101,17 +101,19 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, done){
-  // NOTE: I think facebook might be a little broken atm
-  let user = User.findOne({email: profile.emails[0].value});
-  if(user){
-    // console.log(user);
-    return done(null, user);
-  }else{
-    let newUser = new User({email: profile.emails[0].value, password: profile.id})
-      .generatePasswordHash(profile.id)
-      .then((newUser) => newUser.generateToken())
-    return done(null, newUser);
-  }
+  User.findOne({email: profile.emails[0].value})
+  .then((user) => {
+    if(user){
+      console.log('---------- old user --------------', user);
+      return done(null, user);
+    }else{
+      let newUser = new User({email: profile.emails[0].value, password: profile.id})
+        .generatePasswordHash(profile.id)
+        .then((user) => user.generateToken())
+        console.log('------new user-----', newUser)
+      return done(null, newUser);
+    }
+  })
 }
 ));
 
