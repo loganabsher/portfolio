@@ -80,7 +80,9 @@ User.handleOAUTH = function(data) {
     })
     .catch(() => {
       console.log('___DATA___', data);
-      return new User({email: data.email, password: data.sub}).save();
+      let user = new User({email: data.email, password: data.sub})
+      user.generatePasswordHash(data.sub)
+      .then((user) => user.generateToken())
     });
 };
 
