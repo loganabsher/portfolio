@@ -60,8 +60,6 @@ userRouter.get('/auth/facebook/callback',
     // Successful authentication, redirect home.
     // NOTE: need to set a token after user create / find
     // NOTE: redirect needs to go to main page (it doesn't exist yet)
-    console.log(res);
-    console.log(process.env.CLIENT_URL)
     res.redirect(`${process.env.CLIENT_URL}/dashboard`);
   });
 

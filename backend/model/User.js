@@ -86,11 +86,12 @@ User.handleOAUTH = function(data) {
 };
 
 passport.serializeUser((user, done) => {
+  console.log(user)
   done(null, user.id);
 });
 
-passport.deserializeUser(function(obj, cb) {
-  cb(null, obj);
+passport.deserializeUser(function(id, done) {
+  done(null, id);
 });
 
 passport.use(new FacebookStrategy({
@@ -99,21 +100,18 @@ passport.use(new FacebookStrategy({
   callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
   profileFields: ['id', 'email']
 },
-function(accessToken, refreshToken, profile, cb){
+function(accessToken, refreshToken, profile, done){
   // NOTE: I think facebook might be a little broken atm
-  User.findOneAndUpdate({email: profile.emails[0].value, password: profile.id},
-    {$setOnInsert: new User({email: profile.emails[0].value, password: profile.id})
+  let user = User.findOne({email: profile.emails[0].value});
+  if(user){
+    // console.log(user);
+    return done(null, user);
+  }else{
+    let newUser = new User({email: profile.emails[0].value, password: profile.id})
       .generatePasswordHash(profile.id)
-      .then((user) => user.generateToken())
-    },
-    {
-      returnOriginal: false,
-      upsert: true
-    },
-    function(err, user) {
-      return cb(err, user);
-    }
-  );
+      .then((newUser) => newUser.generateToken())
+    return done(null, newUser);
+  }
 }
 ));
 
@@ -130,6 +128,7 @@ passport.use(new TwitterStrategy({
         upsert: true
       },
       function (err, user) {
+        console.log(err)
         return cb(err, user);
     });
   }
