@@ -86,7 +86,6 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   let user = new User(req.body);
 
   user.generatePasswordHash(password)
-    .then((user) => user.save())
     .then((user) => user.generateToken())
     .then((token) => {
       res.cookie('portfolio-login-token', token, {maxAge: 900000000});
