@@ -36,11 +36,13 @@ class AuthContainer extends React.Component{
 
     return(
       <div className='auth-container'>
+        <h1>Welcome to my portfilio!</h1>
         <p>forms go here</p>
         <AuthForm onComplete={this.handleAuth} />
         <a href={formatedURI}>login with google</a>
         <a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a>
         <a href={`${process.env.API_URL}/auth/twitter`}>login with twitter</a>
+        <h3>If you'd like to skip all of this nonsense click here:<a> skip_URL</a></h3>
       </div>
     );
   }
