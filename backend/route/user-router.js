@@ -70,6 +70,7 @@ userRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
     // NOTE: take to dashboard
+    // NOTE: also both this and the fb redirects need to be changed to client URL rather than the API URL
     res.redirect('/');
   });
 

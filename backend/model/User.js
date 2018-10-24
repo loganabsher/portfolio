@@ -117,7 +117,6 @@ passport.use(new TwitterStrategy({
     callbackURL: `${process.env.API_URL}/auth/twitter/callback`
   },
   function(token, tokenSecret, profile, cb) {
-    console.log(profile);
     User.findOneAndUpdate({email: profile.username}, {$setOnInsert: {email: profile.username, password: profile.id}},
       {
         returnOriginal: false,
