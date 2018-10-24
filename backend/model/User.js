@@ -79,7 +79,6 @@ User.handleOAUTH = function(data) {
       return user;
     })
     .catch(() => {
-      console.log('___DATA___', data);
       let user = new User({email: data.email, password: data.sub})
       user.generatePasswordHash(data.sub)
       .then((user) => user.generateToken())
@@ -102,7 +101,11 @@ passport.use(new FacebookStrategy({
 },
 function(accessToken, refreshToken, profile, cb){
   // NOTE: I think facebook might be a little broken atm
-  User.findOneAndUpdate({email: profile.emails[0].value, password: profile.id}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
+  User.findOneAndUpdate({email: profile.emails[0].value, password: profile.id},
+    {$setOnInsert: new User({email: profile.emails[0].value, password: profile.id})
+      .generatePasswordHash(profile.id)
+      .then((user) => user.generateToken())
+    },
     {
       returnOriginal: false,
       upsert: true
