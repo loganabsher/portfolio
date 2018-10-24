@@ -79,44 +79,57 @@ User.handleOAUTH = function(data) {
       return user;
     })
     .catch(() => {
-      console.log('___DATA___', data);
-      return new User({email: data.email, password: data.sub}).save();
+      let user = new User({email: data.email, password: data.sub})
+      user.generatePasswordHash(data.sub)
+      .then((user) => user.generateToken())
     });
 };
 
 passport.serializeUser((user, done) => {
+  console.log(user)
   done(null, user.id);
+});
+
+passport.deserializeUser(function(id, done) {
+  done(null, id);
 });
 
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: 'http://localhost:8000/auth/facebook/callback',
+  callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
   profileFields: ['id', 'email']
 },
-function(accessToken, refreshToken, profile, cb){
-  console.log(profile);
-  console.log(profile.emails[0].value);
-  User.findOneAndUpdate({email: profile.emails[0].value}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
-    {
-      returnOriginal: false,
-      upsert: true
-    },
-    function(err, user) {
-      return cb(err, user);
-    }
-  );
+function(accessToken, refreshToken, profile, done){
+  // NOTE: I think facebook might be a little broken atm
+  let user = User.findOne({email: profile.emails[0].value});
+  if(user){
+    // console.log(user);
+    return done(null, user);
+  }else{
+    let newUser = new User({email: profile.emails[0].value, password: profile.id})
+      .generatePasswordHash(profile.id)
+      .then((newUser) => newUser.generateToken())
+    return done(null, newUser);
+  }
 }
 ));
 
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_APP_ID,
     consumerSecret: process.env.TWITTER_APP_SECRET,
-    callbackURL: "http://127.0.0.1:3000/auth/twitter/callback"
+    callbackURL: `${process.env.API_URL}/auth/twitter/callback`
   },
   function(token, tokenSecret, profile, cb) {
-    User.findOrCreate({ twitterId: profile.id }, function (err, user) {
-      return cb(err, user);
+    // NOTE: I don't have advanced permissions to request a user's email... as of now...
+    User.findOneAndUpdate({email: profile.username, password: profile.id}, {$setOnInsert: {email: profile.username, password: profile.id}},
+      {
+        returnOriginal: false,
+        upsert: true
+      },
+      function (err, user) {
+        console.log(err)
+        return cb(err, user);
     });
   }
 ));
