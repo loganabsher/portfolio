@@ -7,6 +7,7 @@ import {BrowserRouter, Route} from 'react-router-dom';
 import {tokenSet} from '../../../actions/auth-actions';
 
 import AuthContainer from '../auth-container';
+import Dashboard from '../dashboard';
 import RepositoryContainer from '../repository-container';
 
 class App extends React.Component {
@@ -16,6 +17,7 @@ class App extends React.Component {
         <BrowserRouter>
           <section>
             <Route exact path='/auth' component={AuthContainer} />
+            <Route exact path='/dashboard' component={Dashboard} />
             <Route exact path='/repository' component={RepositoryContainer} />
           </section>
         </BrowserRouter>

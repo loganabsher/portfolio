@@ -25,14 +25,12 @@ app.use(cors({
 }));
 app.use(morgan('dev'));
 
-app.use(passport.initialize());
-
 app.use(session({
   resave: false,
   saveUninitialized: true,
   secret: 'the killers are just a solid band aren\nt they?'
 }));
-
+app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(user);
