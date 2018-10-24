@@ -69,7 +69,7 @@ userRouter.get('/auth/twitter',
 userRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
-    console.log(res);
+    // NOTE: take to dashboard
     res.redirect('/');
   });
 
@@ -141,7 +141,6 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
   debug('DELETE: /api/deleteaccount/:id');
 
   let id = {'_id': req.params.id};
-  console.log(id);
   User.findById(id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));

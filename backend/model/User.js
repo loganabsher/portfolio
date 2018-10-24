@@ -88,7 +88,9 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
-console.log(`${process.env.API_URL}/auth/facebook/callback`);
+passport.deserializeUser(function(obj, cb) {
+  cb(null, obj);
+});
 
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
@@ -97,8 +99,6 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, cb){
-  console.log(profile);
-  console.log(profile.emails[0].value);
   User.findOneAndUpdate({email: profile.emails[0].value}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
     {
       returnOriginal: false,
@@ -111,20 +111,20 @@ function(accessToken, refreshToken, profile, cb){
 }
 ));
 
-console.log(`${process.env.API_URL}/auth/twitter/callback`);
-
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_APP_ID,
     consumerSecret: process.env.TWITTER_APP_SECRET,
     callbackURL: `${process.env.API_URL}/auth/twitter/callback`
   },
   function(token, tokenSecret, profile, cb) {
-    console.log('yes');
-    console.log(token);
-    console.log(tokenSecret);
     console.log(profile);
-    User.findOrCreate({ twitterId: profile.id }, function (err, user) {
-      return cb(err, user);
+    User.findOneAndUpdate({email: profile.username}, {$setOnInsert: {email: profile.username, password: profile.id}},
+      {
+        returnOriginal: false,
+        upsert: true
+      },
+      function (err, user) {
+        return cb(err, user);
     });
   }
 ));
