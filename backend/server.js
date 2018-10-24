@@ -4,6 +4,7 @@ require('dotenv').config();
 const cors = require('cors');
 const debug = require('debug')('Backend-Portfolio:server.js');
 const express = require('express');
+const session = require('express-session');
 const passport = require('passport');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
@@ -25,7 +26,15 @@ app.use(cors({
 app.use(morgan('dev'));
 
 app.use(passport.initialize());
+
+app.use(session({
+  resave: false,
+  saveUninitialized: true,
+  secret: 'the killers are just a solid band aren\nt they?'
+}));
+
 app.use(passport.session());
+
 app.use(user);
 app.use(repository);
 

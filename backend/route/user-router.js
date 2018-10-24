@@ -69,7 +69,7 @@ userRouter.get('/auth/twitter',
 userRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
-    // Successful authentication, redirect home.
+    console.log(res);
     res.redirect('/');
   });
 

@@ -88,10 +88,12 @@ passport.serializeUser((user, done) => {
   done(null, user.id);
 });
 
+console.log(`${process.env.API_URL}/auth/facebook/callback`);
+
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: 'http://localhost:8000/auth/facebook/callback',
+  callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
   profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, cb){
@@ -109,12 +111,18 @@ function(accessToken, refreshToken, profile, cb){
 }
 ));
 
+console.log(`${process.env.API_URL}/auth/twitter/callback`);
+
 passport.use(new TwitterStrategy({
     consumerKey: process.env.TWITTER_APP_ID,
     consumerSecret: process.env.TWITTER_APP_SECRET,
-    callbackURL: "http://127.0.0.1:3000/auth/twitter/callback"
+    callbackURL: `${process.env.API_URL}/auth/twitter/callback`
   },
   function(token, tokenSecret, profile, cb) {
+    console.log('yes');
+    console.log(token);
+    console.log(tokenSecret);
+    console.log(profile);
     User.findOrCreate({ twitterId: profile.id }, function (err, user) {
       return cb(err, user);
     });
