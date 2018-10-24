@@ -60,7 +60,9 @@ userRouter.get('/auth/facebook/callback',
     // Successful authentication, redirect home.
     // NOTE: need to set a token after user create / find
     // NOTE: redirect needs to go to main page (it doesn't exist yet)
-    res.redirect('/');
+    console.log(res);
+    console.log(process.env.CLIENT_URL)
+    res.redirect(process.env.CLIENT_URL);
   });
 
 userRouter.get('/auth/twitter',
@@ -70,8 +72,9 @@ userRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
     // NOTE: take to dashboard
-    // NOTE: also both this and the fb redirects need to be changed to client URL rather than the API URL
-    res.redirect('/');
+    console.log(res);
+    console.log(process.env.CLIENT_URL)
+    res.redirect(process.env.CLIENT_URL);
   });
 
 userRouter.post('/api/signup', jsonParser, (req, res, next) => {

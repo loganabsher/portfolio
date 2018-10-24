@@ -99,7 +99,8 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, cb){
-  User.findOneAndUpdate({email: profile.emails[0].value}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
+  // NOTE: I think facebook might be a little broken atm
+  User.findOneAndUpdate({email: profile.emails[0].value, password: profile.id}, {$setOnInsert: {email: profile.emails[0].value, password: profile.id}},
     {
       returnOriginal: false,
       upsert: true
@@ -117,7 +118,8 @@ passport.use(new TwitterStrategy({
     callbackURL: `${process.env.API_URL}/auth/twitter/callback`
   },
   function(token, tokenSecret, profile, cb) {
-    User.findOneAndUpdate({email: profile.username}, {$setOnInsert: {email: profile.username, password: profile.id}},
+    // NOTE: I don't have advanced permissions to request a user's email... as of now...
+    User.findOneAndUpdate({email: profile.username, password: profile.id}, {$setOnInsert: {email: profile.username, password: profile.id}},
       {
         returnOriginal: false,
         upsert: true

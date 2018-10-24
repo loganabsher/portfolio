@@ -40,6 +40,7 @@ class AuthContainer extends React.Component{
         <AuthForm onComplete={this.handleAuth} />
         <a href={formatedURI}>login with google</a>
         <a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a>
+        <a href={`${process.env.API_URL}/auth/twitter`}>login with twitter</a>
       </div>
     );
   }
