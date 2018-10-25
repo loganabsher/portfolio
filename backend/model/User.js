@@ -86,7 +86,7 @@ User.handleOAUTH = function(data) {
 };
 
 passport.serializeUser((user, done) => {
-  // console.log('------------------------------', user)
+  // NOTE: this seems to act a little funky when logging in for the first time with facebook, but otherwise works fine?
   done(null, user.id);
 });
 
@@ -104,13 +104,13 @@ passport.use(new FacebookStrategy({
     User.findOne({email: profile.emails[0].value})
     .then((user) => {
       if(user){
-        debug('new facebook user signup:', profile.emails[0].value);
+        debug('returning facebook user signin:', profile.emails[0].value);
         return done(null, user);
       }else{
         let newUser = new User({email: profile.emails[0].value, password: profile.id})
           .generatePasswordHash(profile.id)
           .then((user) => user.generateToken());
-          debug('returning user signin:', profile.emails[0].value);
+          debug('new facebook user signup:', profile.emails[0].value);
         return done(null, newUser);
       }
     });
@@ -122,16 +122,18 @@ passport.use(new TwitterStrategy({
     consumerSecret: process.env.TWITTER_APP_SECRET,
     callbackURL: `${process.env.API_URL}/auth/twitter/callback`
   },
-  function(token, tokenSecret, profile, cb) {
+  function(token, tokenSecret, profile, done) {
     // NOTE: I don't have advanced permissions to request a user's email... as of now...
     User.findOne({email: profile.username})
     .then((user) => {
       if(user){
+        debug('returning twitter user signin:', profile.username)
         return done(null, user);
       }else{
         let newUser = new User({email: profile.username, password: profile.id})
         .generatePasswordHash(profile.id)
         .then((user) => user.generateToken());
+        debug('new twitter user signup:', profile.username);
         return done(null, user);
       }
     });
