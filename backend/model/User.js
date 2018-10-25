@@ -95,26 +95,26 @@ passport.deserializeUser(function(id, done) {
 });
 
 passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
-  profileFields: ['id', 'email']
-},
-function(accessToken, refreshToken, profile, done){
-  User.findOne({email: profile.emails[0].value})
-  .then((user) => {
-    if(user){
-      console.log('---------- old user --------------', user);
-      return done(null, user);
-    }else{
-      let newUser = new User({email: profile.emails[0].value, password: profile.id})
-        .generatePasswordHash(profile.id)
-        .then((user) => user.generateToken())
-        console.log('------new user-----', newUser)
-      return done(null, newUser);
-    }
-  })
-}
+    clientID: process.env.FACEBOOK_APP_ID,
+    clientSecret: process.env.FACEBOOK_APP_SECRET,
+    callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
+    profileFields: ['id', 'email']
+  },
+  function(accessToken, refreshToken, profile, done){
+    User.findOne({email: profile.emails[0].value})
+    .then((user) => {
+      if(user){
+        debug('new facebook user signup:', profile.emails[0].value);
+        return done(null, user);
+      }else{
+        let newUser = new User({email: profile.emails[0].value, password: profile.id})
+          .generatePasswordHash(profile.id)
+          .then((user) => user.generateToken());
+          debug('returning user signin:', profile.emails[0].value);
+        return done(null, newUser);
+      }
+    });
+  }
 ));
 
 passport.use(new TwitterStrategy({
@@ -124,14 +124,16 @@ passport.use(new TwitterStrategy({
   },
   function(token, tokenSecret, profile, cb) {
     // NOTE: I don't have advanced permissions to request a user's email... as of now...
-    User.findOneAndUpdate({email: profile.username, password: profile.id}, {$setOnInsert: {email: profile.username, password: profile.id}},
-      {
-        returnOriginal: false,
-        upsert: true
-      },
-      function (err, user) {
-        console.log(err)
-        return cb(err, user);
+    User.findOne({email: profile.username})
+    .then((user) => {
+      if(user){
+        return done(null, user);
+      }else{
+        let newUser = new User({email: profile.username, password: profile.id})
+        .generatePasswordHash(profile.id)
+        .then((user) => user.generateToken());
+        return done(null, user);
+      }
     });
   }
 ));
