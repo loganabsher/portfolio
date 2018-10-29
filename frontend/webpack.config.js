@@ -10,6 +10,7 @@ const ExtractPlugin = require('extract-text-webpack-plugin');
 
 let plugins = [
   new Dotenv(),
+  // NOTE: not sure if this is correct...
   new EnvironmentPlugin(['NODE_ENV']),
   new ExtractPlugin('bundle-[hash].css'),
   new HTMLPlugin({template: `${__dirname}/src/index.html`}),

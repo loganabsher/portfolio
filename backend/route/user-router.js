@@ -54,10 +54,12 @@ userRouter.get('/auth/facebook',
   passport.authenticate('facebook', {scope: ['email']})
 );
 
+// NOTE: maybe try to add api into the route
 userRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
     // NOTE: need to set a token after user create / find
+    debug('GET: /auth/facebook');
     res.redirect(`${process.env.CLIENT_URL}/dashboard`);
   });
 
@@ -67,6 +69,7 @@ userRouter.get('/auth/twitter',
 userRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
+    debug('GET: /auth/twitter');
     res.redirect(`${process.env.CLIENT_URL}/dashboard`);
   });
 

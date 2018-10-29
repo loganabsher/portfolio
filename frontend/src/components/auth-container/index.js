@@ -37,7 +37,6 @@ class AuthContainer extends React.Component{
     return(
       <div className='auth-container'>
         <h1>Welcome to my portfilio!</h1>
-        <p>forms go here</p>
         <AuthForm onComplete={this.handleAuth} />
         <a href={formatedURI}>login with google</a>
         <a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a>
