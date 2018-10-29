@@ -85,15 +85,8 @@ User.handleOAUTH = function(data) {
     });
 };
 
-passport.serializeUser((user, done) => {
-  // NOTE: this seems to act a little funky when logging in for the first time with facebook, but otherwise works fine?
-  // console.log('user id', user.id);
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  done(null, id);
-});
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) => done(null, id));
 
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
@@ -112,9 +105,8 @@ function(accessToken, refreshToken, profile, done){
         let newUser = new User({email: profile.emails[0].value, password: profile.id})
           .generatePasswordHash(profile.id)
           .then((user) => {
-            user.generateToken()
+            user.generateToken();
             debug('new facebook user signup:', profile.emails[0].value);
-            console.log('newuser.id', user);
             return done(null, user);
           })
       }
@@ -138,9 +130,11 @@ function(token, tokenSecret, profile, done) {
       }else{
         let newUser = new User({email: profile.username, password: profile.id})
           .generatePasswordHash(profile.id)
-          .then((user) => user.generateToken());
-        debug('new twitter user signup:', profile.username);
-        return done(null, newUser);
+          .then((user) => {
+            user.generateToken();
+            debug('new twitter user signup:', profile.username);
+            return done(null, user);
+          });
       }
     });
 }
