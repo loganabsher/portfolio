@@ -47,11 +47,11 @@ class AuthContainer extends React.Component{
   }
 }
 
-let mapStateToProps = (state) => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-let mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch) => {
   return{
     signup: (user) => dispatch(signupRequest(user)),
     login: (user) => dispatch(loginRequest(user)),
