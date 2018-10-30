@@ -21,18 +21,17 @@ class CowsayContainer extends React.Component{
   }
 
   componentDidMount(){
-    this.fetchCows();
+    this.fetchCows()
+    .then((list) => {
+      console.log(list)
+    })
   }
 
   fetchCows(){
-    (() => Cowsay.list(function(err, list){
+    Cowsay.list(function(err, list){
       if(err) throw new Error('bad things');
       return list;
-    }))
-      .then((list) => {
-        console.log(list);
-        this.setState({cowOptions: list});
-      });
+    });
   }
 
   cowRender(){
