@@ -1,9 +1,12 @@
 'use strict';
 
 import React from 'react';
+import {connect} from 'react-redux';
 
 import Cowsay from 'cowsay-browser';
 import Faker from 'faker';
+
+import CowForm from '../forms/cow-form';
 
 class CowsayContainer extends React.Component{
   constructor(props){
@@ -17,17 +20,19 @@ class CowsayContainer extends React.Component{
     this.cowRender = this.cowRender.bind(this);
   }
 
-  fetchCows(){
-    return Cowsay.list(function(err, list){
-      if(err) throw new Error('bad things');
-      console.log(list);
-      return list;
-    });
+  componentDidMount(){
+    this.fetchCows();
   }
 
-  componentDidMount(){
-    let cowList = this.fetchCows();
-    console.log(cowList);
+  fetchCows(){
+    (() => Cowsay.list(function(err, list){
+      if(err) throw new Error('bad things');
+      return list;
+    }))
+      .then((list) => {
+        console.log(list);
+        this.setState({cowOptions: list});
+      });
   }
 
   cowRender(){
@@ -42,19 +47,14 @@ class CowsayContainer extends React.Component{
   render(){
     return(
       <div className='cowsay-container'>
-        {!this.state.cowOptions ? <p>...loading</p> :
-          <section>
-            <p>cowsay</p>
-            <select>
-              {this.state.cowOptions.forEach((ele) => <option value="ele">{ele}</option>)}
-            </select>
-            <button onClick={this.cowRender}>click me</button>
-            <pre>{this.state.cowsay}</pre>
-          </section>
-        }
+        {!this.state.cowOptions ? <p>...loading</p> : <CowForm cowOptions={this.state.cowOptions} />}
       </div>
     );
   }
 }
 
-export default CowsayContainer;
+const mapStateToProps = (state) => ({
+  cowOptions: state.cowOptions
+});
+
+export default connect(mapStateToProps)(CowsayContainer);
