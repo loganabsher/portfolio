@@ -9,6 +9,7 @@ import {tokenSet} from '../../../actions/auth-actions';
 import AuthContainer from '../auth-container';
 import Dashboard from '../dashboard';
 import RepositoryContainer from '../repository-container';
+import CowsayContainer from '../cowsay-container';
 
 class App extends React.Component {
   render() {
@@ -17,8 +18,9 @@ class App extends React.Component {
         <BrowserRouter>
           <section>
             <Route exact path='/auth' component={AuthContainer} />
-            <Route exact path='/dashboard' component={Dashboard} />
-            <Route exact path='/repository' component={RepositoryContainer} />
+            <Route exact path='/' component={Dashboard} />
+            <Route exact path='/repo' component={RepositoryContainer} />
+            <Route exact path='/cowsay' component={CowsayContainer} />
           </section>
         </BrowserRouter>
       </div>

@@ -37,7 +37,6 @@ class AuthContainer extends React.Component{
     return(
       <div className='auth-container'>
         <h1>Welcome to my portfilio!</h1>
-        <p>forms go here</p>
         <AuthForm onComplete={this.handleAuth} />
         <a href={formatedURI}>login with google</a>
         <a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a>
@@ -48,11 +47,11 @@ class AuthContainer extends React.Component{
   }
 }
 
-let mapStateToProps = (state) => ({
+const mapStateToProps = (state) => ({
   auth: state.auth,
 });
 
-let mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch) => {
   return{
     signup: (user) => dispatch(signupRequest(user)),
     login: (user) => dispatch(loginRequest(user)),

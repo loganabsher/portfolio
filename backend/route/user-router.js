@@ -41,11 +41,11 @@ userRouter.get('/oauth/google/code', (req, res) => {
       .then((user) => user.generateToken())
       .then((token) => {
         res.cookie('portfolio-login-token', token);
-        res.redirect(process.env.CLIENT_URL);
+        res.redirect(`${process.env.CLIENT_URL}/`);
       })
       .catch((error) => {
         console.error(error);
-        res.redirect(process.env.CLIENT_URL);
+        res.redirect(`${process.env.CLIENT_URL}/auth`);
       });
   }
 });
@@ -54,13 +54,13 @@ userRouter.get('/auth/facebook',
   passport.authenticate('facebook', {scope: ['email']})
 );
 
+// NOTE: maybe try to add api into the route
 userRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
-    // Successful authentication, redirect home.
     // NOTE: need to set a token after user create / find
-    // NOTE: redirect needs to go to main page (it doesn't exist yet)
-    res.redirect(`${process.env.CLIENT_URL}/dashboard`);
+    debug('GET: /auth/facebook');
+    res.redirect(`${process.env.CLIENT_URL}/`);
   });
 
 userRouter.get('/auth/twitter',
@@ -69,10 +69,8 @@ userRouter.get('/auth/twitter',
 userRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
-    // NOTE: take to dashboard
-    console.log(res);
-    console.log(process.env.CLIENT_URL)
-    res.redirect(process.env.CLIENT_URL);
+    debug('GET: /auth/twitter');
+    res.redirect(`${process.env.CLIENT_URL}/`);
   });
 
 userRouter.post('/api/signup', jsonParser, (req, res, next) => {

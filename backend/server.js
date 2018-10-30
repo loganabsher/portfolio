@@ -28,7 +28,7 @@ app.use(morgan('dev'));
 app.use(session({
   resave: false,
   saveUninitialized: true,
-  secret: 'the killers are just a solid band aren\nt they?'
+  secret: 'the killers are just a solid band aren\'t they?'
 }));
 app.use(passport.initialize());
 app.use(passport.session());

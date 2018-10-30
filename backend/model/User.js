@@ -79,61 +79,63 @@ User.handleOAUTH = function(data) {
       return user;
     })
     .catch(() => {
-      let user = new User({email: data.email, password: data.sub})
+      let user = new User({email: data.email, password: data.sub});
       user.generatePasswordHash(data.sub)
-      .then((user) => user.generateToken())
+        .then((user) => user.generateToken());
     });
 };
 
-passport.serializeUser((user, done) => {
-  // console.log('------------------------------', user)
-  done(null, user.id);
-});
-
-passport.deserializeUser(function(id, done) {
-  done(null, id);
-});
+passport.serializeUser((user, done) => done(null, user.id));
+passport.deserializeUser((id, done) => done(null, id));
 
 passport.use(new FacebookStrategy({
-    clientID: process.env.FACEBOOK_APP_ID,
-    clientSecret: process.env.FACEBOOK_APP_SECRET,
-    callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
-    profileFields: ['id', 'email']
-  },
-  function(accessToken, refreshToken, profile, done){
-    User.findOne({email: profile.emails[0].value})
+  clientID: process.env.FACEBOOK_APP_ID,
+  clientSecret: process.env.FACEBOOK_APP_SECRET,
+  callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
+  profileFields: ['id', 'email']
+},
+function(accessToken, refreshToken, profile, done){
+  User.findOne({email: profile.emails[0].value})
     .then((user) => {
+      debug('POST: /api/auth/facebook');
       if(user){
-        debug('new facebook user signup:', profile.emails[0].value);
+        debug('returning facebook user signin:', profile.emails[0].value);
         return done(null, user);
       }else{
         let newUser = new User({email: profile.emails[0].value, password: profile.id})
           .generatePasswordHash(profile.id)
-          .then((user) => user.generateToken());
-          debug('returning user signin:', profile.emails[0].value);
-        return done(null, newUser);
+          .then((user) => {
+            user.generateToken();
+            debug('new facebook user signup:', profile.emails[0].value);
+            return done(null, user);
+          })
       }
     });
-  }
+}
 ));
 
 passport.use(new TwitterStrategy({
-    consumerKey: process.env.TWITTER_APP_ID,
-    consumerSecret: process.env.TWITTER_APP_SECRET,
-    callbackURL: `${process.env.API_URL}/auth/twitter/callback`
-  },
-  function(token, tokenSecret, profile, cb) {
-    // NOTE: I don't have advanced permissions to request a user's email... as of now...
-    User.findOne({email: profile.username})
+  consumerKey: process.env.TWITTER_APP_ID,
+  consumerSecret: process.env.TWITTER_APP_SECRET,
+  callbackURL: `${process.env.API_URL}/auth/twitter/callback`
+},
+function(token, tokenSecret, profile, done) {
+  // NOTE: I don't have advanced permissions to request a user's email... as of now...
+  User.findOne({email: profile.username})
     .then((user) => {
+      debug('POST: /api/auth/twitter');
       if(user){
+        debug('returning twitter user signin:', profile.username);
         return done(null, user);
       }else{
         let newUser = new User({email: profile.username, password: profile.id})
-        .generatePasswordHash(profile.id)
-        .then((user) => user.generateToken());
-        return done(null, user);
+          .generatePasswordHash(profile.id)
+          .then((user) => {
+            user.generateToken();
+            debug('new twitter user signup:', profile.username);
+            return done(null, user);
+          });
       }
     });
-  }
+}
 ));
