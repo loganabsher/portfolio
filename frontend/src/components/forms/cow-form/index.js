@@ -7,15 +7,16 @@ class CowForm extends React.Component{
     super(props);
     this.state = {
       cowOptions: this.props.cowOptions
-    }
+    };
   }
 
   render(){
+    console.log(this.state.cowOptions)
     return(
       <div>
         <p>cowsay</p>
         <select>
-          {this.state.cowOptions.forEach((ele) => <option value="ele">{ele}</option>)}
+          {this.state.cowOptions.map((ele, index) => <option key={index} value={ele}>{ele}</option>)}
         </select>
         <button onClick={this.cowRender}>click me</button>
         <pre>{this.state.cowsay}</pre>
