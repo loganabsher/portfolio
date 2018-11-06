@@ -129,16 +129,11 @@ userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next
   User.findById(req.params.id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
-      console.log(req.body.password)
       return user.comparePasswordHash(req.auth.password)
     })
     .then((user) => {
-      console.log(user)
       user.generatePasswordHash(req.body.password)
-        .then((user) => {
-          console.log(user)
-          user.generateToken();
-        })
+        .then((user) => user.generateToken())
         .then((token) => {
           res.cookie('portfolio-login-token', token, {maxAge: 900000000});
           res.json(token);
