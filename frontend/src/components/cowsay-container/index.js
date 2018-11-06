@@ -1,10 +1,10 @@
 'use strict';
 
 import React from 'react';
-import {connect} from 'react-redux';
 
 import Cowsay from 'cowsay-browser';
 import Faker from 'faker';
+import Promise from 'bluebird';
 
 import CowForm from '../forms/cow-form';
 
@@ -21,16 +21,18 @@ class CowsayContainer extends React.Component{
   }
 
   componentDidMount(){
-    this.fetchCows()
-    .then((list) => {
-      console.log(list)
-    })
+    Promise.all(this.fetchCows)
+      .then((list) => {
+        console.log(list);
+      });
   }
 
   fetchCows(){
-    Cowsay.list(function(err, list){
-      if(err) throw new Error('bad things');
-      return list;
+    return new Promise((resolve, reject) => {
+      Cowsay.list((err, list) => {
+        if(err) reject(err);
+        else if(list !== undefined) resolve(list);
+      });
     });
   }
 
@@ -52,8 +54,8 @@ class CowsayContainer extends React.Component{
   }
 }
 
-const mapStateToProps = (state) => ({
-  cowOptions: state.cowOptions
-});
+// const mapStateToProps = (state) => ({
+//   cowOptions: state.cowOptions
+// });
 
-export default connect(mapStateToProps)(CowsayContainer);
+export default CowsayContainer;
