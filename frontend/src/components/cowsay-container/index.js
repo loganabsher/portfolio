@@ -4,7 +4,6 @@ import React from 'react';
 import {connect} from 'react-redux';
 
 import Cowsay from 'cowsay-browser';
-import Faker from 'faker';
 import Promise from 'bluebird';
 
 import CowForm from '../forms/cow-form';
@@ -13,20 +12,14 @@ class CowsayContainer extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      cowsay: null,
-      cow: 'default',
       cowOptions: null
     };
     this.fetchCows = this.fetchCows.bind(this);
-    this.cowRender = this.cowRender.bind(this);
   }
 
   componentDidMount(){
     Promise.all(this.fetchCows())
-      .then((list) => {
-        console.log('finished list', list);
-        this.setState({cowOptions: list});
-      });
+      .then((list) => this.setState({cowOptions: list}));
   }
 
   fetchCows(){
@@ -35,15 +28,6 @@ class CowsayContainer extends React.Component{
         if(err) reject(err);
         return resolve(list);
       });
-    });
-  }
-
-  cowRender(){
-    this.setState({
-      cowsay: Cowsay.think({
-        text: `My name is ${Faker.name.prefix()} ${Faker.name.findName()} I am ${Faker.name.title()}`,
-        f: this.state.cowpath
-      })
     });
   }
 
