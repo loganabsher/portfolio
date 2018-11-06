@@ -2,7 +2,7 @@
 
 import React from 'react';
 
-const limitArr = [5, 10, 25, 50];
+const limitArr = [5, 10, 25, 50, 'all'];
 
 class RepoTable extends React.Component {
   constructor(props){
@@ -42,10 +42,14 @@ class RepoTable extends React.Component {
   changeLimit(e){
     let offset = parseInt(this.state.offset);
     let selected = e.target.options[e.target.selectedIndex].value;
+    if(selected === 'all'){
+      this.setState({offset: 0, limit: this.state.repos.length});
+    }else{
+      this.setState({limit: selected});
+    }
     if(parseInt(selected) + offset > this.state.repos.length){
       this.setState({offset: this.state.repos.length - parseInt(selected)});
     }
-    this.setState({limit: selected});
   }
 
   sortByName(e){

@@ -1,7 +1,7 @@
 'use strict';
 
 const Dotenv = require('dotenv-webpack');
-const production = process.env.NODE_ENV = 'production';
+const production = process.env.NODE_ENV = 'development';
 const {DefinePlugin, EnvironmentPlugin} = require('webpack');
 const HTMLPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
