@@ -122,16 +122,22 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
     .catch(next);
 });
 
-userRouter.put('/api/editaccount/:id', basicAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/editaccount/:id');
+// NOTE: need to change from findbyid to find by email/user
+userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/updatepassword/:id');
 
   User.findById(req.params.id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
+      return user.comparePasswordHash(req.auth.password)
     })
-    .then(() => {
-      User.findOneAndUpdate(req.params.id, req.body, {new: true})
-        .then((token) => res.json(token));
+    .then((user) => {
+      user.generatePasswordHash(req.body.password)
+        .then((user) => user.generateToken())
+        .then((token) => {
+          res.cookie('portfolio-login-token', token, {maxAge: 900000000});
+          res.json(token);
+        });
     })
     .catch(next);
 });
