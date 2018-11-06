@@ -12,13 +12,10 @@ class RepoTable extends React.Component {
       offset: 0,
       limit: 5
     };
-    // NOTE: these can all probably be put into one big event listener
+
     this.changeOffSet = this.changeOffSet.bind(this);
     this.changeLimit = this.changeLimit.bind(this);
-    this.sortByName = this.sortByName.bind(this);
-    this.sortByDateCreated = this.sortByDateCreated.bind(this);
-    this.sortByDateUpdated = this.sortByDateUpdated.bind(this);
-    this.sortBySize = this.sortBySize.bind(this);
+    this.sortBy = this.sortBy.bind(this);
   }
 
   changeOffSet(e){
@@ -52,20 +49,18 @@ class RepoTable extends React.Component {
     }
   }
 
-  sortByName(e){
-
-  }
-
-  sortByDateCreated(e){
-
-  }
-
-  sortByDateUpdated(e){
-
-  }
-
-  sortBySize(e){
-
+  sortBy(e){
+    console.log(e.target);
+    this.setState({repos: this.state.repos.sort((a, b) => {
+      let sorting = e.target.value.split(' ').join('');
+      if(a[sorting] < b[sorting]){
+        return -1;
+      }else if(a[sorting] > b[sorting]){
+        return 1;
+      }else{
+        return 0;
+      }
+    })});
   }
 
   render(){
@@ -91,13 +86,13 @@ class RepoTable extends React.Component {
         <table>
           <thead id='repo-table-head'>
             <tr>
-              <th><button onClick={this.sortByName}>name</button></th>
-              <th><button onClick={this.sortByName}>language</button></th>
-              <th><button onClick={this.sortByName}>forks</button></th>
-              <th><button onClick={this.sortByName}>watchers</button></th>
-              <th><button onClick={this.sortByDateCreated}>date created</button></th>
-              <th><button onClick={this.sortByDateUpdated}>last update</button></th>
-              <th><button onClick={this.sortBySize}>size</button></th>
+              <th><button value="name" onClick={this.sortBy}>name</button></th>
+              <th><button value="language" onClick={this.sortBy}>language</button></th>
+              <th><button value="forks" onClick={this.sortBy}>forks</button></th>
+              <th><button value="watchers" onClick={this.sortBy}>watchers</button></th>
+              <th><button value="date created" onClick={this.sortBy}>date created</button></th>
+              <th><button value="last update" onClick={this.sortBy}>last update</button></th>
+              <th><button value="size" onClick={this.sortBy}>size</button></th>
             </tr>
           </thead>
           <tbody id='repo-table-body'>
