@@ -15,7 +15,8 @@ class RepoTable extends React.Component {
 
     this.changeOffSet = this.changeOffSet.bind(this);
     this.changeLimit = this.changeLimit.bind(this);
-    this.sortBy = this.sortBy.bind(this);
+    this.sortByNumberOrLetter = this.sortByNumberOrLetter.bind(this);
+    this.sortByDate = this.sortByDate.bind(this);
   }
 
   changeOffSet(e){
@@ -49,9 +50,16 @@ class RepoTable extends React.Component {
     }
   }
 
-  sortBy(e){
+  sortByDate(e){
+    this.setState({repos: this.state.repos.sort((a, b) => {
+      console.log(e.target.value);
+    })});
+  }
+
+  sortByNumberOrLetter(e){
     this.setState({repos: this.state.repos.sort((a, b) => {
       let sorting = e.target.value.split(' ').join('');
+      console.log(sorting)
       if(a[sorting] < b[sorting]){
         return -1;
       }else if(a[sorting] > b[sorting]){
@@ -85,20 +93,20 @@ class RepoTable extends React.Component {
         <table>
           <thead id='repo-table-head'>
             <tr>
-              <th><button value="name" onClick={this.sortBy}>name</button></th>
-              <th><button value="language" onClick={this.sortBy}>language</button></th>
-              <th><button value="forks" onClick={this.sortBy}>forks</button></th>
-              <th><button value="watchers" onClick={this.sortBy}>watchers</button></th>
-              <th><button value="date created" onClick={this.sortBy}>date created</button></th>
-              <th><button value="last update" onClick={this.sortBy}>last update</button></th>
-              <th><button value="size" onClick={this.sortBy}>size</button></th>
+              <th><button value="name" onClick={this.sortByNumberOrLetter}>name</button></th>
+              <th><button value="language" onClick={this.sortByNumberOrLetter}>language</button></th>
+              <th><button value="forks" onClick={this.sortByNumberOrLetter}>forks</button></th>
+              <th><button value="watchers" onClick={this.sortByNumberOrLetter}>watchers</button></th>
+              <th><button value="date created" onClick={this.sortByDate}>date created</button></th>
+              <th><button value="last update" onClick={this.sortByDate}>last update</button></th>
+              <th><button value="size" onClick={this.sortByNumberOrLetter}>size</button></th>
             </tr>
           </thead>
           <tbody id='repo-table-body'>
             {this.state.repos.slice(offset, (offset + limit)).map((ele, index) => {
               return(
                 <tr key={index} style={{background: index % 2 === 0 ? '#F0F0F0' : '#F7F7F7'}}>
-                  <td>{ele.name}</td>
+                  <td><a>{ele.name}</a></td>
                   <td>{ele.language}</td>
                   <td>{ele.forks}</td>
                   <td>{ele.watchers}</td>
