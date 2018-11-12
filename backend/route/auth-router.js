@@ -8,6 +8,7 @@ const superagent = require('superagent');
 const passport = require('passport');
 
 const User = require('../model/User.js');
+
 const authRouter = module.exports = Router();
 
 authRouter.get('/oauth/google/code', (req, res) => {

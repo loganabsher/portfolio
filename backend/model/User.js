@@ -87,8 +87,6 @@ User.handleOAUTH = function(data) {
   return User.findOne({email: data.email})
     .then((user) => {
       if(user){
-        console.log(user.googlePermissions)
-        console.log(user.googlePermissions.authenticated)
         if(user.googlePermissions.authenticated){
           debug('GET: /api/auth/google');
           debug('returning google user signin:', data.email);
@@ -133,8 +131,6 @@ function(accessToken, refreshToken, profile, done){
   User.findOne({email: profile.emails[0].value})
     .then((user) => {
       if(user){
-        console.log(user.facebookPermissions)
-        console.log(user.facebookPermissions.authenticated)
         // NOTE: should add some sort of try catch here just in case something changes from facebook or twitter
         if(user.facebookPermissions.authenticated){
           debug('GET: /api/auth/facebook');
@@ -177,8 +173,6 @@ function(token, tokenSecret, profile, done) {
   User.findOne({email: profile.username})
     .then((user) => {
       if(user){
-        console.log(user.twitterPermissions)
-        console.log(user.twitterPermissions.authenticated)
         if(user.twitterPermissions.authenticated){
           debug('GET: /api/auth/twitter');
           debug('returning twitter user signin:', profile.username);

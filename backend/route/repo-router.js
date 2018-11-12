@@ -6,8 +6,8 @@ const superagent = require('superagent');
 const Router = require('express').Router;
 
 const Repository = require('../model/Repository.js');
-const repositoryRouter = module.exports = Router();
 
+const repositoryRouter = module.exports = Router();
 
 // NOTE: add checker to see if the repo exists, if it does, check the updated at and see if it is the same as what was returned
 const loader = function () {

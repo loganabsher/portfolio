@@ -7,6 +7,7 @@ const Schema = mongoose.Schema;
 
 const messageSchema = Schema({
   authorId: {type: String, required: true},
+  title: String,
   text: String,
   photo: String,
   comments: String

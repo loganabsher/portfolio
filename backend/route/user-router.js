@@ -8,8 +8,8 @@ const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
-
 const User = require('../model/User.js');
+
 const userRouter = module.exports = Router();
 
 // NOTE: need to add some sort of email authentication
@@ -67,10 +67,10 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
   debug('GET: /api/allaccounts');
 
   User.find({})
-    .then((all) => {
+    .then((users) => {
       let tempArr = [];
-      all.forEach((ele) => tempArr.push(ele.email));
-      res.json(tempArr);
+      users.forEach((ele) => tempArr.push(ele.email))
+        .then(() => res.json(tempArr));
     })
     .catch(next);
 });
