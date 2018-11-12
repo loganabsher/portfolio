@@ -85,7 +85,7 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, (req, res, next) => 
 
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
 
-  Message.findByIdAndRemove({req.params.id})
+  Message.findByIdAndRemove(req.params.id)
   .then(() => res.status(204).send())
   .catch(next);
 });
