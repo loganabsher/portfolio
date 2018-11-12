@@ -1,6 +1,7 @@
 'use strict';
 
 const debug = require('debug')('Backend-Portfolio:User.js');
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
@@ -14,8 +15,20 @@ const FacebookStrategy = require('passport-facebook');
 const TwitterStrategy = require('passport-twitter');
 
 const userSchema = Schema({
+  googlePermissions: {
+    authenticated: {type: Boolean, required: true},
+    login: String
+  },
+  facebookPermissions: {
+    authenticated: {type: Boolean, required: true},
+    login: String
+  },
+  twitterPermissions: {
+    authenticated: {type: Boolean, required: true},
+    login: String
+  },
   email: {type: String, required: true, unique: true},
-  password: {type: String, required: true},
+  password: String,
   findHash: {type: String, unique: true}
 });
 
@@ -73,16 +86,36 @@ User.handleOAUTH = function(data) {
 
   return User.findOne({email: data.email})
     .then((user) => {
-      if(!user) {
-        throw new Error('not found - create a user');
+      if(user){
+        if(user.googlePermissions.authenticated){
+          debug('GET: /api/auth/google');
+          debug('returning google user signin:', data.email);
+        }else{
+          user.googlePermissions.login = data.sub
+          user.googlePermissions.authenticated = true
+          user.save()
+          debug('GET: /api/auth/google');
+          debug('setting existing user with facebook permissions:', data.email);
+        }
+        return user;
+      }else{
+        debug('POST: /api/auth/google');
+        debug('new google user signup:', data.email);
+        let newUser = new User({
+          googlePermissions: {authenticated: true, login: data.sub},
+          facebookPermissions: {authenticated: false, login: null},
+          twitterPermissions: {authenticated: false, login: null},
+          email: data.email
+        });
+        return newUser;
       }
-      return user;
+      // return user;
     })
-    .catch(() => {
-      let user = new User({email: data.email, password: data.sub});
-      user.generatePasswordHash(data.sub)
-        .then((user) => user.generateToken());
-    });
+    // .catch(() => {
+    //   let user = new User({email: data.email, password: data.sub});
+    //   user.generatePasswordHash(data.sub)
+    //     .then((user) => user.generateToken());
+    // });
 };
 
 passport.serializeUser((user, done) => done(null, user.id));
@@ -97,18 +130,34 @@ passport.use(new FacebookStrategy({
 function(accessToken, refreshToken, profile, done){
   User.findOne({email: profile.emails[0].value})
     .then((user) => {
-      debug('POST: /api/auth/facebook');
       if(user){
-        debug('returning facebook user signin:', profile.emails[0].value);
+        // NOTE: should add some sort of try catch here just in case something changes from facebook or twitter
+        if(user.facebookPermissions.authenticated){
+          debug('GET: /api/auth/facebook');
+          debug('returning facebook user signin:', profile.emails[0].value);
+        }else{
+          debug('PUT: /api/auth/facebook');
+          debug('setting existing user with facebook permissions:', profile.emails[0].value);
+          user.facebookPermissions.login = profile.id;
+          user.facebookPermissions.authenticated = true;
+          user.save()
+        }
         return done(null, user);
       }else{
-        let newUser = new User({email: profile.emails[0].value, password: profile.id})
-          .generatePasswordHash(profile.id)
-          .then((user) => {
-            user.generateToken();
-            debug('new facebook user signup:', profile.emails[0].value);
-            return done(null, user);
-          })
+        debug('POST: /api/auth/facebook');
+        let newUser = new User({
+          googlePermissions: {authenticated: false, login: null},
+          facebookPermissions: {authenticated: true, login: profile.id},
+          twitterPermissions: {authenticated: false, login: null},
+          email: profile.emails[0].value,
+        });
+        // NOTE: I don't think generating a passwordHash would work in this way
+          // .generatePasswordHash(profile.id)
+          // .then((user) => {
+            // user.generateToken();
+        debug('new facebook user signup:', profile.emails[0].value);
+        return done(null, newUser);
+          // })
       }
     });
 }
@@ -123,18 +172,32 @@ function(token, tokenSecret, profile, done) {
   // NOTE: I don't have advanced permissions to request a user's email... as of now...
   User.findOne({email: profile.username})
     .then((user) => {
-      debug('POST: /api/auth/twitter');
       if(user){
-        debug('returning twitter user signin:', profile.username);
+        if(user.twitterPermissions.authenticated){
+          debug('GET: /api/auth/twitter');
+          debug('returning twitter user signin:', profile.username);
+        }else{
+          debug('PUT: /api/auth/twitter');
+          debug('setting existing user with twitter permissions:', profile.username);
+          user.twitterPermissions.login = profile.id;
+          user.twitterPermissions.authenticated = true;
+          user.save()
+        }
         return done(null, user);
       }else{
-        let newUser = new User({email: profile.username, password: profile.id})
-          .generatePasswordHash(profile.id)
-          .then((user) => {
-            user.generateToken();
-            debug('new twitter user signup:', profile.username);
-            return done(null, user);
-          });
+        debug('POST: /api/auth/twitter');
+        let newUser = new User({
+          googlePermissions: {authenticated: false, login: null},
+          facebookPermissions: {authenticated: false, login: null},
+          twitterPermissions: {authenticated: true, login: profile.id},
+          email: profile.username
+        });
+          // .generatePasswordHash(profile.id)
+          // .then((user) => {
+            // user.generateToken();
+        debug('new twitter user signup:', profile.username);
+        return done(null, newUser);
+          // });
       }
     });
 }

@@ -2,18 +2,19 @@
 
 // NOTE: perhaps change this to just require('mongoose').schema;
 const debug = require('debug')('Backend-Portfolio:Repository.js');
+
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const repoSchema = Schema ({
-  name: {type: String},
-  language: {type: String},
-  forks: {type: Number},
-  watchers: {type: Number},
-  size: {type: Number},
-  created_at: {type: String},
-  updated_at: {type: String},
-  branches_url: {type: String}
+const repoSchema = Schema({
+  name: String,
+  language: String,
+  forks: Number,
+  watchers: Number,
+  size: Number,
+  created_at: String,
+  updated_at: String,
+  branches_url: String
 });
 
 module.exports = mongoose.model('repositories', repoSchema);

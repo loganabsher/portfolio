@@ -6,88 +6,41 @@ const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
 const createError = require('http-errors');
-const superagent = require('superagent');
-const passport = require('passport');
 
-const basicAuth = require('../lib/basic-auth.js');
-
+const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
+
 const userRouter = module.exports = Router();
 
-userRouter.get('/oauth/google/code', (req, res) => {
-  debug('GET: /oauth/google/code');
-
-  if(!req.query.code) {
-    res.redirect(process.env.CLIENT_URL);
-  }else{
-    debug('POST: /oauth2/v4/token');
-    superagent.post('https://www.googleapis.com/oauth2/v4/token')
-      .type('form')
-      .send({
-        code: req.query.code,
-        grant_type: 'authorization_code',
-        client_id: process.env.GOOGLE_APP_ID,
-        client_secret: process.env.GOOGLE_APP_SECRET,
-        redirect_uri: `${process.env.API_URL}/oauth/google/code`
-      })
-      .then((res) => {
-        debug('GET: /plus/v1/people/me/openIdConnect');
-        return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
-          .set('Authorization', `Bearer ${res.body.access_token}`);
-      })
-      .then((res) => {
-        return User.handleOAUTH(res.body);
-      })
-      .then((user) => user.generateToken())
-      .then((token) => {
-        res.cookie('portfolio-login-token', token);
-        res.redirect(`${process.env.CLIENT_URL}/`);
-      })
-      .catch((error) => {
-        console.error(error);
-        res.redirect(`${process.env.CLIENT_URL}/auth`);
-      });
-  }
-});
-
-userRouter.get('/auth/facebook',
-  passport.authenticate('facebook', {scope: ['email']})
-);
-
-// NOTE: maybe try to add api into the route
-userRouter.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
-  function(req, res) {
-    // NOTE: need to set a token after user create / find
-    debug('GET: /auth/facebook');
-    res.redirect(`${process.env.CLIENT_URL}/`);
-  });
-
-userRouter.get('/auth/twitter',
-  passport.authenticate('twitter'));
-
-userRouter.get('/auth/twitter/callback',
-  passport.authenticate('twitter', {failureRedirect: '/auth'}),
-  function(req, res) {
-    debug('GET: /auth/twitter');
-    res.redirect(`${process.env.CLIENT_URL}/`);
-  });
-
+// NOTE: need to add some sort of email authentication
 userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   debug('POST: /api/signup');
 
   let password = req.body.password;
   delete req.body.password;
 
-  let user = new User(req.body);
+  User.findOne({email: req.body.email})
+  .then((user) => {
+    // NOTE: this is just temporary until I create something to authenticate their email
+    if(user) return Promise.reject(createError(500, 'this email is already being used'));
+    else{
+      debug('setting up new user');
+      let user = new User({
+        googlePermissions: {authenticated: false, login: null},
+        facebookPermissions: {authenticated: false, login: null},
+        twitterPermissions: {authenticated: false, login: null},
+        email: req.body.email
+      });
 
-  user.generatePasswordHash(password)
-    .then((user) => user.generateToken())
-    .then((token) => {
-      res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-      res.json(token);
-    })
-    .catch(next);
+      user.generatePasswordHash(password)
+        .then((user) => user.generateToken())
+        .then((token) => {
+          res.cookie('portfolio-login-token', token, {maxAge: 900000000});
+          res.json(token);
+        });
+    }
+  })
+  .catch(next);
 });
 
 userRouter.get('/api/login', basicAuth, (req, res, next) => {
@@ -114,10 +67,10 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
   debug('GET: /api/allaccounts');
 
   User.find({})
-    .then((all) => {
+    .then((users) => {
       let tempArr = [];
-      all.forEach((ele) => tempArr.push(ele.email));
-      res.json(tempArr);
+      users.forEach((ele) => tempArr.push(ele.email))
+        .then(() => res.json(tempArr));
     })
     .catch(next);
 });
