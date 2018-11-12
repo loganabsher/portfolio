@@ -54,7 +54,6 @@ authRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
     // NOTE: need to set a token after user create / find
-    debug('GET: /auth/facebook');
     res.redirect(`${process.env.CLIENT_URL}/`);
   });
 
@@ -64,6 +63,5 @@ authRouter.get('/auth/twitter',
 authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
-    debug('GET: /auth/twitter');
     res.redirect(`${process.env.CLIENT_URL}/`);
   });

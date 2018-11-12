@@ -19,7 +19,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   let password = req.body.password;
   delete req.body.password;
 
-  user.find({email: req.body.email})
+  User.findOne({email: req.body.email})
   .then((user) => {
     // NOTE: this is just temporary until I create something to authenticate their email
     if(user) return Promise.reject(createError(500, 'this email is already being used'));

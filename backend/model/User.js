@@ -84,7 +84,7 @@ User.handleOAUTH = function(data) {
 
   if(!data || !data.email) return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));
 
-  return User.find({email: data.email})
+  return User.findOne({email: data.email})
     .then((user) => {
       if(user){
         console.log(user.googlePermissions)
@@ -95,6 +95,7 @@ User.handleOAUTH = function(data) {
         }else{
           user.googlePermissions.login = data.sub
           user.googlePermissions.authenticated = true
+          user.save()
           debug('GET: /api/auth/google');
           debug('setting existing user with facebook permissions:', data.email);
         }
@@ -129,7 +130,7 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, done){
-  User.find({email: profile.emails[0].value})
+  User.findOne({email: profile.emails[0].value})
     .then((user) => {
       if(user){
         console.log(user.facebookPermissions)
@@ -143,6 +144,7 @@ function(accessToken, refreshToken, profile, done){
           debug('setting existing user with facebook permissions:', profile.emails[0].value);
           user.facebookPermissions.login = profile.id;
           user.facebookPermissions.authenticated = true;
+          user.save()
         }
         return done(null, user);
       }else{
@@ -172,7 +174,7 @@ passport.use(new TwitterStrategy({
 },
 function(token, tokenSecret, profile, done) {
   // NOTE: I don't have advanced permissions to request a user's email... as of now...
-  User.find({email: profile.username})
+  User.findOne({email: profile.username})
     .then((user) => {
       if(user){
         console.log(user.twitterPermissions)
@@ -185,6 +187,7 @@ function(token, tokenSecret, profile, done) {
           debug('setting existing user with twitter permissions:', profile.username);
           user.twitterPermissions.login = profile.id;
           user.twitterPermissions.authenticated = true;
+          user.save()
         }
         return done(null, user);
       }else{
