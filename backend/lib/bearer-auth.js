@@ -1,8 +1,9 @@
 'use strict';
 
+const debug = require('debug')('Backend-Portfolio:bearer-auth.js');
+
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');
-const debug = require('debug')('Backend-Portfolio:bearer-auth.js');
 
 const User = require('../model/User.js');
 

@@ -1,5 +1,6 @@
 'use strict';
 
+// NOTE: maybe try removing this dotenv and see if things works still
 require('dotenv').config();
 const cors = require('cors');
 const debug = require('debug')('Backend-Portfolio:server.js');
@@ -10,8 +11,9 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-const repository = require('./route/repo-router.js');
 const user = require('./route/user-router.js');
+const repository = require('./route/repo-router.js');
+const message = require('./route/message-router.js');
 
 const app = express();
 const PORT = 8000;
@@ -35,5 +37,6 @@ app.use(passport.session());
 
 app.use(user);
 app.use(repository);
+app.use(message);
 
 app.listen(PORT, () => debug('running on port: ' + PORT));

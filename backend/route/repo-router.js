@@ -57,5 +57,7 @@ repositoryRouter.get('/api/repository', (req, res, next) => {
     })
     .catch(next);
 });
-//
-// repositoryRoute.get('/api/repositories/branches', )
+
+// repositoryRoute.get('/api/repositories/branches/:id', (req, res, next) => {
+//   debug('GET: /api/repositories/branches/:id')
+// });

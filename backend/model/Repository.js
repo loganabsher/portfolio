@@ -5,7 +5,7 @@ const debug = require('debug')('Backend-Portfolio:Repository.js');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const repoSchema = Schema ({
+const repoSchema = Schema({
   name: {type: String},
   language: {type: String},
   forks: {type: Number},
