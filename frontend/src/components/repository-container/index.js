@@ -45,7 +45,4 @@ let mapDispatchToProps = (dispatch) => ({
   allRepositories: (repo) => dispatch(allRepositoriesRequest())
 });
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(RepositoryContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(RepositoryContainer);

@@ -1,12 +1,13 @@
 'use strict';
 
 const debug = require('debug')('Backend-Portfolio:repo-router.js');
+
 const superagent = require('superagent');
 const Router = require('express').Router;
 
 const Repository = require('../model/Repository.js');
-const repositoryRouter = module.exports = Router();
 
+const repositoryRouter = module.exports = Router();
 
 // NOTE: add checker to see if the repo exists, if it does, check the updated at and see if it is the same as what was returned
 const loader = function () {
@@ -48,8 +49,8 @@ repositoryRouter.get('/api/repository/:id', (req, res, next) => {
     .catch(next);
 });
 
-repositoryRouter.get('/api/repositories/all', (req, res, next) => {
-  debug('GET: /api/repositories/all');
+repositoryRouter.get('/api/repository', (req, res, next) => {
+  debug('GET: /api/repository');
 
   Repository.find({})
     .then((repos) => {
@@ -57,5 +58,7 @@ repositoryRouter.get('/api/repositories/all', (req, res, next) => {
     })
     .catch(next);
 });
-//
-// repositoryRoute.get('/api/repositories/branches', )
+
+// repositoryRoute.get('/api/repositories/branches/:id', (req, res, next) => {
+//   debug('GET: /api/repositories/branches/:id')
+// });
