@@ -15,8 +15,20 @@ const FacebookStrategy = require('passport-facebook');
 const TwitterStrategy = require('passport-twitter');
 
 const userSchema = Schema({
+  googlePermissions: {
+    authenticated: {type: Boolean, required: true},
+    login: String
+  },
+  facebookPermissions: {
+    authenticated: {type: Boolean, required: true},
+    login: String
+  },
+  twitterPermissions: {
+    authenticated: {type: Boolean, required: true},
+    login: String
+  },
   email: {type: String, required: true, unique: true},
-  password: {type: String, required: true},
+  password: String,
   findHash: {type: String, unique: true}
 });
 
