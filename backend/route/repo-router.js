@@ -48,8 +48,8 @@ repositoryRouter.get('/api/repository/:id', (req, res, next) => {
     .catch(next);
 });
 
-repositoryRouter.get('/api/repositories/all', (req, res, next) => {
-  debug('GET: /api/repositories/all');
+repositoryRouter.get('/api/repository', (req, res, next) => {
+  debug('GET: /api/repository');
 
   Repository.find({})
     .then((repos) => {

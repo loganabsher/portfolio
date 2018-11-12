@@ -10,7 +10,7 @@ export const repoSet = (repo) => ({
 });
 
 export const allRepositoriesRequest = () => (dispatch) => {
-  return superagent.get(`${process.env.API_URL}/api/repositories/all`)
+  return superagent.get(`${process.env.API_URL}/api/repository`)
     .then((res) => {
       console.log('finding repos', res);
       dispatch(repoSet(res.body));

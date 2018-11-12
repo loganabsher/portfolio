@@ -77,7 +77,7 @@ class RepoTable extends React.Component {
           </li>
           <li><p>items per page</p>
             <select onChange={this.changeLimit}>
-              {this.state.repos.map((ele, index) => {
+              {limitArr.map((ele, index) => {
                 return(<option key={index} value={ele}>{ele}</option>);
               })}
             </select>
@@ -97,7 +97,6 @@ class RepoTable extends React.Component {
           </thead>
           <tbody id='repo-table-body'>
             {this.state.repos.slice(offset, (offset + limit)).map((ele, index) => {
-              console.log(ele.created_at)
               return(
                 <tr key={index} style={{background: index % 2 === 0 ? '#F0F0F0' : '#F7F7F7'}}>
                   <td>{ele.name}</td>
