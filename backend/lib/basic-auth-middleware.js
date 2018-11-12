@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('Backend-Portfolio:basic-auth.js');
+const debug = require('debug')('Backend-Portfolio:basic-auth-middleware.js');
 
 const createError = require('http-errors');
 

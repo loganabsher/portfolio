@@ -1,6 +1,6 @@
 'use strict';
 
-const debug = require('debug')('Backend-Portfolio:bearer-auth.js');
+const debug = require('debug')('Backend-Portfolio:bearer-auth-middleware.js');
 
 const jwt = require('jsonwebtoken');
 const createError = require('http-errors');

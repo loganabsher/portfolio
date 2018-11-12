@@ -9,7 +9,7 @@ const createError = require('http-errors');
 const superagent = require('superagent');
 const passport = require('passport');
 
-const basicAuth = require('../lib/basic-auth.js');
+const basicAuth = require('../lib/basic-auth-middleware.js');
 
 const User = require('../model/User.js');
 const userRouter = module.exports = Router();
