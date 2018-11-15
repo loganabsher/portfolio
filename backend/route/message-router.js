@@ -16,13 +16,14 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 
   if(!req.body || !req.body.id) return next(createError(400, 'missing id credentials'));
 
-  let message = new Message({
+  new Message({
     authorId: req.body.id,
     text: req.body.text || null,
     title: req.body.title || null,
     photos: req.body.photos || null,
     comments: []
   })
+    .save()
     .then((message) => res.json(message))
     .catch(next);
 });
