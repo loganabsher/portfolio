@@ -290,7 +290,7 @@ X-Powered-By: Express
 ```
 
 ## POST: /api/message
-#### http POST localhost:8000/api/message Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE0MDJlNWZhYWMxZTZiYWI2NDQyM2MyYzZkZjI0ODY3MjUyZDEyZTM2YTBjMDNkOThmYTE3YzI2NmRiNjQwZjIiLCJpYXQiOjE1MzkxMTgzNTh9.TEXsbn2VaBRZJ8hIrUQ6r3MY33esJshWQ12mZWlVf2o' authorId=5bbd104f61fdf30d00163d77 text='cool thangs' title='new post'
+#### http POST localhost:8000/api/message Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE0MDJlNWZhYWMxZTZiYWI2NDQyM2MyYzZkZjI0ODY3MjUyZDEyZTM2YTBjMDNkOThmYTE3YzI2NmRiNjQwZjIiLCJpYXQiOjE1MzkxMTgzNTh9.TEXsbn2VaBRZJ8hIrUQ6r3MY33esJshWQ12mZWlVf2o' authorId=5bbd104f61fdf30d00163d77 text='cool thangs' title='new post' photos=link
 
 ```
 HTTP/1.1 200 OK
@@ -309,7 +309,8 @@ set-cookie: connect.sid=s%3AM7XiWPIaayr7qIOAi8HUsfnDcwzmrwpQ.ip5j2k3GlVlPFkMIDyK
     "__v": 0,
     "_id": "5bee08c69e0abbc5e99c7ba7",
     "authorId": "5bbd104f61fdf30d00163d77",
-    "comments": [],
+    "comments": "[]",
+    "photos": "link",
     "text": "cool thangs",
     "title": "new post"
 }
@@ -344,7 +345,7 @@ X-Powered-By: Express
 }
 ```
 
-## POST: /api/message/all
+## GET: /api/message/all
 #### http GET localhost:8000/api/message/all Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjJkMzc5ZjYyYzk2Nzk5N2VhNWJiMjY2NGE0YjFiZDRkMjllZDQyNGQzYWM3YjlhZWNlNGNjNDMwN2M4ZjA5MWQiLCJpYXQiOjE1NDIzMjIyODZ9.3NA07bXGVjU1B81YpsD9tM4ekVhxvbZNUAUjr4bjlMo'
 
 ```
@@ -365,7 +366,8 @@ set-cookie: connect.sid=s%3AdmXN71WPKtmE3BNwlwQ1rw8LMpmSzqtF.ZjF4a9gJndmAWYv77sy
         "__v": 0,
         "_id": "5bedfa379e0abbc5e99c7ba6",
         "authorId": "5bbd104f61fdf30d00163d77",
-        "comments": "",
+        "comments": "[]",
+        "photos": "link",
         "text": "cool thangs",
         "title": "new post"
     },
@@ -373,7 +375,8 @@ set-cookie: connect.sid=s%3AdmXN71WPKtmE3BNwlwQ1rw8LMpmSzqtF.ZjF4a9gJndmAWYv77sy
         "__v": 0,
         "_id": "5bee08c69e0abbc5e99c7ba7",
         "authorId": "5bbd104f61fdf30d00163d77",
-        "comments": "",
+        "comments": "[]",
+        "photos": "another link",
         "text": "cooler thangs",
         "title": "newer post"
     }
@@ -409,7 +412,7 @@ X-Powered-By: Express
 }
 ```
 
-## POST: /api/message/self/:id
+## GET: /api/message/self/:id
 #### http GET localhost:8000/api/message/self/5bbd104f61fdf30d00163d77 Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjJkMzc5ZjYyYzk2Nzk5N2VhNWJiMjY2NGE0YjFiZDRkMjllZDQyNGQzYWM3YjlhZWNlNGNjNDMwN2M4ZjA5MWQiLCJpYXQiOjE1NDIzMjIyODZ9.3NA07bXGVjU1B81YpsD9tM4ekVhxvbZNUAUjr4bjlMo'
 
 ```
@@ -430,7 +433,8 @@ set-cookie: connect.sid=s%3AdmXN71WPKtmE3BNwlwQ1rw8LMpmSzqtF.ZjF4a9gJndmAWYv77sy
         "__v": 0,
         "_id": "5bedfa379e0abbc5e99c7ba6",
         "authorId": "5bbd104f61fdf30d00163d77",
-        "comments": "",
+        "comments": "[]",
+        "photos": "link",
         "text": "cool thangs",
         "title": "new post"
     },
@@ -438,7 +442,8 @@ set-cookie: connect.sid=s%3AdmXN71WPKtmE3BNwlwQ1rw8LMpmSzqtF.ZjF4a9gJndmAWYv77sy
         "__v": 0,
         "_id": "5bee08c69e0abbc5e99c7ba7",
         "authorId": "5bbd104f61fdf30d00163d77",
-        "comments": "",
+        "comments": "[]",
+        "photos": "another link",
         "text": "cooler thangs",
         "title": "newer post"
     }
@@ -474,7 +479,7 @@ X-Powered-By: Express
 }
 ```
 
-## POST: /api/message/:id
+## GET: /api/message/:id
 #### http GET localhost:8000/api/message/5bedfa379e0abbc5e99c7ba6 Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjJkMzc5ZjYyYzk2Nzk5N2VhNWJiMjY2NGE0YjFiZDRkMjllZDQyNGQzYWM3YjlhZWNlNGNjNDMwN2M4ZjA5MWQiLCJpYXQiOjE1NDIzMjIyODZ9.3NA07bXGVjU1B81YpsD9tM4ekVhxvbZNUAUjr4bjlMo'
 
 ```
@@ -493,11 +498,111 @@ set-cookie: connect.sid=s%3AMt40DNcZX3C_FGtPfjYQJG-PuTVF9yLQ.S1tGNhixxMRFG92LGzH
 {
     "__v": 0,
     "_id": "5bedfa379e0abbc5e99c7ba6",
-    "authorId": "141243243",
-    "comments": "",
-    "text": "yeah yeah yeah",
-    "title": "cool things"
+    "authorId": "5bbd104f61fdf30d00163d77",
+    "comments": "[]",
+    "photos": "link",
+    "text": "cool thangs",
+    "title": "new post"
 }
+```
+
+</p>
+</details>
+
+
+<details><summary>edit message</summary>
+<p>
+
+## GET: /api/login
+#### http -a absherlogan@gmail.com:123 GET localhost:8000/api/login
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 226
+Content-Type: application/json; charset=utf-8
+Date: Tue, 09 Oct 2018 20:52:38 GMT
+ETag: W/"e2-Ua/tX3cU0Ed06ScvrZiI+GlrQnw"
+Set-Cookie: login-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE0MDJlNWZhYWMxZTZiYWI2NDQyM2MyYzZkZjI0ODY3MjUyZDEyZTM2YTBjMDNkOThmYTE3YzI2NmRiNjQwZjIiLCJpYXQiOjE1MzkxMTgzNTh9.TEXsbn2VaBRZJ8hIrUQ6r3MY33esJshWQ12mZWlVf2o; Max-Age=900000; Path=/; Expires=Sat, 20 Oct 2018 06:52:38 GMT
+X-Powered-By: Express
+
+{
+    "__v": 0,
+    "_id": "5bbd104f61fdf30d00163d77",
+    "email": "absherlogan@gmail.com",
+    "findHash": "1402e5faac1e6bab64423c2c6df24867252d12e36a0c03d98fa17c266db640f2",
+    "password": "$2b$10$tH45HtJ4By.jIn.F9LokY.1iIHDIgBrcUxVI3b/qFLP6Oppuo3j3a"
+}
+```
+
+## PUT: /api/message/edit/:id
+#### http PUT localhost:8000/api/message/edit/5bedfa379e0abbc5e99c7ba6 Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjJkMzc5ZjYyYzk2Nzk5N2VhNWJiMjY2NGE0YjFiZDRkMjllZDQyNGQzYWM3YjlhZWNlNGNjNDMwN2M4ZjA5MWQiLCJpYXQiOjE1NDIzMjIyODZ9.3NA07bXGVjU1B81YpsD9tM4ekVhxvbZNUAUjr4bjlMo' text='coolest thang' title='newest post' photos='[new link, some other link]'
+
+```
+HTTP/1.1 200 OK
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: http://localhost:8080
+Connection: keep-alive
+Content-Length: 124
+Content-Type: application/json; charset=utf-8
+Date: Fri, 16 Nov 2018 00:42:31 GMT
+ETag: W/"7c-ZgGbuDFjyKfYOSmOwF9bBJbqxZ4"
+Vary: Origin
+X-Powered-By: Express
+set-cookie: connect.sid=s%3AezfYTsARBrgFipeeVwfFvGXRI44diYvg.4USM2gTj%2FwwZLIqlYbf35g4pYU8RZyygOyMryrHXmOs; Path=/; HttpOnly
+
+{
+    "__v": 0,
+    "_id": "5bedfa379e0abbc5e99c7ba6",
+    "authorId": "5bbd104f61fdf30d00163d77",
+    "comments": "[]",
+    "photos": "[new link, some other link]",
+    "text": "coolest thang",
+    "title": "newest post"
+}
+```
+
+</p>
+</details>
+
+
+<details><summary>remove message</summary>
+<p>
+
+## GET: /api/login
+#### http -a absherlogan@gmail.com:123 GET localhost:8000/api/login
+
+```
+HTTP/1.1 200 OK
+Connection: keep-alive
+Content-Length: 226
+Content-Type: application/json; charset=utf-8
+Date: Tue, 09 Oct 2018 20:52:38 GMT
+ETag: W/"e2-Ua/tX3cU0Ed06ScvrZiI+GlrQnw"
+Set-Cookie: login-token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjE0MDJlNWZhYWMxZTZiYWI2NDQyM2MyYzZkZjI0ODY3MjUyZDEyZTM2YTBjMDNkOThmYTE3YzI2NmRiNjQwZjIiLCJpYXQiOjE1MzkxMTgzNTh9.TEXsbn2VaBRZJ8hIrUQ6r3MY33esJshWQ12mZWlVf2o; Max-Age=900000; Path=/; Expires=Sat, 20 Oct 2018 06:52:38 GMT
+X-Powered-By: Express
+
+{
+    "__v": 0,
+    "_id": "5bbd104f61fdf30d00163d77",
+    "email": "absherlogan@gmail.com",
+    "findHash": "1402e5faac1e6bab64423c2c6df24867252d12e36a0c03d98fa17c266db640f2",
+    "password": "$2b$10$tH45HtJ4By.jIn.F9LokY.1iIHDIgBrcUxVI3b/qFLP6Oppuo3j3a"
+}
+```
+
+## PUT: /api/message/remove/:id
+#### http DELETE localhost:8000/api/message/remove/5bee1345321d18e6ad8335c6 Authorization:'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbiI6IjJkMzc5ZjYyYzk2Nzk5N2VhNWJiMjY2NGE0YjFiZDRkMjllZDQyNGQzYWM3YjlhZWNlNGNjNDMwN2M4ZjA5MWQiLCJpYXQiOjE1NDIzMjIyODZ9.3NA07bXGVjU1B81YpsD9tM4ekVhxvbZNUAUjr4bjlMo'
+
+```
+HTTP/1.1 204 No Content
+Access-Control-Allow-Credentials: true
+Access-Control-Allow-Origin: http://localhost:8080
+Connection: keep-alive
+Date: Fri, 16 Nov 2018 00:50:56 GMT
+Vary: Origin
+X-Powered-By: Express
+set-cookie: connect.sid=s%3A7hoHwvLELz9yckSpiKwJUi6fsgnA85rS.CERcAvQRj7RyQ4krO1elIwDllekgUNqhECfQdGXjS4I; Path=/; HttpOnly
 ```
 
 </p>

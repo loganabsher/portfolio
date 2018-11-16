@@ -61,9 +61,19 @@ messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, ne
 
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
 
-  Message.findOne(req.params.id)
+  Message.findById(req.params.id)
     .then((message) => {
-
+      if(req.body.text){
+        message.text = req.body.text;
+      }
+      if(req.body.title){
+        message.title = req.body.title;
+      }
+      // NOTE: this may need to be fixed later
+      if(req.body.photos){
+        message.photos = req.body.photos;
+      }
+      res.json(message);
     })
     .catch(next);
 });
