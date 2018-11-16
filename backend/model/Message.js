@@ -9,7 +9,7 @@ const messageSchema = Schema({
   authorId: {type: String, required: true},
   title: String,
   text: String,
-  photo: String,
+  photos: String,
   comments: String
 });
 
