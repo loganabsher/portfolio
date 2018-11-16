@@ -16,44 +16,34 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 
   if(!req.body || !req.body.id) return next(createError(400, 'missing id credentials'));
 
-  let message = new Message({
+  new Message({
     authorId: req.body.id,
     text: req.body.text || null,
     title: req.body.title || null,
     photos: req.body.photos || null,
     comments: []
   })
-  .then((message) => res.json(message))
-  .catch(next);
+    .save()
+    .then((message) => res.json(message))
+    .catch(next);
 });
 
 messageRouter.get('/api/message/all', bearerAuth, (req, res, next) => {
   debug('GET: /api/message/all');
 
   Message.find({})
-  .then((messages) => {
-    // NOTE: maybe we can just return messages????
-    console.log(messages)
-    let tempArr = [];
-    messages.forEach((ele) => tempArr.push(ele))
-    .then(() => res.json(tempArr))
-  })
-  .catch(next);
+    .then((messages) => res.json(messages))
+    .catch(next);
 });
 
-messageRouter.get('/api/message/self', bearerAuth, (req, res, next) => {
-  debug('GET: /api/message/self');
+messageRouter.get('/api/message/self/:id', bearerAuth, (req, res, next) => {
+  debug('GET: /api/message/self/:id');
 
-  if(!req.body || !req.body.id) return next(createError(400, 'missing authorId field'));
+  if(!req.params || !req.params.id) return next(createError(400, 'missing authorId field'));
 
-  Message.find({authorId: req.body.id})
-  .then((messages) => {
-    console.log(messages)
-    let tempArr = [];
-    messages.forEach((ele) => tempArr.push(ele))
-    .then(() => res.json(tempArr))
-  })
-  .catch(next);
+  Message.find({authorId: req.params.id})
+    .then((messages) => res.json(messages))
+    .catch(next);
 });
 
 messageRouter.get('/api/message/:id', bearerAuth, (req, res, next) => {
@@ -62,10 +52,8 @@ messageRouter.get('/api/message/:id', bearerAuth, (req, res, next) => {
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
 
   Message.findById(req.params.id)
-  .then((message) => {
-    res.json(message);
-  })
-  .catch(next);
+    .then((message) => res.json(message))
+    .catch(next);
 });
 
 messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
@@ -73,11 +61,21 @@ messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, ne
 
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
 
-  Message.findOne(req.params.id)
-  .then((message) => {
-
-  })
-  .catch(next);
+  Message.findById(req.params.id)
+    .then((message) => {
+      if(req.body.text){
+        message.text = req.body.text;
+      }
+      if(req.body.title){
+        message.title = req.body.title;
+      }
+      // NOTE: this may need to be fixed later
+      if(req.body.photos){
+        message.photos = req.body.photos;
+      }
+      res.json(message);
+    })
+    .catch(next);
 });
 
 messageRouter.delete('/api/message/remove/:id', bearerAuth, (req, res, next) => {
@@ -86,6 +84,6 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, (req, res, next) => 
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
 
   Message.findByIdAndRemove(req.params.id)
-  .then(() => res.status(204).send())
-  .catch(next);
+    .then(() => res.status(204).send())
+    .catch(next);
 });
