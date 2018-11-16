@@ -70,9 +70,7 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
 
   User.find({})
     .then((users) => {
-      let tempArr = [];
-      users.forEach((ele) => tempArr.push(ele.email))
-        .then(() => res.json(tempArr));
+      res.json(users);
     })
     .catch(next);
 });
