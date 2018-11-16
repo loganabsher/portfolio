@@ -32,28 +32,17 @@ messageRouter.get('/api/message/all', bearerAuth, (req, res, next) => {
   debug('GET: /api/message/all');
 
   Message.find({})
-    .then((messages) => {
-      // NOTE: maybe we can just return messages????
-      console.log(messages);
-      let tempArr = [];
-      messages.forEach((ele) => tempArr.push(ele))
-        .then(() => res.json(tempArr));
-    })
+    .then((messages) => res.json(messages))
     .catch(next);
 });
 
-messageRouter.get('/api/message/self', bearerAuth, (req, res, next) => {
-  debug('GET: /api/message/self');
+messageRouter.get('/api/message/self/:id', bearerAuth, (req, res, next) => {
+  debug('GET: /api/message/self/:id');
 
-  if(!req.body || !req.body.id) return next(createError(400, 'missing authorId field'));
+  if(!req.params || !req.params.id) return next(createError(400, 'missing authorId field'));
 
-  Message.find({authorId: req.body.id})
-    .then((messages) => {
-      console.log(messages);
-      let tempArr = [];
-      messages.forEach((ele) => tempArr.push(ele))
-        .then(() => res.json(tempArr));
-    })
+  Message.find({authorId: req.params.id})
+    .then((messages) => res.json(messages))
     .catch(next);
 });
 
@@ -63,9 +52,7 @@ messageRouter.get('/api/message/:id', bearerAuth, (req, res, next) => {
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
 
   Message.findById(req.params.id)
-    .then((message) => {
-      res.json(message);
-    })
+    .then((message) => res.json(message))
     .catch(next);
 });
 
