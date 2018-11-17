@@ -36,7 +36,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
           .then((user) => user.generateToken())
           .then((token) => {
             res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-            res.json(token);
+            res.json(user);
           });
       }
     })
@@ -69,15 +69,16 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
   debug('GET: /api/allaccounts');
 
   User.find({})
-    .then((users) => {
-      res.json(users);
-    })
+    .then((users) => res.json(users))
     .catch(next);
 });
 
 // NOTE: need to change from findbyid to find by email/user
 userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updatepassword/:id');
+
+  console.log(req.params.id);
+
 
   User.findById(req.params.id)
     .then((user) => {

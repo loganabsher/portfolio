@@ -33,7 +33,7 @@ describe('user-router.js test', function(){
           .send(testUser)
           .end((err, res) => {
             if(err) return done(err);
-            console.log(res.body);
+            // console.log(res.body);
             expect(res.status).to.equal(200);
             done();
           });
@@ -59,7 +59,7 @@ describe('user-router.js test', function(){
           .auth(testUser.email, testUser.password)
           .end((err, res) => {
             if(err) return done(err);
-            console.log(res.body);
+            // console.log(res.body);
             expect(res.status).to.equal(200);
             done();
           });
@@ -91,7 +91,39 @@ describe('user-router.js test', function(){
         superagent.get(`${url}/api/allaccounts`)
           .end((err, res) => {
             if(err) return done(err);
-            console.log(res.body);
+            // console.log(res.body);
+            expect(res.status).to.equal(200);
+            done();
+          });
+      });
+    });
+  });
+
+  describe('PUT: /api/updatepassword/:id', () => {
+    describe('with valid credentials', () => {
+      let tempUser = null;
+      beforeEach((done) => {
+        superagent.post(`${url}/api/signup`)
+          .send(testUser)
+          .then((user) => {
+            tempUser = user.body;
+            done();
+          })
+          .catch(done);
+      });
+      afterEach((done) => {
+        User.deleteOne({email: testUser.email})
+          .then(() => done())
+          .catch(done);
+      });
+      it('should return a status code of 200', (done) => {
+        console.log(tempUser._id);
+        superagent.put(`${url}/api/updatepassword/${tempUser._id}`)
+          .auth(testUser.email, testUser.password)
+          .send(newUser.password)
+          .end((err, res) => {
+            if(err) return done(err);
+            console.log(res.status);
             expect(res.status).to.equal(200);
             done();
           });
