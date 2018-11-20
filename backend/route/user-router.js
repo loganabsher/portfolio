@@ -90,7 +90,7 @@ userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next
         .then((user) => user.generateToken())
         .then((token) => {
           res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-          res.json(token);
+          res.json(user);
         });
     })
     .catch(next);

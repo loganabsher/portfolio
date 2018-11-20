@@ -105,10 +105,7 @@ describe('user-router.js test', function(){
       beforeEach((done) => {
         superagent.post(`${url}/api/signup`)
           .send(testUser)
-          .then((user) => {
-            tempUser = user.body;
-            done();
-          })
+          .then(() => done())
           .catch(done);
       });
       afterEach((done) => {
