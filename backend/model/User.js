@@ -32,7 +32,7 @@ const userSchema = Schema({
   findHash: {type: String, unique: true}
 });
 
-userSchema.methods.generatePasswordHash = function (password) {
+userSchema.methods.generatePasswordHash = function(password){
   debug('generatePasswordHash');
 
   return new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@ userSchema.methods.generateToken = function(){
 
 const User = module.exports = mongoose.model('users', userSchema);
 
-User.handleOAUTH = function(data) {
+User.handleOAUTH = function(data){
   debug('googleOauth');
 
   if(!data || !data.email) return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));

@@ -28,6 +28,16 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
     .catch(next);
 });
 
+messageRouter.post('/api/comment/:id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('POST: /api/comment/:id');
+
+  if(!req.body || !req.body.text) return next(createError(400, 'no text content provided for comment'));
+  if(!req.params.id) return next(createError(400, 'need to provide message id to post comment'));
+
+  Message.findById(req.params.id)
+    .then((message) => )
+});
+
 messageRouter.get('/api/message/all', bearerAuth, (req, res, next) => {
   debug('GET: /api/message/all');
 
