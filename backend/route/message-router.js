@@ -4,6 +4,7 @@ const debug = require('debug')('Backend-Portfolio:message-router.js');
 
 const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
+const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
@@ -14,28 +15,18 @@ const messageRouter = module.exports = Router();
 messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
   debug('POST: /api/message');
 
-  if(!req.body || !req.body.id) return next(createError(400, 'missing id credentials'));
+  if(!req.body || !req.body.authorId) return next(createError(400, 'missing id credentials'));
 
   new Message({
-    authorId: req.body.id,
+    authorId: req.body.authorId,
     text: req.body.text || null,
     title: req.body.title || null,
-    photos: req.body.photos || null,
+    photos: req.body.photos || [],
     comments: []
   })
     .save()
     .then((message) => res.json(message))
     .catch(next);
-});
-
-messageRouter.post('/api/comment/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('POST: /api/comment/:id');
-
-  if(!req.body || !req.body.text) return next(createError(400, 'no text content provided for comment'));
-  if(!req.params.id) return next(createError(400, 'need to provide message id to post comment'));
-
-  Message.findById(req.params.id)
-    .then((message) => )
 });
 
 messageRouter.get('/api/message/all', bearerAuth, (req, res, next) => {
