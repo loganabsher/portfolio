@@ -32,6 +32,32 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
     });
 });
 
+commentRouter.get('/api/comment/:id', bearerAuth, (req, res, next) => {
+
+});
+
+commentRouter.get('/api/comment/all', bearerAuth, (req, res, next) => {
+
+});
+
+commentRouter.put('/api/updateComment/:id', bearerAuth, (req, res, next) => {
+  debug('PUT: /api/updateComment/:id');
+
+  Message.findById
+});
+
+commentRouter.delete('/api/removeComment/:id', bearerAuth, (req, res, next) => {
+
+});
+
+commentRouter.delete('/api/removeAllFromUser/:id', bearerAuth, (req, res, next) => {
+
+});
+
+commentRouter.delete('/api/removeAllFromComment/:id', bearerAuth, (req, res, next) => {
+
+});
+
 
 
 
