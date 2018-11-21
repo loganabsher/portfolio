@@ -20,13 +20,12 @@ messageSchema.methods.addComment = function(comment){
   debug('addComment');
 
   return new Promise((resolve, reject) => {
-    let message = this;
-
     if(!comment) reject(createError(400, 'no comment provided'));
     if(typeof this.comments !== 'object') this.comments = [];
-    this.comments.push(comment)
-      .then(() => message.save())
-      .then(() => resolve(message.comments))
+
+    this.comments.push(comment);
+    this.save()
+      .then((message) => resolve(message.comments))
       .catch((err) => reject(err));
   });
 };
@@ -35,17 +34,15 @@ messageSchema.methods.updateComment = function(comment){
   debug('updateComment');
 
   return new Promise((resolve, reject) => {
-    let message = this;
-
     if(!comment) reject(createError(400, 'no comment provided'));
     if(this.comments.length < 1) reject(500, 'no reference found');
     this.comments.map((ele) => {
       console.log(ele._id);
       console.log(comment._id);
       if(ele._id === comment._id) ele.text = comment.text;
-    })
-      .then(() => message.save())
-      .then(() => resolve(message.comments))
+    });
+    this.save()
+      .then((message) => resolve(message.comments))
       .catch((err) => reject(err));
   });
 };
@@ -58,11 +55,9 @@ messageSchema.methods.deleteComment = function(comment){
 
     if(!comment._id) reject(createError(400, 'need to provide a comment object with a valid existing comment._id parameter'));
     if(this.comments.length < 1) reject(500, 'no reference found');
-    this.comments.filter((ele) => {
-      ele._id === comment._id;
-    })
-      .then(() => message.save())
-      .then(() => resolve(message.comments))
+    this.comments.filter((ele) => ele._id === comment._id);
+    message.save()
+      .then((message) => resolve(message.comments))
       .catch((err) => reject(err));
   });
 };

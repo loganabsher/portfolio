@@ -72,10 +72,10 @@ commentRouter.get('/api/comment/message/all/:id', bearerAuth, (req, res, next) =
     .catch(next);
 });
 
-commentRouter.put('/api/updateComment/:id', bearerAuth, (req, res, next) => {
+commentRouter.put('/api/updateComment/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updateComment/:id');
 
-  if(!req.body.text) return next(createError(400, 'no new text provided'));
+  if(!req.body || !req.body.text) return next(createError(400, 'no new text provided'));
   if(!req.params.id) return next(createError(400, 'must provide comment id parameter'));
 
   Comment.findById(req.params.id)
@@ -87,7 +87,8 @@ commentRouter.put('/api/updateComment/:id', bearerAuth, (req, res, next) => {
           Message.findById(comment.messageId)
             .then((message) => {
               if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
-              message.updateComment(comment).save();
+              message.updateComment(comment)
+                .then((message) => res.json(message));
             });
         });
     })
@@ -105,7 +106,7 @@ commentRouter.delete('/api/removeComment/:id', bearerAuth, (req, res, next) => {
       Message.findById(comment.messageId)
         .then((message) => {
           if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
-          message.deleteComment(comment).save();
+          message.deleteComment(comment);
         })
         .then(() => {
           Comment.DeleteOne(req.params.id)
@@ -128,7 +129,7 @@ commentRouter.delete('/api/removeComment/user/all/:id', bearerAuth, (req, res, n
         Message.findById(ele.messageId)
           .then((message) => {
             if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
-            message.deleteComent(ele).save();
+            message.deleteComent(ele);
           })
           .then(() => Comment.DeleteOne(ele._id));
       })
