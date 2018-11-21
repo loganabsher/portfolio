@@ -1,6 +1,9 @@
 'use strict';
 
 import React from 'react';
+import connect from 'react-redux';
+
+import MessageForm from '../forms/message-form'
 
 class Dashboard extends React.Component{
   constructor(props){
@@ -12,9 +15,18 @@ class Dashboard extends React.Component{
     return(
       <div className='dashboard'>
         <p>hey you made it to the dashboard</p>
+        <MessageForm  />
       </div>
     );
   }
 }
 
-export default Dashboard;
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = (dispatch) => {
+  return{
+    signup: (user) => dispatch(signupRequest(user))
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Dashboard);

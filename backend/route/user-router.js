@@ -36,7 +36,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
           .then((user) => user.generateToken())
           .then((token) => {
             res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-            res.json(token);
+            res.json(user);
           });
       }
     })
@@ -63,23 +63,34 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
     .catch(next);
 });
 
+userRouter.get('/api/userExisits/:id', (req, res, next) => {
+  debug('GET: /api/userExisits/:id');
+
+  User.findById(req.params.id)
+    .then((user) => {
+      if(user) res.status(204).send();
+      else{
+        res.status(404).send();
+      }
+    })
+    .catch(next);
+});
 
 // NOTE: this should really have some sort of authentication
 userRouter.get('/api/allaccounts', (req, res, next) => {
   debug('GET: /api/allaccounts');
 
   User.find({})
-    .then((users) => {
-      let tempArr = [];
-      users.forEach((ele) => tempArr.push(ele.email))
-        .then(() => res.json(tempArr));
-    })
+    .then((users) => res.json(users))
     .catch(next);
 });
 
 // NOTE: need to change from findbyid to find by email/user
 userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updatepassword/:id');
+
+  console.log(req.params.id);
+
 
   User.findById(req.params.id)
     .then((user) => {
@@ -91,7 +102,7 @@ userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next
         .then((user) => user.generateToken())
         .then((token) => {
           res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-          res.json(token);
+          res.json(user);
         });
     })
     .catch(next);
@@ -107,7 +118,7 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
     })
     .then(() => {
       User.deleteOne(id)
-        .then((token) => res.json(token));
+        .then(() => res.status(204).send());
     })
     .catch(next);
 });

@@ -32,7 +32,7 @@ const userSchema = Schema({
   findHash: {type: String, unique: true}
 });
 
-userSchema.methods.generatePasswordHash = function (password) {
+userSchema.methods.generatePasswordHash = function(password){
   debug('generatePasswordHash');
 
   return new Promise((resolve, reject) => {
@@ -79,7 +79,7 @@ userSchema.methods.generateToken = function(){
 
 const User = module.exports = mongoose.model('users', userSchema);
 
-User.handleOAUTH = function(data) {
+User.handleOAUTH = function(data){
   debug('googleOauth');
 
   if(!data || !data.email) return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));
@@ -91,9 +91,9 @@ User.handleOAUTH = function(data) {
           debug('GET: /api/auth/google');
           debug('returning google user signin:', data.email);
         }else{
-          user.googlePermissions.login = data.sub
-          user.googlePermissions.authenticated = true
-          user.save()
+          user.googlePermissions.login = data.sub;
+          user.googlePermissions.authenticated = true;
+          user.save();
           debug('GET: /api/auth/google');
           debug('setting existing user with facebook permissions:', data.email);
         }
@@ -110,12 +110,12 @@ User.handleOAUTH = function(data) {
         return newUser;
       }
       // return user;
-    })
-    // .catch(() => {
-    //   let user = new User({email: data.email, password: data.sub});
-    //   user.generatePasswordHash(data.sub)
-    //     .then((user) => user.generateToken());
-    // });
+    });
+  // .catch(() => {
+  //   let user = new User({email: data.email, password: data.sub});
+  //   user.generatePasswordHash(data.sub)
+  //     .then((user) => user.generateToken());
+  // });
 };
 
 passport.serializeUser((user, done) => done(null, user.id));
@@ -140,7 +140,7 @@ function(accessToken, refreshToken, profile, done){
           debug('setting existing user with facebook permissions:', profile.emails[0].value);
           user.facebookPermissions.login = profile.id;
           user.facebookPermissions.authenticated = true;
-          user.save()
+          user.save();
         }
         return done(null, user);
       }else{
@@ -154,10 +154,10 @@ function(accessToken, refreshToken, profile, done){
         // NOTE: I don't think generating a passwordHash would work in this way
           // .generatePasswordHash(profile.id)
           // .then((user) => {
-            // user.generateToken();
+        // user.generateToken();
         debug('new facebook user signup:', profile.emails[0].value);
         return done(null, newUser);
-          // })
+      // })
       }
     });
 }
@@ -181,7 +181,7 @@ function(token, tokenSecret, profile, done) {
           debug('setting existing user with twitter permissions:', profile.username);
           user.twitterPermissions.login = profile.id;
           user.twitterPermissions.authenticated = true;
-          user.save()
+          user.save();
         }
         return done(null, user);
       }else{
@@ -194,10 +194,10 @@ function(token, tokenSecret, profile, done) {
         });
           // .generatePasswordHash(profile.id)
           // .then((user) => {
-            // user.generateToken();
+        // user.generateToken();
         debug('new twitter user signup:', profile.username);
         return done(null, newUser);
-          // });
+      // });
       }
     });
 }

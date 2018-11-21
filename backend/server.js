@@ -15,6 +15,7 @@ const user = require('./route/user-router.js');
 const auth = require('./route/auth-router.js')
 const repository = require('./route/repo-router.js');
 const message = require('./route/message-router.js');
+const comment = require('./route/comment-router.js');
 
 const app = express();
 const PORT = 8000;
@@ -40,5 +41,6 @@ app.use(user);
 app.use(auth);
 app.use(repository);
 app.use(message);
+app.use(comment);
 
 app.listen(PORT, () => debug('running on port: ' + PORT));
