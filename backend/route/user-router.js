@@ -34,10 +34,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 
         user.generatePasswordHash(password)
           .then((user) => user.generateToken())
-          .then((token) => {
-            res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-            res.json(token);
-          });
+          .then((token) => res.send({user: user, token: token}));
       }
     })
     .catch(next);

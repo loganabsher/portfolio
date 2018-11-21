@@ -11,8 +11,7 @@ export const messageCreate = (message) => ({
 
 export const messageCreateRequest = (message) => (dispatch) => {
   let token = readCookie('portfolio-login-token')
-  token.replace('"', '');
-  console.log(token)
+  message.authorId = readCookie('user');
   return superagent.post(`${process.env.API_URL}/api/message`)
     .set('Authorization', `Bearer ${token}`)
     .send(message)

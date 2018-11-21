@@ -11,6 +11,14 @@ export const tokenSet = (token) => {
   };
 };
 
+export const userSet = (id) => {
+  createCookie('user', id, 8);
+  return {
+    type: 'USER_SET',
+    payload: id
+  };
+};
+
 export const logout = () => {
   deleteCookie('portfolio-login-token');
   return { type: 'LOGOUT' };
@@ -21,7 +29,8 @@ export const signupRequest = (user) => (dispatch) => {
     .withCredentials()
     .send(user)
     .then((res) => {
-      dispatch(tokenSet(res.text));
+      dispatch(tokenSet(res.body.token));
+      dispatch(userSet(res.body.user._id));
       return res;
     })
     .catch((err) => console.error(err));
