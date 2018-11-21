@@ -63,6 +63,18 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
     .catch(next);
 });
 
+userRouter.get('/api/userExisits/:id', (req, res, next) => {
+  debug('GET: /api/userExisits/:id');
+
+  User.findById(req.params.id)
+    .then((user) => {
+      if(user) res.status(204).send();
+      else{
+        res.status(404).send();
+      }
+    })
+    .catch(next);
+});
 
 // NOTE: this should really have some sort of authentication
 userRouter.get('/api/allaccounts', (req, res, next) => {
@@ -106,7 +118,7 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
     })
     .then(() => {
       User.deleteOne(id)
-        .then((token) => res.json(token));
+        .then(() => res.status(204).send());
     })
     .catch(next);
 });
