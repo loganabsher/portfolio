@@ -18,6 +18,7 @@ class MessageForm extends React.Component{
 
   handleChange(e){
     let {name, value} = e.target;
+    console.log(this.state)
     this.setState({[name]: value});
   }
 

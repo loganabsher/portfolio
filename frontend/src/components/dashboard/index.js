@@ -1,21 +1,28 @@
 'use strict';
 
 import React from 'react';
-import connect from 'react-redux';
+import {connect} from 'react-redux';
 
-import MessageForm from '../forms/message-form'
+import {messageCreateRequest} from '../../../actions/repo-actions.js';
+
+import MessageForm from '../forms/message-form';
 
 class Dashboard extends React.Component{
   constructor(props){
     super(props);
 
+    this.handleNewMessage = this.handleNewMessage.bind(this);
+  }
+
+  handleNewMessage(message){
+    return this.props.messageCreate(message);
   }
 
   render(){
     return(
       <div className='dashboard'>
         <p>hey you made it to the dashboard</p>
-        <MessageForm  />
+        <MessageForm onComplete={this.handleNewMessage} />
       </div>
     );
   }
@@ -25,7 +32,7 @@ const mapStateToProps = () => ({});
 
 const mapDispatchToProps = (dispatch) => {
   return{
-    signup: (user) => dispatch(signupRequest(user))
+    messageCreate: (message) => dispatch(messageCreateRequest(message))
   };
 };
 
