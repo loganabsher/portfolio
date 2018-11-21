@@ -4,24 +4,33 @@ import superagent from 'superagent';
 import {createCookie, deleteCookie} from '../lib/util';
 
 export const tokenSet = (token) => {
-  createCookie('Special-Cookie', token, 8);
+  createCookie('portfolio-login-token', token, 8);
   return {
     type: 'TOKEN_SET',
     payload: token
   };
 };
 
+export const userSet = (id) => {
+  createCookie('user', id, 8);
+  return {
+    type: 'USER_SET',
+    payload: id
+  };
+};
+
 export const logout = () => {
-  deleteCookie('Special-Cookie');
+  deleteCookie('portfolio-login-token');
   return { type: 'LOGOUT' };
 };
 
-export const signupRequest =  (user) => (dispatch) => {
+export const signupRequest = (user) => (dispatch) => {
   return superagent.post(`${process.env.API_URL}/api/signup`)
     .withCredentials()
     .send(user)
     .then((res) => {
-      dispatch(tokenSet(res.text));
+      dispatch(tokenSet(res.body.token));
+      dispatch(userSet(res.body.user._id));
       return res;
     })
     .catch((err) => console.error(err));
