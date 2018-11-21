@@ -36,7 +36,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
           .then((user) => user.generateToken())
           .then((token) => {
             res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-            res.json(user);
+            res.json(token);
           });
       }
     })
@@ -57,7 +57,7 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
           let cookieOptions = {maxAge: 900000000};
           res.cookie('portfolio-login-token', token, cookieOptions);
           // NOTE: this needs to be removed for production, changed return to token
-          res.json(user);
+          res.json(token);
         });
     })
     .catch(next);

@@ -3,7 +3,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {messageCreateRequest} from '../../../actions/repo-actions.js';
+import {messageCreateRequest} from '../../../actions/message-actions.js';
 
 import MessageForm from '../forms/message-form';
 

@@ -4,7 +4,7 @@ import superagent from 'superagent';
 import {createCookie, deleteCookie} from '../lib/util';
 
 export const tokenSet = (token) => {
-  createCookie('Special-Cookie', token, 8);
+  createCookie('portfolio-login-token', token, 8);
   return {
     type: 'TOKEN_SET',
     payload: token
@@ -12,7 +12,7 @@ export const tokenSet = (token) => {
 };
 
 export const logout = () => {
-  deleteCookie('Special-Cookie');
+  deleteCookie('portfolio-login-token');
   return { type: 'LOGOUT' };
 };
 
