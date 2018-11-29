@@ -4,16 +4,15 @@
 
 import superagent from 'superagent';
 
-export const repoSet = (repo) => ({
-  type: 'REPOS_SET',
+export const repoFetch = (repo) => ({
+  type: 'REPOS_FETCH',
   payload: repo
 });
 
 export const allRepositoriesRequest = () => (dispatch) => {
   return superagent.get(`${process.env.API_URL}/api/repository`)
     .then((res) => {
-      console.log('finding repos', res);
-      dispatch(repoSet(res.body));
+      dispatch(repoFetch(res.body));
       return res.body;
     })
     .catch((err) => console.error(err));
