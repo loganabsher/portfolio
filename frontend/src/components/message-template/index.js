@@ -2,18 +2,19 @@
 
 import React from 'react';
 
-class Message extends React.Component{
+class MessageTemplate extends React.Component{
   constructor(props){
     super(props);
     this.state = {
       title: this.props.title,
-      text: this.props.text
+      text: this.props.text,
+      comments: this.props.comments
     };
   }
 
   render(){
     return(
-      <div className='message'>
+      <div className='message-template'>
         <h2>this.state.title</h2>
         <p>this.state.text</p>
       </div>
@@ -21,4 +22,4 @@ class Message extends React.Component{
   }
 }
 
-export default Message;
+export default MessageTemplate;
