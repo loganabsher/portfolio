@@ -23,6 +23,7 @@ class Dashboard extends React.Component{
       <div className='dashboard'>
         <p>hey you made it to the dashboard</p>
         <MessageForm onComplete={this.handleNewMessage} />
+        {}
       </div>
     );
   }
