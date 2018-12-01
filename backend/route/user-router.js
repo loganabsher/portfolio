@@ -9,6 +9,7 @@ const createError = require('http-errors');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
+const Profile = require('../model/Profile.js');
 
 const userRouter = module.exports = Router();
 
@@ -60,8 +61,8 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
     .catch(next);
 });
 
-userRouter.get('/api/userExisits/:id', (req, res, next) => {
-  debug('GET: /api/userExisits/:id');
+userRouter.get('/api/userexisits/:id', (req, res, next) => {
+  debug('GET: /api/userexisits/:id');
 
   User.findById(req.params.id)
     .then((user) => {
@@ -112,6 +113,7 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
   User.findById(id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
+      if(user.profileId) Profile.deleteOne(user.profileId);
     })
     .then(() => {
       User.deleteOne(id)

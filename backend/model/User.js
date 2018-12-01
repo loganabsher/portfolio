@@ -15,6 +15,7 @@ const FacebookStrategy = require('passport-facebook');
 const TwitterStrategy = require('passport-twitter');
 
 const userSchema = Schema({
+  profileId: String,
   googlePermissions: {
     authenticated: {type: Boolean, required: true},
     login: String
