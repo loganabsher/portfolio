@@ -18,7 +18,8 @@ class UserSettingsContainer extends React.Component{
   }
 
   handleSubmit(profile){
-    return this.props.profileCreate(profile);
+    return this.props.profileCreate(profile)
+      .then(() => this.props.history.push('/'));
   }
 
   render(){

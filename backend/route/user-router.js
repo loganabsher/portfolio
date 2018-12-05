@@ -10,6 +10,7 @@ const createError = require('http-errors');
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
+const Message = require('../model/Message.js');
 
 const userRouter = module.exports = Router();
 
@@ -87,9 +88,6 @@ userRouter.get('/api/allaccounts', (req, res, next) => {
 userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updatepassword/:id');
 
-  console.log(req.params.id);
-
-
   User.findById(req.params.id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
@@ -106,6 +104,7 @@ userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next
     .catch(next);
 });
 
+// NOTE: should probably add some sort of wait method that waits a few weeks before actually deleting the account and rather just have it be disabled, kinda like what facebook does
 userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
   debug('DELETE: /api/deleteaccount/:id');
 
@@ -113,7 +112,16 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
   User.findById(id)
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
-      if(user.profileId) Profile.deleteOne(user.profileId);
+      return user.comparePasswordHash(req.auth.password);
+    })
+    .then((user) => {
+      console.log(user.profileId, user.profileId)
+      if(user.profileId) Profile.deleteOne({'_id': user.profileId});
+      return user;
+    })
+    .then((user) => {
+      console.log(user);
+      Message.deleteMany({authorId: user.id});
     })
     .then(() => {
       User.deleteOne(id)
