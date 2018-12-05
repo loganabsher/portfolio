@@ -1,0 +1,50 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "description": "react web app leveraging github's API",
+  "main": "server.js",
+  "scripts": {
+    "test": "DEBUG='Backend-Portfolio*' mocha ",
+    "nodemon": "DEBUG='Backend-Portfolio*' node server.js",
+    "start": "DEBUG='Backend-Portfolio*' node server.js",
+    "build": "",
+    "coveralls": ""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/loganabsher/portfolio.git"
+  },
+  "keywords": [
+    "react"
+  ],
+  "author": "Logan Absher",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/loganabsher/portfolio/issues"
+  },
+  "homepage": "https://github.com/loganabsher/portfolio#readme",
+  "devDependencies": {
+    "chai": "^4.1.1",
+    "mocha": "^3.5.0"
+  },
+  "dependencies": {
+    "bcrypt": "^3.0.1",
+    "bluebird": "^3.5.2",
+    "body-parser": "^1.18.3",
+    "cors": "^2.8.4",
+    "crypto": "^1.0.1",
+    "debug": "^4.1.0",
+    "dotenv": "^6.0.0",
+    "express": "^4.16.3",
+    "express-session": "^1.15.6",
+    "faker": "^4.1.0",
+    "http-errors": "^1.7.1",
+    "jsonwebtoken": "^8.3.0",
+    "mongoose": "^5.3.1",
+    "morgan": "^1.9.1",
+    "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-twitter": "^1.0.4",
+    "superagent": "^4.0.0-beta.5"
+  }
+}
