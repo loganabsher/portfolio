@@ -56,9 +56,9 @@ class Dashboard extends React.Component{
       <div className='dashboard'>
         <p>hey you made it to the dashboard</p>
         <MessageForm onComplete={this.handleNewMessage} />
-        {this.state.messages.map((ele) => {
+        {this.state.messages ? this.state.messages.map((ele) => {
           <MessageTemplate title={ele.title} text={ele.text} comments={ele.comments}  />
-        })
+        }) : <p>no messages</p>
         }
       </div>
     );

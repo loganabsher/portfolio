@@ -2,22 +2,22 @@
 
 import React from 'react';
 
-class MessageForm extends React.Component{
+class UserSettingsForm extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      title: '',
-      text: '',
-      photos: '',
+      firstName: '',
+      lastName: '',
+      userName: '',
       error: false
     };
-
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
   handleChange(e){
     let {name, value} = e.target;
+    console.log(this.state);
     this.setState({[name]: value});
   }
 
@@ -25,8 +25,9 @@ class MessageForm extends React.Component{
     e.preventDefault();
     if(!this.state.error){
       this.props.onComplete(this.state)
-        .then(() => this.setState({title: '', text: '', photos: ''}))
+        .then(() => this.setState({firstName: '', lastName: '', userName: ''}))
         .catch((error) => {
+          console.error(error);
           this.setState({
             error,
           });
@@ -36,33 +37,31 @@ class MessageForm extends React.Component{
 
   render(){
     return(
-      <div className='message-form'>
+      <div className='profile-form'>
         <form>
           <input
             type='text'
-            name='title'
-            value={this.state.title}
-            onChange={this.handleChange}
-          />
-
-          <input
-            type='text'
-            name='text'
+            name='firstName'
             value={this.state.text}
             onChange={this.handleChange}
           />
-
           <input
             type='text'
-            name='photos'
-            value={this.state.photos}
+            name='lastName'
+            value={this.state.text}
             onChange={this.handleChange}
           />
-          <button type='submit' onClick={this.handleSubmit}>Post</button>
+          <input
+            type='text'
+            name='userName'
+            value={this.state.text}
+            onChange={this.handleChange}
+          />
+          <button type='submit' onClick={this.handleSubmit}>submit</button>
         </form>
       </div>
     );
   }
 }
 
-export default MessageForm;
+export default UserSettingsForm;
