@@ -18,7 +18,6 @@ class MessageForm extends React.Component{
 
   handleChange(e){
     let {name, value} = e.target;
-    console.log(this.state)
     this.setState({[name]: value});
   }
 
@@ -28,7 +27,6 @@ class MessageForm extends React.Component{
       this.props.onComplete(this.state)
         .then(() => this.setState({title: '', text: '', photos: ''}))
         .catch((error) => {
-          console.error(error);
           this.setState({
             error,
           });
