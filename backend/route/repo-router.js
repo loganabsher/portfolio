@@ -15,6 +15,7 @@ const loader = function () {
   superagent.get('https://api.github.com/user/repos?per_page=100&type=owner/')
     .set({'Authorization': 'token ' + process.env.GITHUB_TOKEN})
     .end((req, res) => {
+      // console.log(res.body)
       res.body.forEach((ele) => {
         Repository.findOne({name: ele.name})
           .then((repo) => {

@@ -28,7 +28,7 @@ class AuthContainer extends React.Component{
   render(){
     // NOTE: move this to auth actions
     let AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
-    let clientIDQuqery = 'client_id=553643806097-695nfkfu213qrn2t4114e5htj0m6lbvs.apps.googleusercontent.com';
+    let clientIDQuqery = 'client_id=894544787890-8ns55cvpqudq0ppcajbn3b8s9l4pbq53.apps.googleusercontent.com';
     let responseTypeQuery = 'response_type=code';
     let scopeQuery = 'scope=openid%20profile%20email';
     let promptQuery = 'prompt=consent';
