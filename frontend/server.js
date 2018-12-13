@@ -2,7 +2,9 @@
 
 const express = require('express');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT;
+
+app.use(express.static(`${__dirname}/build`));
 
 app.get('/*', ((req, res) => res.redirect('/')));
 

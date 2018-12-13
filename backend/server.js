@@ -19,7 +19,7 @@ const message = require('./route/message-router.js');
 const comment = require('./route/comment-router.js');
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT;
 
 // NOTE: need to connect to heroku's mongolab once in deployment
 mongoose.connect(process.env.MONGODB_URI);
