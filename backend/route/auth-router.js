@@ -37,7 +37,7 @@ authRouter.get('/oauth/google/code', (req, res) => {
       })
       .then((token) => {
         res.cookie('portfolio-login-token', token);
-        res.redirect(`${process.env.CLIENT_URL}/`);
+        res.redirect(`${process.env.CLIENT_URL}/settings`);
       })
       .catch((error) => {
         console.error(error);
@@ -55,7 +55,7 @@ authRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
     // NOTE: need to set a token after user create / find
-    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
 
 authRouter.get('/auth/twitter',
@@ -64,5 +64,5 @@ authRouter.get('/auth/twitter',
 authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
-    res.redirect(`${process.env.CLIENT_URL}/`);
+    res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
