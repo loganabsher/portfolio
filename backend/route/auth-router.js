@@ -59,7 +59,7 @@ authRouter.get('/auth/facebook/callback',
   });
 
 authRouter.get('/auth/twitter',
-  passport.authenticate('twitter'));
+  passport.authenticate('twitter', {include_email: true}));
 
 authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),

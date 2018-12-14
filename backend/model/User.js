@@ -66,24 +66,25 @@ userSchema.methods.generatePasswordHash = function(type, password){
 userSchema.methods.comparePasswordHash = function(type, password){
   debug('comparePasswordHash');
 
+  let user = this;
   return new Promise((resolve, reject) => {
     if(type === 'normal'){
       console.log('normal')
-      console.log(this.password)
+      console.log(user.password)
       console.log(password)
-      bcrypt.compare(password, this.password, (err, valid) => {
+      bcrypt.compare(password, user.password, (err, valid) => {
         if(err) return reject(err);
         if(!valid) return reject(createError(401, 'unauthorized'));
-        resolve(this);
+        resolve(user);
       });
     }else if(type === 'googlePermissions' || 'facebookPermissions' || 'twitterPermissions'){
       console.log(type)
-      console.log(this[type].password)
+      console.log(user[type].password)
       console.log(password)
-      bcrypt.compare(password, this[type].password, (err, valid) => {
+      bcrypt.compare(password, user[type].password, (err, valid) => {
         if(err) return reject(err);
         if(!valid) return reject(createError(401, 'unauthorized'));
-        resolve(this);
+        resolve(user);
       });
     }else{
       reject(createError(400, `unrecognized password type: ${type}`));
@@ -107,7 +108,10 @@ userSchema.methods.generateToken = function(){
 
   return new Promise((resolve, reject) => {
     this.generateFindHash()
-      .then((findHash) => resolve(jsonwebtoken.sign({token: findHash}, process.env.APP_SECRET)))
+      .then((findHash) => {
+        console.log(findHash)
+        resolve(jsonwebtoken.sign({token: findHash}, process.env.APP_SECRET))
+      })
       .catch((err) => reject(err));
   });
 };
@@ -127,9 +131,10 @@ User.handleOAUTH = function(data){
           debug('returning google user signin:', data.email);
           user.comparePasswordHash('googlePermissions', data.sub)
             .then((user) => user.generateToken())
+            .then((token) => res.send({user: user, token: token}))
             .catch((err) => console.error(err));
         }else{
-          user.googlePermissions.password = user.generatePasswordHash('googlePermissions', data.sub)
+          user.generatePasswordHash('googlePermissions', data.sub)
             .then((user) => user.generateToken())
             .catch((err) => console.error(err));
           user.googlePermissions.authenticated = true;
@@ -140,11 +145,10 @@ User.handleOAUTH = function(data){
         return user;
       }else{
         debug('POST: /api/auth/google');
-        debug('new google user signup:', data.email);
         let newUser = new User({
           googlePermissions: {authenticated: false, password: null},
-          facebookPermissions: {authenticated: false, login: null},
-          twitterPermissions: {authenticated: false, login: null},
+          facebookPermissions: {authenticated: false, password: null},
+          twitterPermissions: {authenticated: false, password: null},
           email: data.email
         });
         newUser.generatePasswordHash('googlePermissions', data.sub)
@@ -152,6 +156,7 @@ User.handleOAUTH = function(data){
           .catch((err) => console.error(err));
         newUser.googlePermissions.authenticated = true;
         newUser.save();
+        debug('new google user signup:', data.email);
         return newUser;
       }
     });
@@ -189,11 +194,10 @@ function(accessToken, refreshToken, profile, done){
         return done(null, user);
       }else{
         debug('POST: /api/auth/facebook');
-        debug('new facebook user signup:', profile.emails[0].value);
         let newUser = new User({
-          googlePermissions: {authenticated: false, login: null},
-          facebookPermissions: {authenticated: true, login: profile.id},
-          twitterPermissions: {authenticated: false, login: null},
+          googlePermissions: {authenticated: false, password: null},
+          facebookPermissions: {authenticated: true, password: null},
+          twitterPermissions: {authenticated: false, password: null},
           email: profile.emails[0].value,
         });
         newUser.generatePasswordHash('facebookPermissions', profile.id)
@@ -201,29 +205,36 @@ function(accessToken, refreshToken, profile, done){
           .catch((err) => console.error(err));
         newUser.facebookPermissions.authenticated = true;
         newUser.save();
+        debug('new facebook user signup:', profile.emails[0].value);
         return done(null, newUser);
       }
     });
 }
 ));
 
+// NOTE: okay I just made a request for a user's email from twitter, just need to wait a little
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_APP_ID,
   consumerSecret: process.env.TWITTER_APP_SECRET,
   callbackURL: `${process.env.API_URL}/auth/twitter/callback`
 },
 function(token, tokenSecret, profile, done) {
-  // NOTE: I don't have advanced permissions to request a user's email... as of now...
+  console.log(profile);
   User.findOne({email: profile.username})
     .then((user) => {
       if(user){
         if(user.twitterPermissions.authenticated){
           debug('GET: /api/auth/twitter');
           debug('returning twitter user signin:', profile.username);
+          user.comparePasswordHash('twitterPermissions', profile.id)
+            .then((user) => user.generateToken())
+            .catch((err) => console.error(err));
         }else{
           debug('PUT: /api/auth/twitter');
           debug('setting existing user with twitter permissions:', profile.username);
-          user.twitterPermissions.login = profile.id;
+          user.twitterPermissions.password = user.comparePasswordHash('twitterPermissions', profile.id)
+            .then((user) => user.generateToken())
+            .catch((err) => console.error(err));
           user.twitterPermissions.authenticated = true;
           user.save();
         }
@@ -231,17 +242,18 @@ function(token, tokenSecret, profile, done) {
       }else{
         debug('POST: /api/auth/twitter');
         let newUser = new User({
-          googlePermissions: {authenticated: false, login: null},
-          facebookPermissions: {authenticated: false, login: null},
-          twitterPermissions: {authenticated: true, login: profile.id},
+          googlePermissions: {authenticated: false, password: null},
+          facebookPermissions: {authenticated: false, password: null},
+          twitterPermissions: {authenticated: true, password: null},
           email: profile.username
         });
-          // .generatePasswordHash(profile.id)
-          // .then((user) => {
-        // user.generateToken();
+        newUser.generatePasswordHash('twitterPermissions', profile.id)
+          .then((user) => user.generateToken())
+          .catch((err) => console.error(err));
+        newUser.twitterPermissions.authenticated = true;
+        newUser.save();
         debug('new twitter user signup:', profile.username);
         return done(null, newUser);
-      // });
       }
     });
 }

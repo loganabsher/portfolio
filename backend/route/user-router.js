@@ -31,9 +31,9 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
       else{
         debug('setting up new user');
         let user = new User({
-          googlePermissions: {authenticated: false, login: null},
-          facebookPermissions: {authenticated: false, login: null},
-          twitterPermissions: {authenticated: false, login: null},
+          googlePermissions: {authenticated: false, password: null},
+          facebookPermissions: {authenticated: false, password: null},
+          twitterPermissions: {authenticated: false, password: null},
           email: req.body.email
         });
 
@@ -118,12 +118,10 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
       return user.comparePasswordHash('normal', req.auth.password);
     })
     .then((user) => {
-      console.log(user.profileId, user.profileId)
       if(user.profileId) Profile.deleteOne({'_id': user.profileId});
       return user;
     })
     .then((user) => {
-      console.log(user);
       Message.deleteMany({authorId: user.id});
     })
     .then(() => {
