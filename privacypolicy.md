@@ -1,5 +1,5 @@
 # Privacy Policy
- 
+
 Protecting your private information is our priority. This Statement of Privacy applies to https://frontendportfolio.herokuapp.com/ and Absher and Associates and governs data collection and usage. For the purposes of this Privacy Policy, unless otherwise noted, all references to Absher and Associates include https://frontendportfolio.herokuapp.com/. The Absher and Associates website is a blog site. By using the Absher and Associates website, you consent to the data practices described in this statement.
  
 ## Collection of your Personal Information
@@ -44,15 +44,15 @@ Absher and Associates reserves the right to change this Privacy Policy from time
 ## Contact Information
 Absher and Associates welcomes your questions or comments regarding this Statement of Privacy. If you believe that Absher and Associates has not adhered to this Statement, please contact Absher and Associates at:
  
-###### Absher and Associates
-###### 8519 24th AVE NW
-###### Seattle, Washington 98117
+...Absher and Associates
+...8519 24th AVE NW
+...Seattle, Washington 98117
  
-## Email Address:
-###### absherlogan@gmail.com
+#### Email Address:
+...absherlogan@gmail.com
  
-## Telephone number:
-###### +1(206)-910-2217
+#### Telephone number:
+...+1(206)-910-2217
  
 ## Effective as of December 13, 2018
  
