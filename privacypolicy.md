@@ -44,15 +44,15 @@ Absher and Associates reserves the right to change this Privacy Policy from time
 ## Contact Information
 Absher and Associates welcomes your questions or comments regarding this Statement of Privacy. If you believe that Absher and Associates has not adhered to this Statement, please contact Absher and Associates at:
  
-...Absher and Associates
-...8519 24th AVE NW
-...Seattle, Washington 98117
+Absher and Associates
+8519 24th AVE NW
+Seattle, Washington 98117
  
 #### Email Address:
-...absherlogan@gmail.com
+absherlogan@gmail.com
  
 #### Telephone number:
-...+1(206)-910-2217
++1(206)-910-2217
  
 ## Effective as of December 13, 2018
  
