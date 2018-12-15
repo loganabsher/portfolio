@@ -32,11 +32,10 @@ authRouter.get('/oauth/google/code', (req, res) => {
         return superagent.get('https://www.googleapis.com/plus/v1/people/me/openIdConnect')
           .set('Authorization', `Bearer ${res.body.access_token}`);
       })
-      .then((res) => {
-        return User.handleOAUTH(res.body);
-      })
-      .then((token) => {
-        res.cookie('portfolio-login-token', token);
+      .then((res) => User.googleStrategy(res.body))
+      .then((data) => {
+        res.cookie('portfolio-login-token', data.token);
+        res.cookie('user', data.user);
         res.redirect(`${process.env.CLIENT_URL}/settings`);
       })
       .catch((error) => {
@@ -50,11 +49,11 @@ authRouter.get('/auth/facebook',
   passport.authenticate('facebook', {scope: ['email']})
 );
 
-// NOTE: maybe try to add api into the route
 authRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
-    // NOTE: need to set a token after user create / find
+    res.cookie('portfolio-login-token', res.data.token);
+    res.cookie('user', res.data.user._id);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
 
@@ -64,5 +63,7 @@ authRouter.get('/auth/twitter',
 authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: '/auth'}),
   function(req, res) {
+    res.cookie('portfolio-login-token', res.data.token);
+    res.cookie('user', res.data.user._id);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
