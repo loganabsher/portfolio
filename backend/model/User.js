@@ -112,58 +112,61 @@ const User = module.exports = mongoose.model('users', userSchema);
 User.handleOauth = function(type, data){
   debug('handleOauth');
 
-  console.log('type:', type);
-  console.log('data:', data);
-  if(!type) return createError(400, `need to designate type parameter, ${type} is not valid`);
-  if(!data || !data.email || !data.password) return createError(400, 'no data given');
-  return User.findOne({email: data.email})
-    .then((user) => {
-      if(user){
-        if(user[type].authenticated){
-          debug(`GET: /api/auth/${type}`);
-          debug(`${type} user signin:`, data.email);
-          return user.comparePasswordHash(type, data.password);
+  return new Promise((resolve, reject) => {
+    if(!type) reject(createError(400, `need to designate type parameter, ${type} is not valid`));
+    if(!data || !data.email || !data.password) reject(createError(400, 'no data given'));
+    return User.findOne({email: data.email})
+      .then((user) => {
+        if(user){
+          if(user[type].authenticated){
+            debug(`GET: /api/auth/${type}`);
+            debug(`${type} user signin:`, data.email);
+            return user.comparePasswordHash(type, data.password);
+          }else{
+            debug(`GET: /api/auth/${type}`);
+            debug(`setting existing user with ${type}:`, data.email);
+            user[type].authenticated = true;
+            return user.generatePasswordHash(type, data.password);
+          }
         }else{
-          debug(`GET: /api/auth/${type}`);
-          debug(`setting existing user with ${type}:`, data.email);
-          user[type].authenticated = true;
-          return user.generatePasswordHash(type, data.password);
+          debug(`POST: /api/auth/${type}`);
+          debug(`new user signup with ${type}:`, data.email);
+          let newUser = new User({
+            googlePermissions: {authenticated: false, password: null},
+            facebookPermissions: {authenticated: false, password: null},
+            twitterPermissions: {authenticated: false, password: null},
+            email: data.email
+          });
+          newUser[type].authenticated = true;
+          return newUser.generatePasswordHash(type, data.password);
         }
-      }else{
-        debug(`POST: /api/auth/${type}`);
-        debug(`new user signup with ${type}:`, data.email);
-        let newUser = new User({
-          googlePermissions: {authenticated: false, password: null},
-          facebookPermissions: {authenticated: false, password: null},
-          twitterPermissions: {authenticated: false, password: null},
-          email: data.email
-        });
-        newUser[type].authenticated = true;
-        return newUser.generatePasswordHash(type, data.password);
-      }
-    })
-    .then((user) => {
-      return user.generateToken()
-        .then((token) => {
-          return {
-            token: token,
-            user: user
-          };
-        });
-    })
-    .catch((err) => console.error(err));
+      })
+      .then((user) => {
+        return user.generateToken()
+          .then((token) => {
+            resolve({
+              token: token,
+              user: user
+            });
+          });
+      })
+      .catch((err) => reject(console.error(err)));
+  });
 };
 
 User.googleStrategy = function(profile){
   debug('googleStrategy');
 
-  // if(!data || !data.email) return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));
   let data = {email: profile.email, password: profile.sub};
   return User.handleOauth('googlePermissions', data);
 };
 
-passport.serializeUser((user, done) => done(null, user.id));
-passport.deserializeUser((id, done) => done(null, id));
+passport.serializeUser((cookies, done) => done(null, cookies.user));
+// NOTE: something is up with the desteralize user
+passport.deserializeUser((cookies, done) => {
+  console.log('desteralize', cookies)
+  return done(null, cookies.user.user)
+});
 
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
@@ -173,49 +176,12 @@ passport.use(new FacebookStrategy({
 },
 function(accessToken, refreshToken, profile, done){
   debug('facebookStrategy');
-  let cookies = User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id});
-  return done(null, cookies.user);
-  // User.findOne({email: profile.emails[0].value})
-  //   .then((user) => {
-  //     if(user){
-  //       // NOTE: should add some sort of try catch here just in case something changes from facebook or twitter
-  //       if(user.facebookPermissions.authenticated){
-  //         debug('GET: /api/auth/facebook');
-  //         debug('returning facebook user signin:', profile.emails[0].value);
-  //         user.comparePasswordHash('facebookPermissions', profile.id)
-  //           .then((user) => user.generateToken())
-  //           .catch((err) => console.error(err));
-  //       }else{
-  //         debug('PUT: /api/auth/facebook');
-  //         debug('setting existing user with facebook permissions:', profile.emails[0].value);
-  //         user.facebookPermissions.password = user.generatePasswordHash('facebookPermissions', profile.id)
-  //           .then((user) => user.generateToken())
-  //           .catch((err) => console.error(err));
-  //         user.facebookPermissions.authenticated = true;
-  //         user.save();
-  //       }
-  //       return done(null, user);
-  //     }else{
-  //       debug('POST: /api/auth/facebook');
-  //       let newUser = new User({
-  //         googlePermissions: {authenticated: false, password: null},
-  //         facebookPermissions: {authenticated: true, password: null},
-  //         twitterPermissions: {authenticated: false, password: null},
-  //         email: profile.emails[0].value,
-  //       });
-  //       newUser.generatePasswordHash('facebookPermissions', profile.id)
-  //         .then((user) => user.generateToken())
-  //         .catch((err) => console.error(err));
-  //       newUser.facebookPermissions.authenticated = true;
-  //       newUser.save();
-  //       debug('new facebook user signup:', profile.emails[0].value);
-  //       return done(null, newUser);
-  //     }
-  //   });
+
+  User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id})
+    .then((cookies) => done(null, cookies));
 }
 ));
 
-// NOTE: okay I just made a request for a user's email from twitter, just need to wait a little
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_APP_ID,
   consumerSecret: process.env.TWITTER_APP_SECRET,
@@ -223,46 +189,9 @@ passport.use(new TwitterStrategy({
   callbackURL: `${process.env.API_URL}/auth/twitter/callback`,
 },
 function(token, tokenSecret, profile, done) {
-  console.log(profile.emails[0].value);
   debug('twitterStrategy');
-  let cookies = User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id});
-  console.log(cookies)
-  return done(null, cookies.user);
-  // User.findOne({email: profile.username})
-  //   .then((user) => {
-  //     if(user){
-  //       if(user.twitterPermissions.authenticated){
-  //         debug('GET: /api/auth/twitter');
-  //         debug('returning twitter user signin:', profile.username);
-  //         user.comparePasswordHash('twitterPermissions', profile.id)
-  //           .then((user) => user.generateToken())
-  //           .catch((err) => console.error(err));
-  //       }else{
-  //         debug('PUT: /api/auth/twitter');
-  //         debug('setting existing user with twitter permissions:', profile.username);
-  //         user.twitterPermissions.password = user.comparePasswordHash('twitterPermissions', profile.id)
-  //           .then((user) => user.generateToken())
-  //           .catch((err) => console.error(err));
-  //         user.twitterPermissions.authenticated = true;
-  //         user.save();
-  //       }
-  //       return done(null, user);
-  //     }else{
-  //       debug('POST: /api/auth/twitter');
-  //       let newUser = new User({
-  //         googlePermissions: {authenticated: false, password: null},
-  //         facebookPermissions: {authenticated: false, password: null},
-  //         twitterPermissions: {authenticated: true, password: null},
-  //         email: profile.username
-  //       });
-  //       newUser.generatePasswordHash('twitterPermissions', profile.id)
-  //         .then((user) => user.generateToken())
-  //         .catch((err) => console.error(err));
-  //       newUser.twitterPermissions.authenticated = true;
-  //       newUser.save();
-  //       debug('new twitter user signup:', profile.username);
-  //       return done(null, newUser);
-  //     }
-  //   });
+
+  User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id})
+    .then((cookies) => done(null, cookies));
 }
 ));

@@ -35,7 +35,7 @@ authRouter.get('/oauth/google/code', (req, res) => {
       .then((res) => User.googleStrategy(res.body))
       .then((data) => {
         res.cookie('portfolio-login-token', data.token);
-        res.cookie('user', data.user);
+        res.cookie('user', `${data.user._id}`);
         res.redirect(`${process.env.CLIENT_URL}/settings`);
       })
       .catch((error) => {
@@ -45,25 +45,27 @@ authRouter.get('/oauth/google/code', (req, res) => {
   }
 });
 
-authRouter.get('/auth/facebook',
-  passport.authenticate('facebook', {scope: ['email']})
-);
+authRouter.get('/auth/facebook', passport.authenticate('facebook'));
 
 authRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
-  function(req, res) {
-    res.cookie('portfolio-login-token', res.data.token);
-    res.cookie('user', res.data.user._id);
+  function(req, res){
+    console.log(res.req)
+    console.log(res.req.user.user._id)
+    res.cookie('portfolio-login-token', res.req.user.token);
+    // NOTE: this is so fucking stupid but its the only way I've gotten it to work
+    res.cookie('user', `${res.req.user.user._id}`);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
 
 authRouter.get('/auth/twitter',
-  passport.authenticate('twitter', {include_email: true}));
+  passport.authenticate('twitter'));
 
 authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
-    res.cookie('portfolio-login-token', res.data.token);
-    res.cookie('user', res.data.user._id);
+    console.log(res.req)
+    res.cookie('portfolio-login-token', res.req.user.token);
+    res.cookie('user', `${res.req.user.user._id}`);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
