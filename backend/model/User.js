@@ -162,7 +162,11 @@ User.googleStrategy = function(profile){
 };
 
 passport.serializeUser((cookies, done) => done(null, cookies.user));
-passport.deserializeUser((cookies, done) => done(null, cookies.user));
+// NOTE: something is up with the desteralize user
+passport.deserializeUser((cookies, done) => {
+  console.log('desteralize', cookies)
+  return done(null, cookies.user.user)
+});
 
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
@@ -178,7 +182,6 @@ function(accessToken, refreshToken, profile, done){
 }
 ));
 
-// NOTE: okay I just made a request for a user's email from twitter, just need to wait a little
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_APP_ID,
   consumerSecret: process.env.TWITTER_APP_SECRET,
@@ -190,6 +193,5 @@ function(token, tokenSecret, profile, done) {
 
   User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id})
     .then((cookies) => done(null, cookies));
-
 }
 ));

@@ -35,7 +35,7 @@ authRouter.get('/oauth/google/code', (req, res) => {
       .then((res) => User.googleStrategy(res.body))
       .then((data) => {
         res.cookie('portfolio-login-token', data.token);
-        res.cookie('user', data.user._id);
+        res.cookie('user', `${data.user._id}`);
         res.redirect(`${process.env.CLIENT_URL}/settings`);
       })
       .catch((error) => {
