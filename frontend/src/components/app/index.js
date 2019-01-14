@@ -6,16 +6,20 @@ import {BrowserRouter, Route} from 'react-router-dom';
 
 import {tokenSet} from '../../../actions/auth-actions';
 
+import '../../style/footer.scss';
+
+import NavbarConatiner from '../navbar-container';
 import AuthContainer from '../auth-container';
 import ProfileContainer from '../profile-container';
 import Dashboard from '../dashboard';
 import RepositoryContainer from '../repository-container';
 import CowsayContainer from '../cowsay-container';
 
-class App extends React.Component {
-  render() {
+class App extends React.Component{
+  render(){
     return(
       <div className='app'>
+        <NavbarConatiner />
         <BrowserRouter>
           <section>
             <Route exact path='/auth' component={AuthContainer} />
