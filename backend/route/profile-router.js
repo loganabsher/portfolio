@@ -33,12 +33,12 @@ profileRouter.get('/api/profile/:id', bearerAuth, jsonParser, (req, res, next) =
 
   if(!req.params || !req.params.id) return next(createError(400, 'missing profileId field'));
 
+  // NOTE: should really find by user id rather than profile id since each user only has one profile
   Profile.findById(req.params.id)
     .then((profile) => res.json(profile))
     .catch(next);
 });
 
-// NOTE: I am worried about the authentication on this route, I think it needs some sort of extra authentication, maybe ask them to log in again to verrify
 profileRouter.put('/api/profile/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
 
 });

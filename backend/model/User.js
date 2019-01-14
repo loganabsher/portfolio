@@ -110,6 +110,8 @@ userSchema.methods.generateToken = function(){
 const User = module.exports = mongoose.model('users', userSchema);
 
 User.handleOauth = function(type, data){
+  debug('handleOauth');
+
   console.log('type:', type);
   console.log('data:', data);
   if(!type) return createError(400, `need to designate type parameter, ${type} is not valid`);
@@ -153,7 +155,7 @@ User.handleOauth = function(type, data){
 };
 
 User.googleStrategy = function(profile){
-  debug('googleOauth');
+  debug('googleStrategy');
 
   // if(!data || !data.email) return Promise.reject(createError(400, 'VALIDATION ERROR - missing login info'));
   let data = {email: profile.email, password: profile.sub};
@@ -170,6 +172,7 @@ passport.use(new FacebookStrategy({
   profileFields: ['id', 'email']
 },
 function(accessToken, refreshToken, profile, done){
+  debug('facebookStrategy');
   let cookies = User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id});
   return done(null, cookies.user);
   // User.findOne({email: profile.emails[0].value})
@@ -216,11 +219,13 @@ function(accessToken, refreshToken, profile, done){
 passport.use(new TwitterStrategy({
   consumerKey: process.env.TWITTER_APP_ID,
   consumerSecret: process.env.TWITTER_APP_SECRET,
-  callbackURL: `${process.env.API_URL}/auth/twitter/callback`
+  userProfileURL: 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
+  callbackURL: `${process.env.API_URL}/auth/twitter/callback`,
 },
 function(token, tokenSecret, profile, done) {
-  // console.log(profile);
-  let cookies = User.handleOauth('twitterPermissions', {email: profile.username, password: profile.id});
+  console.log(profile.emails[0].value);
+  debug('twitterStrategy');
+  let cookies = User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id});
   console.log(cookies)
   return done(null, cookies.user);
   // User.findOne({email: profile.username})

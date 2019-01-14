@@ -61,7 +61,7 @@ authRouter.get('/auth/twitter',
   passport.authenticate('twitter', {include_email: true}));
 
 authRouter.get('/auth/twitter/callback',
-  passport.authenticate('twitter', {failureRedirect: '/auth'}),
+  passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
     res.cookie('portfolio-login-token', res.data.token);
     res.cookie('user', res.data.user._id);

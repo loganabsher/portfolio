@@ -57,6 +57,7 @@ messageRouter.get('/api/message/:id', bearerAuth, (req, res, next) => {
     .catch(next);
 });
 
+// NOTE: should really add a catch to make sure you can't edit other people's photos
 messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/message/edit/:id');
 
