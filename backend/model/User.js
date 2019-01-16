@@ -29,6 +29,7 @@ const userSchema = Schema({
     password: String
   },
   email: {type: String, required: true, unique: true},
+  authenticated: {type: Boolean, required: true},
   password: String,
   findHash: {type: String, unique: true}
 });
@@ -135,6 +136,7 @@ User.handleOauth = function(type, data){
             googlePermissions: {authenticated: false, password: null},
             facebookPermissions: {authenticated: false, password: null},
             twitterPermissions: {authenticated: false, password: null},
+            authenticated: false,
             email: data.email
           });
           newUser[type].authenticated = true;

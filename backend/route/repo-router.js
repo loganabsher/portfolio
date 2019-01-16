@@ -9,19 +9,16 @@ const Repository = require('../model/Repository.js');
 
 const repositoryRouter = module.exports = Router();
 
-// NOTE: add checker to see if the repo exists, if it does, check the updated at and see if it is the same as what was returned
 const loader = function () {
   // NOTE: find a way to check the number of repos, replace page=100 with the number of repos
   superagent.get('https://api.github.com/user/repos?per_page=100&type=owner/')
     .set({'Authorization': 'token ' + process.env.GITHUB_TOKEN})
     .end((req, res) => {
-      // console.log(res.body)
       res.body.forEach((ele) => {
         Repository.findOne({name: ele.name})
           .then((repo) => {
             if(!repo) {
-              new Repository(ele).save();
-              return;
+              return new Repository(ele).save();
             }
             if(repo.updated_at !== ele.updated_at) {
               console.log('changes noticed');
@@ -60,6 +57,7 @@ repositoryRouter.get('/api/repository', (req, res, next) => {
     .catch(next);
 });
 
+// NOTE: write this!
 // repositoryRoute.get('/api/repositories/branches/:id', (req, res, next) => {
 //   debug('GET: /api/repositories/branches/:id')
 // });
