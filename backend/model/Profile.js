@@ -17,6 +17,25 @@ const profileSchema = Schema({
   userName: String
 });
 
+profileSchema.methods.disconnectProfileAndUser = function(userId){
+  debug('disconnectProfileAndUser');
+
+  let profile = this;
+  return new Promise((resolve, reject) => {
+    if(!userId) return reject(createError(400, 'missing userId'));
+    User.findById(userId)
+      .then((user) => {
+        if(!user) return reject(createError(404, 'no user with this id was found'));
+        if(user.profileId){
+          user.set('profileId', null);
+          user.save();
+          resolve(profile);
+        }
+        resolve(profile);
+      });
+  });
+};
+
 profileSchema.methods.connectProfileAndUser = function(userId){
   debug('connectProfileAndUser');
 

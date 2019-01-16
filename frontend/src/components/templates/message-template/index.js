@@ -12,11 +12,15 @@ class MessageTemplate extends React.Component{
     };
   }
 
+  componentDidMount(){
+    console.log(this.state);
+  }
+
   render(){
     return(
       <div className='message-template'>
-        <h2>this.state.title</h2>
-        <p>this.state.text</p>
+        <h2>{this.state.title}</h2>
+        <p>{this.state.text}</p>
       </div>
     );
   }

@@ -13,19 +13,28 @@ import {
 } from '../../../actions/message-actions.js';
 
 import MessageForm from '../forms/message-form';
-import MessageTemplate from '../message-template';
+import MessageTemplate from '../templates/message-template';
 
 class Dashboard extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      messages: this.props.messages
+      loading: true
     };
 
     this.handleNewMessage = this.handleNewMessage.bind(this);
     this.fetchAllMessages = this.fetchAllMessages.bind(this);
     this.handleUpdateMessage = this.handleUpdateMessage.bind(this);
     this.handleRemoveMessage = this.handleRemoveMessage.bind(this);
+  }
+
+  componentDidMount(){
+    this.fetchAllMessages();
+  }
+
+  componentWillReceiveProps(nextProps){
+    console.log('props recieved', nextProps);
+    this.setState({message: JSON.parse(nextProps.message), loading: false});
   }
 
   handleNewMessage(message){
@@ -56,8 +65,9 @@ class Dashboard extends React.Component{
       <div className='dashboard'>
         <p>hey you made it to the dashboard</p>
         <MessageForm onComplete={this.handleNewMessage} />
-        {this.state.messages ? this.state.messages.map((ele) => {
-          <MessageTemplate title={ele.title} text={ele.text} comments={ele.comments}  />
+        {this.state.message ? this.state.message.map((ele, index) => {
+          console.log(this.state);
+          return(<MessageTemplate key={index} title={ele.title} text={ele.text} comments={ele.comments} />);
         }) : <p>no messages</p>
         }
       </div>
@@ -66,7 +76,7 @@ class Dashboard extends React.Component{
 }
 
 const mapStateToProps = (state) => ({
-  messages: state.messages
+  message: state.message
 });
 
 // NOTE: the update request should maybe be moved to the individual message templates

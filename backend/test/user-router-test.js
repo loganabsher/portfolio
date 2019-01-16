@@ -33,10 +33,13 @@ describe('user-router.js test', function(){
           .send(testUser)
           .end((err, res) => {
             if(err) return done(err);
-            // console.log(res.body);
+            console.log(res.body);
+            console.log(res.status);
             expect(res.status).to.equal(200);
             done();
-          });
+          })
+          // .then(() => done())
+          .catch(done);
       });
     });
   });
@@ -105,7 +108,12 @@ describe('user-router.js test', function(){
       beforeEach((done) => {
         superagent.post(`${url}/api/signup`)
           .send(testUser)
-          .then(() => done())
+          .end((err, res) => {
+            console.log(res.status)
+            if(err) return done(err);
+            console.log(res);
+            done();
+          })
           .catch(done);
       });
       afterEach((done) => {
@@ -126,5 +134,22 @@ describe('user-router.js test', function(){
           });
       });
     });
+  });
+
+  describe('DELETE: /api/deleteaccount', () => {
+    beforeEach((done) => {
+      superagent.post(`${url}/api/signup`)
+        .send(testUser)
+        .end((err, res) => {
+          if(err) return done(err);
+          console.log(res);
+          done();
+        })
+        .catch(done);
+    });
+    it('should return a status code of 200', (done) => {
+      console.log()
+      done();
+    })
   });
 });

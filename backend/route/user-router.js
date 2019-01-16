@@ -27,13 +27,23 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
       // NOTE: this is interesting, because if they are already authenticated with google, facebook
       // or twitter, then what will happen when they try to sign up normally, I think I need to add
       // some sort of catch for if they are already authenticated
-      if(user) return Promise.reject(createError(500, 'this email is already being used'));
+      if(user){
+        if(user.authenticated){
+          // NOTE: maybe update all error codes and texts to be very specific
+          return Promise.reject(createError(400, 'this email is already used, please log in with your password'));
+        }else{
+          user.generatePasswordHash('normal', password)
+            .then((user) => user.generateToken())
+            .then((token) => res.send({user: user, token: token}));
+        }
+      }
       else{
         debug('setting up new user');
         let user = new User({
           googlePermissions: {authenticated: false, password: null},
           facebookPermissions: {authenticated: false, password: null},
           twitterPermissions: {authenticated: false, password: null},
+          authenticated: true,
           email: req.body.email
         });
 
@@ -59,7 +69,7 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
           let cookieOptions = {maxAge: 900000000};
           res.cookie('portfolio-login-token', token, cookieOptions);
           // NOTE: this needs to be removed for production, changed return to token
-          res.json(token);
+          res.send({user: user, token: token});
         });
     })
     .catch(next);
