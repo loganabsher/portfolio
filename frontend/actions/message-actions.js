@@ -68,7 +68,7 @@ export const messageFetchAllRequest = () => (dispatch) => {
     .then((res) => {
       console.log('message-fetch-all working??', res.text);
       dispatch(messageFetchAll(res.text));
-      return res;
+      return res.text;
     })
     .catch((err) => console.error(err));
 };
