@@ -80,6 +80,8 @@ messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, ne
     .catch(next);
 });
 
+// NOTE: found another small issue, users can remove other people's comments, need to add an id checker I think
+// NOTE: I think I need to remove all comments associated with each message upon deletion
 messageRouter.delete('/api/message/remove/:id', bearerAuth, (req, res, next) => {
   debug('DELETE: /api/message/remove/:id');
 

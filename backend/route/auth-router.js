@@ -50,10 +50,8 @@ authRouter.get('/auth/facebook', passport.authenticate('facebook'));
 authRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res){
-    console.log(res.req)
-    console.log(res.req.user.user._id)
+    debug('GET: /auth/facebook/callback');
     res.cookie('portfolio-login-token', res.req.user.token);
-    // NOTE: this is so fucking stupid but its the only way I've gotten it to work
     res.cookie('user', `${res.req.user.user._id}`);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
@@ -64,7 +62,7 @@ authRouter.get('/auth/twitter',
 authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
-    console.log(res.req)
+    debug('GET: /auth/twitter/callback');
     res.cookie('portfolio-login-token', res.req.user.token);
     res.cookie('user', `${res.req.user.user._id}`);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
