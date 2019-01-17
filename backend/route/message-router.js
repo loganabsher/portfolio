@@ -17,6 +17,9 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 
   if(!req.body || !req.body.authorId) return next(createError(400, 'missing id credentials'));
 
+  console.log(req.user);
+  console.log(req);
+
   new Message({
     authorId: req.body.authorId,
     text: req.body.text || null,

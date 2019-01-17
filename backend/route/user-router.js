@@ -24,9 +24,6 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   User.findOne({email: req.body.email})
     .then((user) => {
       // NOTE: this is just temporary until I create something to authenticate their email
-      // NOTE: this is interesting, because if they are already authenticated with google, facebook
-      // or twitter, then what will happen when they try to sign up normally, I think I need to add
-      // some sort of catch for if they are already authenticated
       if(user){
         if(user.authenticated){
           // NOTE: maybe update all error codes and texts to be very specific
@@ -75,29 +72,30 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
     .catch(next);
 });
 
-userRouter.get('/api/userexisits/:id', (req, res, next) => {
-  debug('GET: /api/userexisits/:id');
-
-  User.findById(req.params.id)
-    .then((user) => {
-      if(user) res.status(204).send();
-      else{
-        res.status(404).send();
-      }
-    })
-    .catch(next);
-});
+// userRouter.get('/api/userexisits/:id', (req, res, next) => {
+//   debug('GET: /api/userexisits/:id');
+//
+//   User.findById(req.params.id)
+//     .then((user) => {
+//       if(user) res.status(204).send();
+//       else{
+//         res.status(404).send();
+//       }
+//     })
+//     .catch(next);
+// });
 
 // NOTE: this should really have some sort of authentication
-userRouter.get('/api/allaccounts', (req, res, next) => {
-  debug('GET: /api/allaccounts');
-
-  User.find({})
-    .then((users) => res.json(users))
-    .catch(next);
-});
+// userRouter.get('/api/allaccounts', (req, res, next) => {
+//   debug('GET: /api/allaccounts');
+//
+//   User.find({})
+//     .then((users) => res.json(users))
+//     .catch(next);
+// });
 
 // NOTE: need to change from findbyid to find by email/user
+// // NOTE: this also probably needs email auth
 userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updatepassword/:id');
 

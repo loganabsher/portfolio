@@ -10,6 +10,8 @@ const createError = require('http-errors');
 
 const User = require('./User.js');
 
+// NOTE: I just researched how to user jwtokens and I think it would be a good
+// idea to get rid of user ids
 const profileSchema = Schema({
   userId: String,
   firstName: String,
