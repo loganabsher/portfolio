@@ -15,7 +15,7 @@ const messageRouter = module.exports = Router();
 messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
   debug('POST: /api/message');
 
-  if(!req.body || (!req.body.photos || (!req.body.title && !req.body.text))) return next(createError(400, 'missing minimum content requirments'));
+  if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return next(createError(400, 'missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'json web token failure, unauthorized'));
 
   new Message({
@@ -92,8 +92,18 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, (req, res, next) => 
   debug('DELETE: /api/message/remove/:id');
 
   if(!req.params.id) return next(createError(400, 'missing user\'s request id'));
-
-  Message.findByIdAndRemove(req.params.id)
-    .then(() => res.status(204).send())
+  if(!req.user || !req.user._id) return next(createError(401, 'you are not authorized to remove this post'));
+  Message.findById({_id: req.params.id})
+    .then((message) => {
+      console.log(req.user._id)
+      console.log(typeof JSON.stringify(req.user._id))
+      console.log(message.authorId)
+      console.log(typeof message.authorId)
+      if(!message) return next(createError(404, 'no message was found with this id'));
+      if(message.authorId !== JSON.stringify(req.user._id)) return next(createError(401, 'you are not authorized to remove this post'));
+      Message.findByIdAndRemove(req.params.id)
+        .then(() => res.status(204).send())
+        .catch(next);
+    })
     .catch(next);
 });
