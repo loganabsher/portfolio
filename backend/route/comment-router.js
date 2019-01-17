@@ -4,7 +4,7 @@ const debug = require('debug')('Backend-Portfolio:comment-router.js');
 
 const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
-const Promise  = require('bluebird');
+// const Promise  = require('bluebird');
 const createError = require('http-errors');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
@@ -16,7 +16,7 @@ const commentRouter = module.exports = Router();
 commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
   debug('POST: /api/comment');
 
-  if(!req.body || !req.body.text) return next(createError(400, 'no text content provided for comment'));
+  if(!req.body || !req.body.value) return next(createError(400, 'no text content provided for comment'));
   if(!req.body.authorId || !req.body.messageId) return next(createError(400, 'missing authorId or messageId request parameters'));
 
   console.log(req.body.text);
@@ -33,10 +33,30 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
     });
 });
 
+// NOTE: this is very broken
+// commentRouter.post('/api/comment/reply/:id', bearerAuth, jsonParser, (req, res, next) => {
+//   debug('POST: /api/comment/reply/:id');
+//
+//   if(!req.params.id) return next(createError(400, 'must provide comment id parameter'));
+//   if(!req.body || !req.body.value) return next(createError(400, 'no text content provided for comment'));
+//   if(!req.body.authorId) return next(createError(400, 'missing authorId request parameter'));
+//
+//   Comment.findById({_id: req.params.id})
+//     .then((comment) => {
+//       if(!comment) return createError(404, 'commnet not found, unable to post comment');
+//       let reply = new Comment(req.body);
+//       comment.addItem(reply);
+//       comment.save();
+//       reply.save()
+//         .then(() => res.json(comment))
+//         .catch(next);
+//     });
+// });
+
 commentRouter.get('/api/comment/:id', bearerAuth, (req, res, next) => {
   debug('GET: /api/comment/:id');
 
-  if(!req.params.id) return next(createError(400, 'must provide comment id parameter'));
+  if(!req.params || !req.params.id) return next(createError(400, 'must provide comment id parameter'));
 
   Comment.findById(req.params.id)
     .then((comment) => {
@@ -46,12 +66,12 @@ commentRouter.get('/api/comment/:id', bearerAuth, (req, res, next) => {
     .catch(next);
 });
 
-commentRouter.get('/api/comment/user/all/:id', bearerAuth, (req, res, next) => {
-  debug('GET: /api/comment/user/all/:id');
+commentRouter.get('/api/comment/self/all', bearerAuth, (req, res, next) => {
+  debug('GET: /api/comment/self/all');
 
-  if(!req.params.id) return next(createError(400, 'must provide user id parameter'));
+  if(!req.user || !req.user._id) return next(createError(401, 'json web token failure, unauthorized'));
 
-  Comment.find({authorId: req.params.id})
+  Comment.find({authorId: req.user._id})
     .then((comments) => {
       if(!comments) return next(createError(404, 'no comments found for this user'));
       res.json(comments);
@@ -75,16 +95,18 @@ commentRouter.get('/api/comment/message/all/:id', bearerAuth, (req, res, next) =
 commentRouter.put('/api/updateComment/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updateComment/:id');
 
-  if(!req.body || !req.body.text) return next(createError(400, 'no new text provided'));
+  if(!req.body || !req.body.value) return next(createError(400, 'no new text provided'));
   if(!req.params.id) return next(createError(400, 'must provide comment id parameter'));
+  if(!req.body || !req.body._id) return next(createError(401, 'json web token failure, unauthorized'));
 
-  Comment.findById(req.params.id)
+  Comment.findById({_id: req.params.id})
     .then((comment) => {
       if(!comment) return next(createError(404, 'comment not found'));
+      if(comment.authorId !== req.body._id) return next(createError(401, 'you are not authorized to edit this post'));
       comment.text = req.body.text;
       comment.save()
         .then((comment) => {
-          Message.findById(comment.messageId)
+          Message.findById({_id: comment.messageId})
             .then((message) => {
               if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
               message.updateComment(comment)
@@ -99,17 +121,18 @@ commentRouter.delete('/api/removeComment/:id', bearerAuth, (req, res, next) => {
   debug('DELETE: /api/removeComment/:id');
 
   if(!req.params.id) return next(createError(400, 'must provide comment id parameter'));
+  if(!req.body || !req.body._id) return next(createError(401, 'you are not authorized to remove this post'));
 
-  Comment.findById(req.params.id)
+  Comment.findById({_id: req.params.id})
     .then((comment) => {
       if(!comment) return next(createError(404, 'comment not found'));
-      Message.findById(comment.messageId)
+      Message.findById({_id: comment.messageId})
         .then((message) => {
           if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
           message.deleteComment(comment);
         })
         .then(() => {
-          Comment.DeleteOne(req.params.id)
+          Comment.findByIdAndRemove({_id: req.params.id})
             .then(() => res.status(204).send());
         });
     })
@@ -117,12 +140,12 @@ commentRouter.delete('/api/removeComment/:id', bearerAuth, (req, res, next) => {
 });
 
 // NOTE: these last two methods probably need some sort of authentication
-commentRouter.delete('/api/removeComment/user/all/:id', bearerAuth, (req, res, next) => {
-  debug('DELETE: /api/removeComment/user/all/:id');
+commentRouter.delete('/api/removeComment/user/all', bearerAuth, (req, res, next) => {
+  debug('DELETE: /api/removeComment/user/all');
 
-  if(!req.params.id) return next(createError(400, 'must provide user id parameter'));
+  if(!req.body || !req.body._id) return next(createError(401, 'you are not authorized to remove this post'));
 
-  Comment.find({authorId: req.params.id})
+  Comment.find({authorId: req.user._id})
     .then((comments) => {
       if(!comments) return next(createError(404, 'no comments found for this user'));
       comments.forEach((ele) => {
@@ -131,7 +154,7 @@ commentRouter.delete('/api/removeComment/user/all/:id', bearerAuth, (req, res, n
             if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
             message.deleteComent(ele);
           })
-          .then(() => Comment.DeleteOne(ele._id));
+          .then(() => Comment.deleteOne(ele._id));
       })
         .then(() => res.status(204).send());
     })
@@ -152,7 +175,7 @@ commentRouter.delete('/api/removeComment/message/all/:id', bearerAuth, (req, res
             if(!message) return next(createError(500, 'no message found for the comment.messageId parameter'));
             message.deleteComent(ele).save();
           })
-          .then(() => Comment.DeleteOne(ele._id));
+          .then(() => Comment.deleteOne(ele._id));
       })
         .then(() => res.status(204).send());
     })

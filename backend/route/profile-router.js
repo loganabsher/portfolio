@@ -8,7 +8,7 @@ const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
-const User = require('../model/User.js');
+// const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
 
 const profileRouter = module.exports = Router();
@@ -16,40 +16,41 @@ const profileRouter = module.exports = Router();
 profileRouter.post('/api/profile', bearerAuth, jsonParser, (req, res, next) => {
   debug('POST: /api/profile');
 
-  if(!req.body || !req.body.userId) return next(createError(400, 'missing userId field'));
+  if(!req.user || !req.user._id) return next(createError(400, 'no user found for this token'));
 
   let profile = new Profile(req.body);
 
-  profile.connectProfileAndUser(req.body.userId)
+  profile.connectProfileAndUser(req.user._id)
     .then((profile) => res.json(profile))
     .catch(next);
 });
 
-profileRouter.get('/api/profile/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/profile/:id');
+profileRouter.get('/api/profile/fetch', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/profile/fetch');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'missing profileId field'));
+  if(!req.user || !req.user._id) return next(createError(400, 'no user found for this token'));
+  if(!req.user.profileId) return next(createError(404, 'this user has no profile id'));
 
-  // NOTE: should really find by user id rather than profile id since each user only has one profile
-  Profile.findById(req.params.id)
+  Profile.findById({_id: req.user.profileId})
     .then((profile) => {
-      // NOTE: make better http error
-      if(!profile) return Promise.reject(createError(400, 'no profile found'));
+      if(!profile) return next(createError(400, 'no profile found'));
       res.json(profile);
     })
     .catch(next);
 });
 
-profileRouter.put('/api/profile/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/profile/edit/:id');
+profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/profile/edit');
 
-  // NOTE: better errors needed
-  if(!req.params || !req.params.id) return next(createError(400, 'missing profileId field'));
+  if(!req.user || !req.user._id) return next(createError(400, 'no user found for this token'));
+  if(!req.user.profileId) return next(createError(404, 'this user has no profile id'));
   if(!req.body) return next(createError(400, 'bad request'));
 
-  Profile.findById(req.params.id)
+  Profile.findById({_id: req.user.profileId})
     .then((profile) => {
-      if(!profile) return Promise.reject(createError(400, 'no profile found'));
+      if(!profile) return next(createError(400, 'no profile found'));
+      if(profile._id !== req.user.profileId) return next(createError(401, 'you are not authorized to edit this profile'));
+
       if(req.body.firstName) profile.firstName = req.body.firstName;
       if(req.body.lastName) profile.lastName = req.body.lastName;
       if(req.body.userName) profile.userName = req.body.userName;
@@ -59,18 +60,17 @@ profileRouter.put('/api/profile/edit/:id', bearerAuth, jsonParser, (req, res, ne
     .catch(next);
 });
 
-profileRouter.delete('/api/profile/delete/:id', bearerAuth, jsonParser, (req, res,next) => {
-  debug('DELETE: /api/profile/delete/:id');
+profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res,next) => {
+  debug('DELETE: /api/profile/delete');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'missing profileId field'));
+  if(!req.user || !req.user._id) return next(createError(400, 'no user found for this token'));
+  if(!req.user.profileId) return next(createError(404, 'this user has no profile id'));
 
-  let id = {'_id': req.params.id};
-  Profile.findById(id)
+  Profile.findById({_id: req.user.profileId})
     .then((profile) => {
-      if(!profile) return Promise.reject(createError(400, 'no profile found'));
-      if(!profile.userId) return Promise.reject(createError(500, 'some shit is VERY wrong'));
-      profile.disconnectProfileAndUser(profile.userId)
-        .then(() => Profile.deleteOne(id))
+      if(!profile) return next(createError(400, 'no profile found'));
+      profile.disconnectProfileAndUser(req.user._id)
+        .then(() => Profile.findByIdAndRemove({_id: req.user._id}))
         .then(() => res.status(204).send())
         .catch(next);
     })
