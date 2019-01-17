@@ -8,6 +8,7 @@ const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
 const Message = require('../model/Message.js');
@@ -31,7 +32,8 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
         }else{
           user.generatePasswordHash('normal', password)
             .then((user) => user.generateToken())
-            .then((token) => res.send({user: user, token: token}));
+            .then((token) => res.json(token))
+            .catch(next);
         }
       }
       else{
@@ -46,7 +48,8 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 
         user.generatePasswordHash('normal', password)
           .then((user) => user.generateToken())
-          .then((token) => res.send({user: user, token: token}));
+          .then((token) => res.json(token))
+          .catch(next);
       }
     })
     .catch(next);
@@ -60,14 +63,10 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
       if(!user) return Promise.reject(createError(401, 'user not found'));
       return user.comparePasswordHash('normal', req.auth.password);
     })
-    .then((user) => {
-      user.generateToken()
-        .then((token) => {
-          let cookieOptions = {maxAge: 900000000};
-          res.cookie('portfolio-login-token', token, cookieOptions);
-          // NOTE: this needs to be removed for production, changed return to token
-          res.send({user: user, token: token});
-        });
+    .then((user) => user.generateToken())
+    .then((token) => {
+      res.cookie('portfolio-login-token', token, {maxAge: 900000000});
+      res.json(token);
     })
     .catch(next);
 });
@@ -96,10 +95,12 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
 
 // NOTE: need to change from findbyid to find by email/user
 // // NOTE: this also probably needs email auth
-userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/updatepassword/:id');
+userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/updatepassword');
 
-  User.findById(req.params.id)
+  if(!req.body || !req.body.password) return next(createError(400, 'password must be provided'));
+
+  User.find({email: req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
@@ -119,8 +120,7 @@ userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next
 userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
   debug('DELETE: /api/deleteaccount/:id');
 
-  let id = {'_id': req.params.id};
-  User.findById(id)
+  User.find({email: req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
@@ -133,8 +133,9 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
       Message.deleteMany({authorId: user.id});
     })
     .then(() => {
-      User.deleteOne(id)
-        .then(() => res.status(204).send());
+      User.findByIdAndRemove({_id: req.auth._id})
+        .then(() => res.status(204).send())
+        .catch(next);
     })
     .catch(next);
 });
