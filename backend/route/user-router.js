@@ -8,7 +8,7 @@ const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
-const bearerAuth = require('../lib/bearer-auth-middleware.js');
+// const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
 const Message = require('../model/Message.js');
@@ -70,28 +70,6 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
     })
     .catch(next);
 });
-
-// userRouter.get('/api/userexisits/:id', (req, res, next) => {
-//   debug('GET: /api/userexisits/:id');
-//
-//   User.findById(req.params.id)
-//     .then((user) => {
-//       if(user) res.status(204).send();
-//       else{
-//         res.status(404).send();
-//       }
-//     })
-//     .catch(next);
-// });
-
-// NOTE: this should really have some sort of authentication
-// userRouter.get('/api/allaccounts', (req, res, next) => {
-//   debug('GET: /api/allaccounts');
-//
-//   User.find({})
-//     .then((users) => res.json(users))
-//     .catch(next);
-// });
 
 // NOTE: need to change from findbyid to find by email/user
 // // NOTE: this also probably needs email auth
