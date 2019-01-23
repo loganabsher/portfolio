@@ -78,7 +78,7 @@ userRouter.put('/api/changepassword', basicAuth, jsonParser, (req, res, next) =>
 
   if(!req.body || !req.body.password) return next(createError(400, 'password must be provided'));
 
-  User.findOne({email: req.auth.email})
+  User.findOne({'email': req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
@@ -86,7 +86,10 @@ userRouter.put('/api/changepassword', basicAuth, jsonParser, (req, res, next) =>
     .then((user) => {
       user.generatePasswordHash('normal', req.body.password)
         .then((user) => user.generateToken())
-        .then((token) => res.cookie('portfolio-login-token', token, {maxAge: 900000000}));
+        .then((token) => {
+          res.cookie('portfolio-login-token', token, {maxAge: 900000000});
+          res.json(token);
+        });
     })
     .catch(next);
 });

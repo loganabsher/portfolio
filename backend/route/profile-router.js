@@ -24,8 +24,8 @@ profileRouter.post('/api/profile', bearerAuth, jsonParser, (req, res, next) => {
     .catch(next);
 });
 
-profileRouter.get('/api/profile/fetch', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/profile/fetch');
+profileRouter.get('/api/profile/self', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/profile/self');
 
   if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
   if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
