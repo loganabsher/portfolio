@@ -24,7 +24,6 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 
   User.findOne({email: req.body.email})
     .then((user) => {
-      // NOTE: this is just temporary until I create something to authenticate their email
       if(user){
         if(user.authenticated){
           // NOTE: maybe update all error codes and texts to be very specific
@@ -72,9 +71,10 @@ userRouter.get('/api/login', basicAuth, (req, res, next) => {
 });
 
 // NOTE: need to change from findbyid to find by email/user
-// // NOTE: this also probably needs email auth
-userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/updatepassword');
+// NOTE: this also probably needs email auth
+// NOTE: should maybe also add a way to email reset password
+userRouter.put('/api/changepassword', basicAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/changepassword');
 
   if(!req.body || !req.body.password) return next(createError(400, 'password must be provided'));
 
