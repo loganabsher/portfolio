@@ -100,7 +100,7 @@ userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res, next) =>
 
   if(!req.body || !req.body.password) return next(createError(400, 'password must be provided'));
 
-  User.find({email: req.auth.email})
+  User.findOne({email: req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
@@ -108,32 +108,31 @@ userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res, next) =>
     .then((user) => {
       user.generatePasswordHash('normal', req.body.password)
         .then((user) => user.generateToken())
-        .then((token) => {
-          res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-          res.json(user);
-        });
+        .then((token) => res.cookie('portfolio-login-token', token, {maxAge: 900000000}));
     })
     .catch(next);
 });
 
 // NOTE: should probably add some sort of wait method that waits a few weeks before actually deleting the account and rather just have it be disabled, kinda like what facebook does
-userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
-  debug('DELETE: /api/deleteaccount/:id');
+userRouter.delete('/api/deleteaccount', basicAuth, (req, res, next) => {
+  debug('DELETE: /api/deleteaccount');
+  // NOTE: I'm trying to decide if bearerAuth would be a good idea in this and the update password querys
 
-  User.find({email: req.auth.email})
+  User.findOne({email: req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
     })
     .then((user) => {
-      if(user.profileId) Profile.deleteOne({'_id': user.profileId});
+      if(user.profileId) Profile.deleteOne({'_id': user.profdileId});
       return user;
     })
     .then((user) => {
       Message.deleteMany({authorId: user.id});
+      return user;
     })
-    .then(() => {
-      User.findByIdAndRemove({_id: req.auth._id})
+    .then((user) => {
+      User.findByIdAndRemove({'_id': user._id})
         .then(() => res.status(204).send())
         .catch(next);
     })
