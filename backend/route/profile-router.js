@@ -42,13 +42,13 @@ profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) 
   debug('PUT: /api/profile/edit');
 
   if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
-  if(!req.user.profileId) return next(createError(404, 'this user has no profile id'));
+  if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
   if(!req.body || (!req.body.firstName && !req.body.lastName && !req.body.userName)) return next(createError(400, 'request did not meet minimum information requirements'));
 
   Profile.findById({'_id': req.user.profileId})
     .then((profile) => {
       if(!profile) return next(createError(500, 'no profile found'));
-      if(profile._id !== req.user.profileId) return next(createError(401, 'you are not authorized to edit this profile'));
+      if(profile._id != req.user.profileId) return next(createError(401, 'you are not authorized to edit this profile'));
 
       if(req.body.firstName) profile.firstName = req.body.firstName;
       if(req.body.lastName) profile.lastName = req.body.lastName;
@@ -63,11 +63,13 @@ profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res,ne
   debug('DELETE: /api/profile/delete');
 
   if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
-  if(!req.user.profileId) return next(createError(404, 'this user has no profile id'));
+  if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
 
   Profile.findById({'_id': req.user.profileId})
     .then((profile) => {
-      if(!profile) return next(createError(400, 'no profile found'));
+      if(!profile) return next(createError(500, 'no profile found'));
+      if(profile._id != req.user.profileId) return next(createError(401, 'you are not authorized to delete this profile'));
+
       profile.disconnectProfileAndUser(req.user._id)
         .then(() => Profile.findByIdAndRemove({'_id': req.user._id}))
         .then(() => res.status(204).send())
