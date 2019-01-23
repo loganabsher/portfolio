@@ -3,7 +3,6 @@
 const debug = require('debug')('Backend-Portfolio:auth-router.js');
 
 const Router = require('express').Router;
-const Promise = require('bluebird');
 const superagent = require('superagent');
 const passport = require('passport');
 
@@ -35,7 +34,6 @@ authRouter.get('/oauth/google/code', (req, res) => {
       .then((res) => User.googleStrategy(res.body))
       .then((data) => {
         res.cookie('portfolio-login-token', data.token);
-        res.cookie('user', `${data.user._id}`);
         res.redirect(`${process.env.CLIENT_URL}/settings`);
       })
       .catch((error) => {
@@ -52,7 +50,6 @@ authRouter.get('/auth/facebook/callback',
   function(req, res){
     debug('GET: /auth/facebook/callback');
     res.cookie('portfolio-login-token', res.req.user.token);
-    res.cookie('user', `${res.req.user.user._id}`);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
 
@@ -64,6 +61,5 @@ authRouter.get('/auth/twitter/callback',
   function(req, res) {
     debug('GET: /auth/twitter/callback');
     res.cookie('portfolio-login-token', res.req.user.token);
-    res.cookie('user', `${res.req.user.user._id}`);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });

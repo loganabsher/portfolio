@@ -3,7 +3,7 @@
 import React from 'react';
 import {connect} from 'react-redux';
 
-import {profileCreateRequest} from '../../../actions/profile-actions.js';
+import {profileCreateRequest, profileFetchRequest} from '../../../actions/profile-actions.js';
 
 import ProfileForm from '../forms/profile-form';
 
@@ -15,6 +15,11 @@ class UserSettingsContainer extends React.Component{
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  componentDidMount(){
+    console.log('loading profile');
+    this.props.profileFetch();
   }
 
   handleSubmit(profile){
@@ -39,7 +44,8 @@ const mapStateToProps = (state) => ({
 // NOTE: the update request should maybe be moved to the individual message templates
 const mapDispatchToProps = (dispatch) => {
   return{
-    profileCreate: (profile) => dispatch(profileCreateRequest(profile))
+    profileCreate: (profile) => dispatch(profileCreateRequest(profile)),
+    profileFetch: () => dispatch(profileFetchRequest())
   };
 };
 

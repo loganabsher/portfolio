@@ -4,7 +4,6 @@ const debug = require('debug')('Backend-Portfolio:message-router.js');
 
 const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
-// const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');

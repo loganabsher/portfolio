@@ -121,7 +121,7 @@ User.handleOauth = function(type, data){
         if(user){
           if(user[type].authenticated){
             debug(`GET: /api/auth/${type}`);
-            debug(`${type} user signin:`, data.email);
+            debug(`returning ${type} user signin:`, data.email);
             return user.comparePasswordHash(type, data.password);
           }else{
             debug(`GET: /api/auth/${type}`);
@@ -143,19 +143,13 @@ User.handleOauth = function(type, data){
           return newUser.generatePasswordHash(type, data.password);
         }
       })
-      .then((user) => {
-        return user.generateToken()
-          .then((token) => {
-            resolve({
-              token: token,
-              user: user
-            });
-          });
-      })
+      .then((user) => user.generateToken())
+      .then((token) => resolve(token))
       .catch((err) => reject(console.error(err)));
   });
 };
 
+// NOTE: seems slightly unnessessary
 User.googleStrategy = function(profile){
   debug('googleStrategy');
 
@@ -163,11 +157,13 @@ User.googleStrategy = function(profile){
   return User.handleOauth('googlePermissions', data);
 };
 
-passport.serializeUser((cookies, done) => done(null, cookies.user));
-// NOTE: something is up with the desteralize user
-passport.deserializeUser((cookies, done) => {
-  console.log('desteralize', cookies)
-  return done(null, cookies.user.user)
+passport.serializeUser((token, done) => {
+  debug(`serializeUser: ${token}`);
+  return done(null, token);
+});
+passport.deserializeUser((token, done) => {
+  debug(`deserializeUser: ${token}`);
+  return done(null, token);
 });
 
 passport.use(new FacebookStrategy({
@@ -180,7 +176,7 @@ function(accessToken, refreshToken, profile, done){
   debug('facebookStrategy');
 
   User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id})
-    .then((cookies) => done(null, cookies));
+    .then((token) => done(null, token));
 }
 ));
 
@@ -194,6 +190,6 @@ function(token, tokenSecret, profile, done) {
   debug('twitterStrategy');
 
   User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id})
-    .then((cookies) => done(null, cookies));
+    .then((token) => done(null, token));
 }
 ));

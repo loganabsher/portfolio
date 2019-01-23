@@ -4,9 +4,9 @@
 
 import superagent from 'superagent';
 
-export const repoFetch = (repo) => ({
+export const repoFetch = (repos) => ({
   type: 'REPOS_FETCH',
-  payload: repo
+  payload: repos
 });
 
 export const allRepositoriesRequest = () => (dispatch) => {
