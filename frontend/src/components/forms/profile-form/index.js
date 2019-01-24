@@ -6,11 +6,13 @@ class UserSettingsForm extends React.Component{
   constructor(props){
     super(props);
     this.state = {
+      profile: this.props.profile,
       firstName: '',
       lastName: '',
       userName: '',
       error: false
     };
+    
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }

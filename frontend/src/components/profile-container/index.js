@@ -31,7 +31,7 @@ class UserSettingsContainer extends React.Component{
     return(
       <div className='profile-container'>
         <p>settings page</p>
-        <ProfileForm onComplete={this.handleSubmit} />
+        <ProfileForm onComplete={this.handleSubmit} profile={this.state.profile} />
       </div>
     );
   }

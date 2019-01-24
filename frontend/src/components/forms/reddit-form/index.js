@@ -1,0 +1,58 @@
+'use strict';
+
+import React from 'react';
+
+class RedditForm extends React.Component{
+  constructor(){
+    super();
+    this.state = {
+      subreddit: '',
+      limit: 25,
+      error: false
+    };
+
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSubmit = this.handleSubmit.bind(this);
+  }
+
+  handleChange(e){
+    let {name, value} = e.target;
+    this.setState({[name]: value});
+  }
+
+  handleSubmit(e){
+    e.preventDefault();
+    if(!this.state.error){
+      this.props.onComplete(this.state)
+        .then(() => this.setState({subreddit: '', limit: 25}))
+        .catch((err) => {
+          console.error(err);
+          this.setState({error: true});
+        });
+    }
+  }
+
+  render(){
+    return(
+      <div className='reddit-form'>
+        <form>
+          <input
+            type='text'
+            name='subreddit'
+            value={this.state.text}
+            onChange={this.handleChange}
+          />
+          <input
+            type='number'
+            name='limit'
+            value={this.state.text}
+            onChange={this.handleChange}
+          />
+          <button type='submit' onClick={this.handleSubmit}>GO</button>
+        </form>
+      </div>
+    );
+  }
+}
+
+export default RedditForm;
