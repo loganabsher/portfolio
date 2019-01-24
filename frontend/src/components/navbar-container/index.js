@@ -18,6 +18,7 @@ class NavbarContainer extends React.Component{
           <li><a href='/'>Home</a></li>
           <li><a href='/repo'>Repos</a></li>
           <li><a href='/cowsay'>Cowsay</a></li>
+          <li><a href='/reddit'>Reddit</a></li>
           <li><a href='/settings'>Settings</a></li>
         </ul>
       </div>

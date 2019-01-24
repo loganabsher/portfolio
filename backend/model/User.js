@@ -38,6 +38,8 @@ userSchema.methods.generatePasswordHash = function(type, password){
   debug(`generatePasswordHash:${type}`);
 
   return new Promise((resolve, reject) => {
+    if(!password) reject(createError(400, 'no password was provided'));
+
     bcrypt.hash(password, 10, (err, hash) => {
       if(err) return reject(err);
       switch(type){
@@ -69,6 +71,8 @@ userSchema.methods.comparePasswordHash = function(type, password){
 
   let user = this;
   return new Promise((resolve, reject) => {
+    if(!password) reject(createError(400, 'no password was provided'));
+
     if(type === 'normal'){
       bcrypt.compare(password, user.password, (err, valid) => {
         if(err) return reject(err);
@@ -116,6 +120,7 @@ User.handleOauth = function(type, data){
   return new Promise((resolve, reject) => {
     if(!type) reject(createError(400, `need to designate type parameter, ${type} is not valid`));
     if(!data || !data.email || !data.password) reject(createError(400, 'no data given'));
+
     return User.findOne({email: data.email})
       .then((user) => {
         if(user){
