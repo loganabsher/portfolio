@@ -1,3 +1,5 @@
+[![Coverage Status](https://coveralls.io/repos/github/loganabsher/portfolio/badge.svg?branch=master)](https://coveralls.io/github/loganabsher/portfolio?branch=master)
+
 # **backend api guide**
 ### **Note** I am using httpie to make all backend calls, you can find a download here: // NOTE: add link
 ### **Note** for any routes using Bearer authentication you **Must** login and use the token returned in the response

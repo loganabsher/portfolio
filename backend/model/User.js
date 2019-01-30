@@ -75,14 +75,14 @@ userSchema.methods.comparePasswordHash = function(type, password){
 
     if(type === 'normal'){
       bcrypt.compare(password, user.password, (err, valid) => {
-        if(err) return reject(err);
-        if(!valid) return reject(createError(401, 'unauthorized'));
+        if(err) reject(err);
+        if(!valid) reject(createError(401, 'unauthorized'));
         resolve(user);
       });
     }else if(type === 'googlePermissions' || 'facebookPermissions' || 'twitterPermissions'){
       bcrypt.compare(password, user[type].password, (err, valid) => {
-        if(err) return reject(err);
-        if(!valid) return reject(createError(401, 'unauthorized'));
+        if(err) reject(err);
+        if(!valid) reject(createError(401, 'unauthorized'));
         resolve(user);
       });
     }else{
