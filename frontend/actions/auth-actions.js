@@ -21,7 +21,7 @@ export const tokenSet = (token) => {
 
 export const logout = () => {
   deleteCookie('portfolio-login-token');
-  return { type: 'LOGOUT' };
+  return {type: 'LOGOUT'};
 };
 
 export const signupRequest = (user) => (dispatch) => {
@@ -41,7 +41,8 @@ export const loginRequest = (user) => (dispatch) => {
     .withCredentials()
     .auth(user.email, user.password)
     .then((res) => {
-      dispatch(tokenSet(res.text));
+      console.log(res)
+      dispatch(tokenSet(res.body));
       return res;
     })
     .catch((err) => console.error(err));

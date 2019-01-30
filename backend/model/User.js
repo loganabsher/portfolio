@@ -121,7 +121,7 @@ User.handleOauth = function(type, data){
     if(!type) reject(createError(400, `need to designate type parameter, ${type} is not valid`));
     if(!data || !data.email || !data.password) reject(createError(400, 'no data given'));
 
-    return User.findOne({email: data.email})
+    return User.findOne({'email': data.email})
       .then((user) => {
         if(user){
           if(user[type].authenticated){

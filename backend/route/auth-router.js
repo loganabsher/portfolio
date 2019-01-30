@@ -32,8 +32,8 @@ authRouter.get('/oauth/google/code', (req, res) => {
           .set('Authorization', `Bearer ${res.body.access_token}`);
       })
       .then((res) => User.googleStrategy(res.body))
-      .then((data) => {
-        res.cookie('portfolio-login-token', data.token);
+      .then((token) => {
+        res.cookie('portfolio-login-token', token);
         res.redirect(`${process.env.CLIENT_URL}/settings`);
       })
       .catch((error) => {
@@ -49,7 +49,8 @@ authRouter.get('/auth/facebook/callback',
   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res){
     debug('GET: /auth/facebook/callback');
-    res.cookie('portfolio-login-token', res.req.user.token);
+
+    res.cookie('portfolio-login-token', res.req.user);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });
 
@@ -60,6 +61,7 @@ authRouter.get('/auth/twitter/callback',
   passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
   function(req, res) {
     debug('GET: /auth/twitter/callback');
-    res.cookie('portfolio-login-token', res.req.user.token);
+
+    res.cookie('portfolio-login-token', res.req.user);
     res.redirect(`${process.env.CLIENT_URL}/settings`);
   });

@@ -21,12 +21,9 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   let password = req.body.password;
   delete req.body.password;
 
-  User.findOne({email: req.body.email})
+  User.findOne({'email': req.body.email})
     .then((user) => {
       // NOTE: this is just temporary until I create something to authenticate their email
-      // NOTE: this is interesting, because if they are already authenticated with google, facebook
-      // or twitter, then what will happen when they try to sign up normally, I think I need to add
-      // some sort of catch for if they are already authenticated
       if(user){
         if(user.authenticated){
           // NOTE: maybe update all error codes and texts to be very specific
@@ -58,71 +55,35 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
 userRouter.get('/api/login', basicAuth, (req, res, next) => {
   debug('GET: /api/login');
 
-  User.findOne({email: req.auth.email})
+  User.findOne({'email': req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(401, 'user not found'));
       return user.comparePasswordHash('normal', req.auth.password);
     })
-    .then((user) => {
-      user.generateToken()
-        .then((token) => {
-          let cookieOptions = {maxAge: 900000000};
-          res.cookie('portfolio-login-token', token, cookieOptions);
-          // NOTE: this needs to be removed for production, changed return to token
-          res.json(token);
-        });
-    })
+    .then((user) => user.generateToken())
+    .then((token) => res.json(token))
     .catch(next);
 });
 
-userRouter.get('/api/userexisits/:id', (req, res, next) => {
-  debug('GET: /api/userexisits/:id');
+userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/updatepassword');
 
-  User.findById(req.params.id)
-    .then((user) => {
-      if(user) res.status(204).send();
-      else{
-        res.status(404).send();
-      }
-    })
-    .catch(next);
-});
-
-// NOTE: this should really have some sort of authentication
-userRouter.get('/api/allaccounts', (req, res, next) => {
-  debug('GET: /api/allaccounts');
-
-  User.find({})
-    .then((users) => res.json(users))
-    .catch(next);
-});
-
-// NOTE: need to change from findbyid to find by email/user
-userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/updatepassword/:id');
-
-  User.findById(req.params.id)
+  User.findOne({'email': req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
     })
-    .then((user) => {
-      user.generatePasswordHash('normal', req.body.password)
-        .then((user) => user.generateToken())
-        .then((token) => {
-          res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-          res.json(token);
-        });
-    })
+    .then((user) => user.generatePasswordHash('normal', req.body.password))
+    .then((user) => user.generateToken())
+    .then((token) => res.json(token))
     .catch(next);
 });
 
 // NOTE: should probably add some sort of wait method that waits a few weeks before actually deleting the account and rather just have it be disabled, kinda like what facebook does
-userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
-  debug('DELETE: /api/deleteaccount/:id');
+userRouter.delete('/api/deleteaccount', basicAuth, (req, res, next) => {
+  debug('DELETE: /api/deleteaccount');
 
-  let id = {'_id': req.params.id};
-  User.findById(id)
+  User.findOne({'email': req.auth.email})
     .then((user) => {
       if(!user) return Promise.reject(createError(404, 'not found'));
       return user.comparePasswordHash('normal', req.auth.password);
@@ -132,10 +93,11 @@ userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
       return user;
     })
     .then((user) => {
-      Message.deleteMany({authorId: user.id});
+      Message.deleteMany({'authorId': user._id});
+      return user;
     })
-    .then(() => {
-      User.deleteOne(id)
+    .then((user) => {
+      User.deleteOne({'_id': user._id})
         .then(() => res.status(204).send());
     })
     .catch(next);
