@@ -6,6 +6,10 @@ const chai = require('chai')
 
 require('../server.js');
 
+setTimeout(() => {
+
+}, 4000)
+
 describe('USER_ROUTES', function(){
   require('./user-router-test.js');
 });

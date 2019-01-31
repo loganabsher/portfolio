@@ -1,8 +1,11 @@
 'use strict';
 
-const expect = require('chai').expect;
+const chai = require('chai');
+const expect = chai.expect;
 const superagent = require('superagent');
 const Promise = require('bluebird');
+const chaiAsPromised = require('chai-as-promised');
+chai.use(chaiAsPromised);
 
 const User = require('../model/User.js');
 
@@ -20,30 +23,44 @@ const newUser = {
 
 describe('POST: /api/signup', () => {
   describe('with valid credentials', () => {
-    afterEach(() => User.deleteOne({'email': testUser.email}));
+    afterEach((done) => {
+      User.deleteOne({'email': testUser.email})
+        .then(() => done())
+        .catch((err) => done(err));
+    });
 
-    it('should return a status code of 200', () => {
+    it('should return a status code of 200', (done) => {
       superagent.post(`${url}/api/signup`)
         .send(testUser)
-        .then((res) => res.status.should.eventually.equal(200));
+        .end((err, res) => {
+          if(err) return done(err);
+          expect(res).to.be.an('object');
+          expect(res.status).to.equal(200);
+        })
+        .then(() => done());
     });
   });
 });
 
 describe('GET: /api/login', () => {
   describe('with valid credentials', () => {
-    beforeEach(() => {
+    beforeEach((done) => {
       return superagent.post(`${url}/api/signup`)
         .send(testUser)
-        .then((res) => res)
-        .catch((err) => err);
+        .then(() => done())
+        .catch((err) => done(err));
     });
     afterEach(() => User.deleteOne({email: testUser.email}));
 
-    it('should return a status code of 200', () => {
+    it('should return a status code of 200', (done) => {
       superagent.get(`${url}/api/login`)
         .auth(testUser.email, testUser.password)
-        .then((res) => res.status.should.eventually.equal(200));
+        .then((res) => {
+          expect(res).to.be.an('object');
+          expect(res.status).to.equal(200);
+          done();
+        })
+        .then((done) => done());
     });
   });
 });
@@ -63,7 +80,7 @@ describe('PUT: /api/updatepassword', () => {
       superagent.put(`${url}/api/updatepassword`)
         .auth(testUser.email, testUser.password)
         .send(newUser.password)
-        .then((res) => res.status.should.eventually.equal(200));
+        .then((res) => expect(Promise.resolve(res.status).to.eventually.equal(200)));
     });
   });
 });
@@ -79,7 +96,7 @@ describe('DELETE: /api/deleteaccount', () => {
     it('should return a status code of 200', () => {
       superagent.delete(`${url}/api/deleteaccount`)
         .auth(testUser.email, testUser.password)
-        .then((res) => res.status.should.eventually.equal(204));
+        .then((res) => expect(Promise.resolve(res.status).to.eventually.equal(204)));
     });
   });
 });

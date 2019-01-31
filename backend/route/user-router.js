@@ -66,9 +66,10 @@ userRouter.get('/api/login', basicAuth, (req, res) => {
         return user.comparePasswordHash('normal', req.auth.password);
       })
       .then((user) => user.generateToken())
-      .then((token) => resolve(res.json(token)))
+      .then((token) => resolve(token))
       .catch((err) => reject(console.error(err)));
-  });
+  })
+    .then((token) => res.json(token));
 });
 
 userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res) => {
@@ -82,9 +83,10 @@ userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res) => {
       })
       .then((user) => user.generatePasswordHash('normal', req.body.password))
       .then((user) => user.generateToken())
-      .then((token) => resolve(res.json(token)))
+      .then((token) => resolve(token))
       .catch((err) => reject(console.error(err)));
-  });
+  })
+    .then((token) => res.json(token));
 });
 
 // NOTE: should probably add some sort of wait method that waits a few weeks before actually deleting the account and rather just have it be disabled, kinda like what facebook does
@@ -107,8 +109,9 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
       })
       .then((user) => {
         User.deleteOne({'_id': user._id})
-          .then(() => resolve(res.status(204).send()));
+          .then(() => resolve(204));
       })
       .catch((err) => reject(console.error(err)));
-  });
+  })
+    .then((status) => res.status(status).send());
 });
