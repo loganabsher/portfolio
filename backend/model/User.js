@@ -75,14 +75,14 @@ userSchema.methods.comparePasswordHash = function(type, password){
 
     if(type === 'normal'){
       bcrypt.compare(password, user.password, (err, valid) => {
-        if(err) return reject(err);
-        if(!valid) return reject(createError(401, 'unauthorized'));
+        if(err) reject(err);
+        if(!valid) reject(createError(401, 'unauthorized'));
         resolve(user);
       });
     }else if(type === 'googlePermissions' || 'facebookPermissions' || 'twitterPermissions'){
       bcrypt.compare(password, user[type].password, (err, valid) => {
-        if(err) return reject(err);
-        if(!valid) return reject(createError(401, 'unauthorized'));
+        if(err) reject(err);
+        if(!valid) reject(createError(401, 'unauthorized'));
         resolve(user);
       });
     }else{
@@ -121,7 +121,7 @@ User.handleOauth = function(type, data){
     if(!type) reject(createError(400, `need to designate type parameter, ${type} is not valid`));
     if(!data || !data.email || !data.password) reject(createError(400, 'no data given'));
 
-    return User.findOne({email: data.email})
+    return User.findOne({'email': data.email})
       .then((user) => {
         if(user){
           if(user[type].authenticated){

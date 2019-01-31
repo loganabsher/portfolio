@@ -15,128 +15,103 @@ const Message = require('../model/Message.js');
 const userRouter = module.exports = Router();
 
 // NOTE: need to add some sort of email authentication
-userRouter.post('/api/signup', jsonParser, (req, res, next) => {
+userRouter.post('/api/signup', jsonParser, (req, res) => {
   debug('POST: /api/signup');
 
   let password = req.body.password;
   delete req.body.password;
 
-  User.findOne({email: req.body.email})
-    .then((user) => {
-      // NOTE: this is just temporary until I create something to authenticate their email
-      // NOTE: this is interesting, because if they are already authenticated with google, facebook
-      // or twitter, then what will happen when they try to sign up normally, I think I need to add
-      // some sort of catch for if they are already authenticated
-      if(user){
-        if(user.authenticated){
-          // NOTE: maybe update all error codes and texts to be very specific
-          return Promise.reject(createError(400, 'this email is already used, please log in with your password'));
-        }else{
+  return new Promise((resolve, reject) => {
+    User.findOne({'email': req.body.email})
+      .then((user) => {
+        // NOTE: this is just temporary until I create something to authenticate their email
+        if(user){
+          if(user.authenticated){
+            // NOTE: maybe update all error codes and texts to be very specific
+            reject(createError(400, 'this email is already used, please log in with your password'));
+          }else{
+            user.generatePasswordHash('normal', password)
+              .then((user) => user.generateToken())
+              .then((token) => resolve(res.json(token)))
+              .catch((err) => reject(console.error(err)));
+          }
+        }
+        else{
+          debug('setting up new user');
+          let user = new User({
+            googlePermissions: {authenticated: false, password: null},
+            facebookPermissions: {authenticated: false, password: null},
+            twitterPermissions: {authenticated: false, password: null},
+            authenticated: true,
+            email: req.body.email
+          });
+
           user.generatePasswordHash('normal', password)
             .then((user) => user.generateToken())
-            .then((token) => res.json(token));
+            .then((token) => resolve(res.json(token)))
+            .catch((err) => reject(console.error(err)));
         }
-      }
-      else{
-        debug('setting up new user');
-        let user = new User({
-          googlePermissions: {authenticated: false, password: null},
-          facebookPermissions: {authenticated: false, password: null},
-          twitterPermissions: {authenticated: false, password: null},
-          authenticated: true,
-          email: req.body.email
-        });
-
-        user.generatePasswordHash('normal', password)
-          .then((user) => user.generateToken())
-          .then((token) => res.json(token));
-      }
-    })
-    .catch(next);
+      })
+      .catch((err) => reject(console.error(err)));
+  });
 });
 
-userRouter.get('/api/login', basicAuth, (req, res, next) => {
+userRouter.get('/api/login', basicAuth, (req, res) => {
   debug('GET: /api/login');
 
-  User.findOne({email: req.auth.email})
-    .then((user) => {
-      if(!user) return Promise.reject(createError(401, 'user not found'));
-      return user.comparePasswordHash('normal', req.auth.password);
-    })
-    .then((user) => {
-      user.generateToken()
-        .then((token) => {
-          let cookieOptions = {maxAge: 900000000};
-          res.cookie('portfolio-login-token', token, cookieOptions);
-          // NOTE: this needs to be removed for production, changed return to token
-          res.json(token);
-        });
-    })
-    .catch(next);
+  return new Promise((resolve, reject) => {
+    User.findOne({'email': req.auth.email})
+      .then((user) => {
+        if(!user) reject(createError(401, 'user not found'));
+        return user.comparePasswordHash('normal', req.auth.password);
+      })
+      .then((user) => user.generateToken())
+      .then((token) => resolve(token))
+      .catch((err) => reject(console.error(err)));
+  })
+    .then((token) => res.json(token));
 });
 
-userRouter.get('/api/userexisits/:id', (req, res, next) => {
-  debug('GET: /api/userexisits/:id');
+userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res) => {
+  debug('PUT: /api/updatepassword');
 
-  User.findById(req.params.id)
-    .then((user) => {
-      if(user) res.status(204).send();
-      else{
-        res.status(404).send();
-      }
-    })
-    .catch(next);
-});
-
-// NOTE: this should really have some sort of authentication
-userRouter.get('/api/allaccounts', (req, res, next) => {
-  debug('GET: /api/allaccounts');
-
-  User.find({})
-    .then((users) => res.json(users))
-    .catch(next);
-});
-
-// NOTE: need to change from findbyid to find by email/user
-userRouter.put('/api/updatepassword/:id', basicAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/updatepassword/:id');
-
-  User.findById(req.params.id)
-    .then((user) => {
-      if(!user) return Promise.reject(createError(404, 'not found'));
-      return user.comparePasswordHash('normal', req.auth.password);
-    })
-    .then((user) => {
-      user.generatePasswordHash('normal', req.body.password)
-        .then((user) => user.generateToken())
-        .then((token) => {
-          res.cookie('portfolio-login-token', token, {maxAge: 900000000});
-          res.json(token);
-        });
-    })
-    .catch(next);
+  return new Promise((resolve, reject) => {
+    User.findOne({'email': req.auth.email})
+      .then((user) => {
+        if(!user) reject(createError(404, 'not found'));
+        return user.comparePasswordHash('normal', req.auth.password);
+      })
+      .then((user) => user.generatePasswordHash('normal', req.body.password))
+      .then((user) => user.generateToken())
+      .then((token) => resolve(token))
+      .catch((err) => reject(console.error(err)));
+  })
+    .then((token) => res.json(token));
 });
 
 // NOTE: should probably add some sort of wait method that waits a few weeks before actually deleting the account and rather just have it be disabled, kinda like what facebook does
-userRouter.delete('/api/deleteaccount/:id', basicAuth, (req, res, next) => {
-  debug('DELETE: /api/deleteaccount/:id');
+userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
+  debug('DELETE: /api/deleteaccount');
 
-  let id = {'_id': req.params.id};
-  User.findById(id)
-    .then((user) => {
-      if(!user) return Promise.reject(createError(404, 'not found'));
-      return user.comparePasswordHash('normal', req.auth.password);
-    })
-    .then((user) => {
-      if(user.profileId) Profile.deleteOne({'_id': user.profileId});
-      return user;
-    })
-    .then((user) => {
-      Message.deleteMany({authorId: user.id});
-    })
-    .then(() => {
-      User.deleteOne(id)
-        .then(() => res.status(204).send());
-    })
-    .catch(next);
+  return new Promise((resolve, reject) => {
+    User.findOne({'email': req.auth.email})
+      .then((user) => {
+        if(!user) reject(createError(404, 'not found'));
+        return user.comparePasswordHash('normal', req.auth.password);
+      })
+      .then((user) => {
+        if(user.profileId) Profile.deleteOne({'_id': user.profileId});
+        return user;
+      })
+      .then((user) => {
+        Message.deleteMany({'authorId': user._id});
+        return user;
+      })
+      .then((user) => {
+        User.deleteOne({'_id': user._id})
+          .then(() => resolve(204));
+      })
+      .catch((err) => reject(console.error(err)));
+  })
+    .then((status) => res.status(status).send());
 });
