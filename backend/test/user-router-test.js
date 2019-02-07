@@ -23,44 +23,40 @@ const newUser = {
 
 describe('POST: /api/signup', () => {
   describe('with valid credentials', () => {
-    afterEach((done) => {
-      User.deleteOne({'email': testUser.email})
-        .then(() => done())
-        .catch((err) => done(err));
-    });
+    afterEach(() => User.deleteOne({'email': testUser.email}));
 
-    it('should return a status code of 200', (done) => {
+    console.log(`${url}/api/signup`);
+    it('should return a status code of 200', () => {
       superagent.post(`${url}/api/signup`)
         .send(testUser)
-        .end((err, res) => {
-          if(err) return done(err);
+        .then((res) => {
+          // if(err) return done(err);
+          // console.log(res);
           expect(res).to.be.an('object');
           expect(res.status).to.equal(200);
         })
-        .then(() => done());
+        .catch((err) => console.error(err));
     });
   });
 });
 
 describe('GET: /api/login', () => {
   describe('with valid credentials', () => {
-    beforeEach((done) => {
+    beforeEach(() => {
       return superagent.post(`${url}/api/signup`)
-        .send(testUser)
-        .then(() => done())
-        .catch((err) => done(err));
+        .send(testUser);
     });
     afterEach(() => User.deleteOne({email: testUser.email}));
 
-    it('should return a status code of 200', (done) => {
+    it('should return a status code of 200', () => {
       superagent.get(`${url}/api/login`)
         .auth(testUser.email, testUser.password)
         .then((res) => {
+          console.log(res);
           expect(res).to.be.an('object');
           expect(res.status).to.equal(200);
-          done();
         })
-        .then((done) => done());
+        .catch((err) => console.error(err));
     });
   });
 });
@@ -80,7 +76,8 @@ describe('PUT: /api/updatepassword', () => {
       superagent.put(`${url}/api/updatepassword`)
         .auth(testUser.email, testUser.password)
         .send(newUser.password)
-        .then((res) => expect(Promise.resolve(res.status).to.eventually.equal(200)));
+        .then((res) => expect(res.status).to.eventually.equal(200))
+        .catch((err) => console.error(err));
     });
   });
 });
@@ -93,10 +90,14 @@ describe('DELETE: /api/deleteaccount', () => {
         .then((res) => res)
         .catch((err) => err);
     });
-    it('should return a status code of 200', () => {
+    it('should return a status code of 204', () => {
       superagent.delete(`${url}/api/deleteaccount`)
         .auth(testUser.email, testUser.password)
-        .then((res) => expect(Promise.resolve(res.status).to.eventually.equal(204)));
+        .end((err, res) => {
+          if(err) return err;
+          expect(res.status).to.eventually.equal(204);
+        });
+        // .catch((err) => console.error(err));
     });
   });
 });

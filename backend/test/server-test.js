@@ -1,14 +1,9 @@
 'use strict';
 
-// const Coveralls = require('coveralls');
-// Coveralls.wear!
-const chai = require('chai')
+const chai = require('chai');
+const superagent = require('superagent');
 
 require('../server.js');
-
-setTimeout(() => {
-
-}, 4000)
 
 describe('USER_ROUTES', function(){
   require('./user-router-test.js');
@@ -17,3 +12,5 @@ describe('USER_ROUTES', function(){
 describe('REPO_ROUTES', function(){
   require('./repo-router-test.js');
 });
+
+superagent.get('/close');

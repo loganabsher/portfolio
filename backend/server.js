@@ -48,4 +48,11 @@ app.use(message);
 app.use(comment);
 app.use(reddit);
 
+// NOTE: this probably needs some sort of authentications from an admin
+app.get('/quit', (req, res) => {
+  console.warning('closing server');
+  res.send('closing server');
+  app.close();
+});
+
 app.listen(PORT, () => debug('running on port: ' + PORT));
