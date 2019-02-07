@@ -29,7 +29,6 @@ export const signupRequest = (user) => (dispatch) => {
     .withCredentials()
     .send(user)
     .then((res) => {
-      console.log(res)
       dispatch(tokenSet(res.body));
       return res;
     })
@@ -41,7 +40,6 @@ export const loginRequest = (user) => (dispatch) => {
     .withCredentials()
     .auth(user.email, user.password)
     .then((res) => {
-      console.log(res)
       dispatch(tokenSet(res.body));
       return res;
     })

@@ -1,5 +1,7 @@
 'use strict';
 
+import './_auth-container.scss';
+
 import React from 'react';
 import {connect} from 'react-redux';
 
@@ -28,7 +30,7 @@ class AuthContainer extends React.Component{
   render(){
     // NOTE: move this to auth actions
     let AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
-    let clientIDQuqery = 'client_id=894544787890-8ns55cvpqudq0ppcajbn3b8s9l4pbq53.apps.googleusercontent.com';
+    let clientIDQuqery = `client_id=${process.env.GOOGLE_CLIENT_ID}.apps.googleusercontent.com`;
     let responseTypeQuery = 'response_type=code';
     let scopeQuery = 'scope=openid%20profile%20email';
     let promptQuery = 'prompt=consent';
@@ -41,6 +43,7 @@ class AuthContainer extends React.Component{
         <h1>Welcome to my portfilio!</h1>
         <AuthForm onComplete={this.handleAuth} />
         <a href={formatedURI}>login with google</a>
+        <div className="g-signin2"></div>
         <a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a>
         <a href={`${process.env.API_URL}/auth/twitter`}>login with twitter</a>
         <h3>If you'd like to skip all of this nonsense click here:<a> skip_URL</a></h3>
