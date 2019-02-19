@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {allRepositoriesRequest} from '../../../actions/repo-actions.js';
@@ -36,12 +37,17 @@ class RepositoryContainer extends React.Component {
   }
 }
 
-let mapStateToProps = (state) => ({
+RepositoryContainer.PropTypes = {
+  allRepositories: PropTypes.func,
+  repos: PropTypes.array
+};
+
+const mapStateToProps = (state) => ({
   repos: state.repos
 });
 
-let mapDispatchToProps = (dispatch) => ({
-  allRepositories: (repos) => dispatch(allRepositoriesRequest())
+const mapDispatchToProps = (dispatch) => ({
+  allRepositories: () => dispatch(allRepositoriesRequest())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RepositoryContainer);

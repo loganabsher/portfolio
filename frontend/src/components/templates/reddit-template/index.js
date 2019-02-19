@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class RedditTemplate extends React.Component{
   constructor(props){
@@ -19,5 +20,9 @@ class RedditTemplate extends React.Component{
     );
   }
 }
+
+RedditTemplate.PropTypes = {
+  post: PropTypes.object
+};
 
 export default RedditTemplate;

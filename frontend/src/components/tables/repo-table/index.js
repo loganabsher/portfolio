@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const limitArr = [5, 10, 25, 50, 'all'];
 
@@ -115,5 +116,9 @@ class RepoTable extends React.Component {
     );
   }
 }
+
+RepoTable.PropTypes = {
+  repos: PropTypes.array
+};
 
 export default RepoTable;

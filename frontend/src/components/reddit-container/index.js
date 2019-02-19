@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {subredditFetchRequest} from '../../../actions/reddit-actions.js';
@@ -47,6 +48,11 @@ class RedditContainer extends React.Component{
     );
   }
 }
+
+RedditContainer.PropTypes = {
+  fetchSubreddit: PropTypes.func,
+  reddit: PropTypes.object
+};
 
 const mapStateToProps = (state) => ({
   reddit: state.reddit,
