@@ -42,11 +42,12 @@ class AuthContainer extends React.Component{
       <div className='auth-container'>
         <h1>Welcome to my portfilio!</h1>
         <AuthForm onComplete={this.handleAuth} />
-        <a href={formatedURI}>login with google</a>
-        <div className="g-signin2"></div>
-        <a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a>
-        <a href={`${process.env.API_URL}/auth/twitter`}>login with twitter</a>
-        <h3>If you'd like to skip all of this nonsense click here:<a> skip_URL</a></h3>
+        <ul className='Oauth-links'>
+          <li><a href={formatedURI}>login with google</a></li>
+          <li><a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a></li>
+          <li><a href={`${process.env.API_URL}/auth/twitter`}>login with twitter</a></li>
+        </ul>
+        <h3>If you'd like to skip all of this nonsense click <a>here</a></h3>
       </div>
     );
   }

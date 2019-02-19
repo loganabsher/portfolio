@@ -1,5 +1,7 @@
 'use strict';
 
+import './_auth-form.scss';
+
 import React from 'react';
 
 class AuthForm extends React.Component{
@@ -55,6 +57,7 @@ class AuthForm extends React.Component{
             className='login'
             type='text'
             name='email'
+            placeholder='email'
             value={this.state.email}
             onChange={this.handleChange}
           />
@@ -62,6 +65,7 @@ class AuthForm extends React.Component{
             className='login'
             type='text'
             name='password'
+            placeholder='password'
             value={this.state.password}
             onChange={this.handleChange}
           />
