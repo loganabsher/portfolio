@@ -1,8 +1,9 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
-class UserSettingsForm extends React.Component{
+class ProfileForm extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -12,7 +13,7 @@ class UserSettingsForm extends React.Component{
       userName: '',
       error: false
     };
-    
+
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
@@ -44,18 +45,21 @@ class UserSettingsForm extends React.Component{
           <input
             type='text'
             name='firstName'
+            placeholder='first name'
             value={this.state.text}
             onChange={this.handleChange}
           />
           <input
             type='text'
             name='lastName'
+            placeholder='last name'
             value={this.state.text}
             onChange={this.handleChange}
           />
           <input
             type='text'
             name='userName'
+            placeholder='user name'
             value={this.state.text}
             onChange={this.handleChange}
           />
@@ -66,4 +70,9 @@ class UserSettingsForm extends React.Component{
   }
 }
 
-export default UserSettingsForm;
+ProfileForm.PropTypes = {
+  onComplete: PropTypes.func,
+  profile: PropTypes.object
+};
+
+export default ProfileForm;

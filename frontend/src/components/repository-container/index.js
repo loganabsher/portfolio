@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {allRepositoriesRequest} from '../../../actions/repo-actions.js';
@@ -16,19 +17,36 @@ class RepositoryContainer extends React.Component {
   }
 
   componentDidMount(){
-    console.log('loading repos');
     this.props.allRepositories();
   }
 
-  componentWillReceiveProps(nextProps){
-    console.log('props recieved', nextProps);
-    this.setState({repos: nextProps.repos, loading: false});
+  static getDerivedStateFromProps(nextProps, prevState){
+    console.log('getDerivedStateFromProps invoked')
+    console.log(nextProps)
+    if(nextProps.repos !== prevState.repos){
+      return {repos: nextProps.repos};
+    }
+    else return null;
   }
+
+  componentDidUpdate(prevProps, prevState) {
+    console.log('componentDidUpdate invoked')
+    console.log(prevProps, prevState)
+    if(prevProps.repos !== this.props.repos){
+      //Perform some operation here
+      this.setState({repos: this.props.repos});
+      // this.classMethod();
+    }
+  }
+
+  // componentWillReceiveProps(nextProps){
+  //   console.log('props recieved', nextProps);
+  //   this.setState({repos: nextProps.repos, loading: false});
+  // }
 
   render() {
     return(
       <div className='repository-container'>
-        {console.log('repos', this.props.repos)}
         <p>thi is the repo page</p>
         {this.state.loading ? <p>...waiting for repos</p> : <RepoTable repos={this.props.repos} />}
       </div>
@@ -36,12 +54,17 @@ class RepositoryContainer extends React.Component {
   }
 }
 
-let mapStateToProps = (state) => ({
+RepositoryContainer.PropTypes = {
+  allRepositories: PropTypes.func,
+  repos: PropTypes.array
+};
+
+const mapStateToProps = (state) => ({
   repos: state.repos
 });
 
-let mapDispatchToProps = (dispatch) => ({
-  allRepositories: (repos) => dispatch(allRepositoriesRequest())
+const mapDispatchToProps = (dispatch) => ({
+  allRepositories: () => dispatch(allRepositoriesRequest())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RepositoryContainer);

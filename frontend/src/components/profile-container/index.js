@@ -1,13 +1,14 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {profileCreateRequest, profileFetchRequest} from '../../../actions/profile-actions.js';
 
 import ProfileForm from '../forms/profile-form';
 
-class UserSettingsContainer extends React.Component{
+class ProfileContainer extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -18,7 +19,6 @@ class UserSettingsContainer extends React.Component{
   }
 
   componentDidMount(){
-    console.log('loading profile');
     this.props.profileFetch();
   }
 
@@ -37,11 +37,17 @@ class UserSettingsContainer extends React.Component{
   }
 }
 
+ProfileContainer.PropTypes = {
+  history: PropTypes.func,
+  profileFetch: PropTypes.func,
+  profileCreate: PropTypes.func,
+  profile: PropTypes.object
+};
+
 const mapStateToProps = (state) => ({
   profile: state.profile
 });
 
-// NOTE: the update request should maybe be moved to the individual message templates
 const mapDispatchToProps = (dispatch) => {
   return{
     profileCreate: (profile) => dispatch(profileCreateRequest(profile)),
@@ -49,4 +55,4 @@ const mapDispatchToProps = (dispatch) => {
   };
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(UserSettingsContainer);
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileContainer);

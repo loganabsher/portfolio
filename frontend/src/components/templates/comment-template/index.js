@@ -1,12 +1,11 @@
-// NOTE: maybe it would be a cool idea to have each comment in the form of a
-// linked list data structure so people can reply to eachother in a chain,
-// similar to reddit
-
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
-class commentTempalte extends React.Component{
+// NOTE: this page still needs a lot of work, I eventually need to decide what I'm going to do here
+
+class CommentTemplate extends React.Component{
   constructor(props){
     super(props);
     this.state = {
@@ -27,4 +26,12 @@ class commentTempalte extends React.Component{
   }
 }
 
-export default commentTempalte;
+CommentTemplate.PropTypes = {
+  value: PropTypes.object
+};
+
+export default CommentTemplate;
+
+// NOTE: maybe it would be a cool idea to have each comment in the form of a
+// linked list data structure so people can reply to eachother in a chain,
+// similar to reddit

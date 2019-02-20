@@ -1,5 +1,7 @@
 'use strict';
 
+import '../../style/main.scss';
+
 import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route} from 'react-router-dom';
@@ -36,9 +38,9 @@ class App extends React.Component{
   }
 }
 
-let mapStateToProps = (state) => ({auth: state.auth});
+const mapStateToProps = (state) => ({auth: state.auth});
 
-let mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch) => ({
   tokenSet: (token) => dispatch(tokenSet(token))
 });
 
