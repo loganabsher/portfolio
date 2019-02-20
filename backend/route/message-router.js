@@ -19,39 +19,65 @@ messageRouter.post('/api/message/post', bearerAuth, jsonParser, (req, res) => {
     if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) reject(createError(400, 'bad request: missing minimum content requirments'));
     if(!req.user || !req.user._id) reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-    new Message({
+    let message = new Message({
       // NOTE: this is probably a bad idea to have a user's id within each message
       authorId: req.user._id,
-      // text: req.body.text || null,
-      // title: req.body.title || null,
+      text: req.body.text || null,
+      title: req.body.title || null,
       // NOTE: probably need some sort of method to handle photo uploads
       photos: req.body.photos || [],
-      comments: []
     })
-      .then((message) => {
-        // NOTE: not sure if this is really nessessary, I may come back and fiddle
-        // with it to see if there is a better way.
-        if(req.body.text) message.text = req.body.text;
-        if(req.body.title) message.title = req.body.title;
-        return message;
-      })
-      .save()
+      // .then((message) => {
+      //   // NOTE: not sure if this is really nessessary, I may come back and fiddle
+      //   // with it to see if there is a better way.
+      //   if(req.body.text) message.text = req.body.text;
+      //   if(req.body.title) message.title = req.body.title;
+      //   if(req.body.parentId){
+      //     Message.findById({'_id': req.body.parentId})
+      //       .then((parent) => {
+      //         if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
+      //         parent.addComment(message);
+      //       });
+      //   }
+      //   return message;
+      // })
+    if(req.body.parentId){
+      Message.findById({'_id': req.body.parentId})
+        .then((parent) => {
+          if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
+          parent.addComment(message)
+            .then((message) => res.json(message));
+        });
+    }
+    message.save()
       .then((message) => res.json(message))
       .catch((err) => reject(err));
   });
 });
 
-messageRouter.post('/api/message/reply', bearerAuth, jsonParser, (req, res) => {
-  debug('POST /api/message/reply');
-
-  return new Promise((reslove, reject) => {
-    if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) reject(createError(400, 'bad request: missing minimum content requirments'));
-    if(!req.parentId) reject(createError(400, 'bad request: no parent id was provided in your request:', req.parentId))
-    if(!req.user || !req.user._id) reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
-
-    
-  });
-});
+// messageRouter.post('/api/message/reply', bearerAuth, jsonParser, (req, res) => {
+//   debug('POST /api/message/reply');
+//
+//   return new Promise((reslove, reject) => {
+//     if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) reject(createError(400, 'bad request: missing minimum content requirments'));
+//     if(!req.parentId) reject(createError(400, 'bad request: no parent id was provided in your request:', req.parentId));
+//     if(!req.user || !req.user._id) reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+//
+//     Message.findById({'_id': req.parentId})
+//       .then((parent) => {
+//         if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
+//         new Message({
+//           // NOTE: this is probably a bad idea to have a user's id within each message
+//           authorId: req.user._id,
+//           // text: req.body.text || null,
+//           // title: req.body.title || null,
+//           // NOTE: probably need some sort of method to handle photo uploads
+//           photos: req.body.photos || [],
+//           comments: []
+//         })
+//       })
+//   });
+// });
 messageRouter.get('/api/message/all')
 messageRouter.get('/api/message/self')
 messageRouter.get('/api/message/:id')

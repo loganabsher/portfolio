@@ -105,11 +105,18 @@ messageSchema.methods.addComment = function(node){
   debug('addComment');
 
   return new Promise((resolve, reject) => {
-    if(!node || !node.authorId || !node.text) reject(createError(400, 'invalid node:', node));
-    if(!this || !this.authorId || !this.text) reject(createError(400, 'invalid node invokation:', this));
+    if(!node || !node.authorId || !node.text) return reject(createError(400, 'invalid node:', node));
+    if(!this || !this.authorId || !this.text) return reject(createError(400, 'invalid node invokation:', this));
 
     this.comments.push(node);
     node.prev = this;
+    console.log(this)
+    console.log(node)
+    node.save();
+    this.save();
+    console.log('resolving maybe')
     resolve(this);
   });
 };
+
+module.exports = mongoose.model('messages', messageSchema);
