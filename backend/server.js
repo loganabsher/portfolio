@@ -16,7 +16,7 @@ const auth = require('./route/auth-router.js');
 const profile = require('./route/profile-router.js');
 const repository = require('./route/repo-router.js');
 const message = require('./route/message-router.js');
-const comment = require('./route/comment-router.js');
+// const comment = require('./route/comment-router.js');
 const reddit = require('./route/reddit-router.js');
 
 const app = express();
@@ -45,7 +45,7 @@ app.use(auth);
 app.use(profile);
 app.use(repository);
 app.use(message);
-app.use(comment);
+// app.use(comment);
 app.use(reddit);
 
 // NOTE: this probably needs some sort of authentications from an admin
