@@ -88,22 +88,31 @@ messageRouter.get('/api/message/:id', bearerAuth, jsonParser, (req, res) => {
 });
 
 messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res) => {
-    debug('PUT: /api/message/edit/:id');
+  debug('PUT: /api/message/edit/:id');
 
-    return new Promise((resolve, reject) => {
-      if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+  return new Promise((resolve, reject) => {
+    if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return reject(createError(400, 'bad request: missing minimum content requirments'));
+    if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-      Message.findById({'_id': req.params.id})
-        .then((message) => {
-          if(!message) return reject(createError(404, 'not found: no message was found:', message));
-          if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+    Message.findById({'_id': req.params.id})
+      .then((message) => {
+        if(!message) return reject(createError(404, 'not found: no message was found:', message));
+        if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-
-        })
-    });
+        if(req.body.)
+      });
+  });
 });
 
-messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser)
+messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser, (req, res) => {
+  debug('DELETE: /api/message/remove/:id');
+
+  return new Promise((resolve, reject) => {
+    if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+    Message.findById({'_id'})
+  });
+});
 
 // if(req.user._id !== ) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 

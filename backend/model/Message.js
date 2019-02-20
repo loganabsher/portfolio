@@ -98,25 +98,54 @@ const messageSchema = Schema({
   text: {type: String, required: false},
   photos: {type: Array, default: []},
   prev: {type: String, default: null},
-  comments: {type: Array, default: []}
+  comments: {type: Array, default: []},
+  created_at: {type: Date, default: Date.now},
+  updated_at: {type: Date, default: Date.now},
+  delete: {type: String, default: null}
 });
 
 messageSchema.methods.addComment = function(node){
   debug('addComment');
 
   return new Promise((resolve, reject) => {
-    if(!node || !node.authorId || !node.text) return reject(createError(400, 'invalid node:', node));
-    if(!this || !this.authorId || !this.text) return reject(createError(400, 'invalid node invokation:', this));
+    // NOTE: these error catches are pretty bad, I need to break them up a little more I think.
+    if(!node || !node.authorId || !node.prev || (!node.text && !node.title)) return reject(createError(400, 'invalid node:', node));
+    if(!this || !this.authorId || !this.comments || (!node.text && !node.title)) return reject(createError(400, 'invalid node invokation:', this));
 
     this.comments.push(node);
     node.prev = this._id;
-    console.log(this)
-    console.log(node)
-    console.log('resolving maybe')
     this.save();
     node.save();
     resolve(node);
   });
+};
+
+// NOTE: needs work
+messageSchema.methods.addPhoto = function(photo){
+  debug('addComment');
+
+  return new Promise((resolve, reject) => {
+    // NOTE: I need to set up AWS for image hosting.
+    resolve(photo);
+  })
+};
+
+messageSchema.methods.removeComment = function(node){
+  debug('removeComment');
+
+  return new Promise((resolve, reject) => {
+
+
+  })
+};
+
+messageSchema.methods.deleteAllComments = function(){
+  debug('deleteAllComments');
+
+  return new Promise((resolve, reject) => {
+
+
+  })
 };
 
 module.exports = mongoose.model('messages', messageSchema);
