@@ -113,6 +113,8 @@ messageSchema.methods.addComment = function(node){
     console.log(this)
     console.log(node)
     console.log('resolving maybe')
+    this.save();
+    node.save();
     resolve(node);
   });
 };

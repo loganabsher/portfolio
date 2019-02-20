@@ -33,11 +33,7 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res) => {
         .then((parent) => {
           if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
           parent.addComment(message)
-            .then((message) => {
-              message.save();
-              parent.save();
-              resolve(res.json(message))
-            });
+            .then((message) => resolve(res.json(message)));
         });
     }else{
       message.save()
@@ -53,7 +49,7 @@ messageRouter.get('/api/message/all', bearerAuth, jsonParser, (req, res) => {
   return new Promise((resolve, reject) => {
     if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-    Message.find({})
+    Message.find({'prev': null})
       .then((messages) => {
         if(!messages) return reject(createError(404, 'not found: no messages were found:', messages));
         resolve(res.json(messages));
