@@ -12,12 +12,12 @@ const Message = require('../model/Message.js');
 
 const messageRouter = module.exports = Router();
 
-messageRouter.post('/api/message/post', bearerAuth, jsonParser, (req, res) => {
-  debug('POST: /api/message/post');
+messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res) => {
+  debug('POST: /api/message');
 
   return new Promise((resolve, reject) => {
-    if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) reject(createError(400, 'bad request: missing minimum content requirments'));
-    if(!req.user || !req.user._id) reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+    if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return reject(createError(400, 'bad request: missing minimum content requirments'));
+    if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
     let message = new Message({
       // NOTE: this is probably a bad idea to have a user's id within each message
@@ -33,44 +33,84 @@ messageRouter.post('/api/message/post', bearerAuth, jsonParser, (req, res) => {
         .then((parent) => {
           if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
           parent.addComment(message)
-            .then((message) => res.json(message));
+            .then((message) => {
+              message.save();
+              parent.save();
+              resolve(res.json(message))
+            });
         });
     }else{
       message.save()
-        .then((message) => res.json(message))
+        .then((message) => resolve(res.json(message)))
         .catch((err) => reject(err));
     }
   });
 });
 
-// messageRouter.post('/api/message/reply', bearerAuth, jsonParser, (req, res) => {
-//   debug('POST /api/message/reply');
-//
-//   return new Promise((reslove, reject) => {
-//     if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) reject(createError(400, 'bad request: missing minimum content requirments'));
-//     if(!req.parentId) reject(createError(400, 'bad request: no parent id was provided in your request:', req.parentId));
-//     if(!req.user || !req.user._id) reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
-//
-//     Message.findById({'_id': req.parentId})
-//       .then((parent) => {
-//         if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
-//         new Message({
-//           // NOTE: this is probably a bad idea to have a user's id within each message
-//           authorId: req.user._id,
-//           // text: req.body.text || null,
-//           // title: req.body.title || null,
-//           // NOTE: probably need some sort of method to handle photo uploads
-//           photos: req.body.photos || [],
-//           comments: []
-//         })
-//       })
-//   });
-// });
-messageRouter.get('/api/message/all')
-messageRouter.get('/api/message/self')
-messageRouter.get('/api/message/:id')
-messageRouter.put('/api/message/edit/:id')
-messageRouter.delete('/api/message/remove/:id')
+messageRouter.get('/api/message/all', bearerAuth, jsonParser, (req, res) => {
+  debug('GET: /api/message/all');
+
+  return new Promise((resolve, reject) => {
+    if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
+
+    Message.find({})
+      .then((messages) => {
+        if(!messages) return reject(createError(404, 'not found: no messages were found:', messages));
+        resolve(res.json(messages));
+      })
+      .catch((err) => reject(err));
+  });
+});
+
+messageRouter.get('/api/message/self', bearerAuth, jsonParser, (req, res) => {
+  debug('GET: /api/message/self');
+
+  return new Promise((resolve, reject) => {
+    if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+    Message.find({'authorId': req.user._id})
+      .then((messages) => {
+        if(!messages) return reject(createError(404, 'not found: no messages were found:', messages));
+        resolve(res.json(messages));
+      })
+      .catch((err) => reject(err));
+  });
+});
+messageRouter.get('/api/message/:id', bearerAuth, jsonParser, (req, res) => {
+  debug('GET: /api/message/:id');
+
+  return new Promise((resolve, reject) => {
+    if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+    Message.findById({'_id': req.params.id})
+      .then((message) => {
+        if(!message) return reject(createError(404, 'not found: no message was found:', message));
+        resolve(res.json(message));
+      })
+      .catch((err) => reject(err));
+  });
+});
+
+messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res) => {
+    debug('PUT: /api/message/edit/:id');
+
+    return new Promise((resolve, reject) => {
+      if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+      Message.findById({'_id': req.params.id})
+        .then((message) => {
+          if(!message) return reject(createError(404, 'not found: no message was found:', message));
+          if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+
+        })
+    });
+});
+
+messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser)
+
+// if(req.user._id !== ) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
 //
 // messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 //   debug('POST: /api/message');

@@ -112,8 +112,6 @@ messageSchema.methods.addComment = function(node){
     node.prev = this._id;
     console.log(this)
     console.log(node)
-    node.save();
-    this.save();
     console.log('resolving maybe')
     resolve(node);
   });
