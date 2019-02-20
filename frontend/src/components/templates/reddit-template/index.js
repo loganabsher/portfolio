@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
 class RedditTemplate extends React.Component{
   constructor(props){
     super(props);
-    this.state ={
+    this.state = {
       post: this.props.post
     };
   }

@@ -8,6 +8,8 @@ const Schema = mongoose.Schema;
 const Promise = require('bluebird');
 const createError = require('http-errors');
 
+const Comment = require('../model/Comment.js');
+
 const messageSchema = Schema({
   authorId: {type: String, required: true},
   title: String,
@@ -15,6 +17,11 @@ const messageSchema = Schema({
   photos: Array,
   comments: Array
 });
+
+// NOTE: I'm thinking maybe I should rewrite both the messages and comments as one
+// thing, having the "message" aspect of it just being the root of a larger data
+// structure, they are both fairly similar anyways and I am a little afraid of making
+// things overly complicated.
 
 messageSchema.methods.addComment = function(comment){
   debug('addComment');
@@ -61,5 +68,16 @@ messageSchema.methods.deleteComment = function(comment){
       .catch((err) => reject(err));
   });
 };
+
+messageSchema.methods.deleteAllComments = function(){
+  debug('deleteAllComments');
+
+  return new Promise((resolve, reject) => {
+    let message = this;
+
+    if(!this || !this._id || !this.comments) reject(createError(500, 'invalid message perameters', this));
+
+  })
+}
 
 module.exports = mongoose.model('messages', messageSchema);

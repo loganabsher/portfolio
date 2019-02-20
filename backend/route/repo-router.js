@@ -10,6 +10,7 @@ const Repository = require('../model/Repository.js');
 const repositoryRouter = module.exports = Router();
 
 const loader = function () {
+  debug('repoLoader');
   // NOTE: find a way to check the number of repos, replace page=100 with the number of repos
   superagent.get('https://api.github.com/user/repos?per_page=100&type=owner/')
     .set({'Authorization': 'token ' + process.env.GITHUB_TOKEN})

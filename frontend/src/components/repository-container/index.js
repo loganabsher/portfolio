@@ -12,6 +12,7 @@ class RepositoryContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      repos: [],
       loading: true
     };
   }
@@ -20,29 +21,11 @@ class RepositoryContainer extends React.Component {
     this.props.allRepositories();
   }
 
-  static getDerivedStateFromProps(nextProps, prevState){
-    console.log('getDerivedStateFromProps invoked')
-    console.log(nextProps)
-    if(nextProps.repos !== prevState.repos){
-      return {repos: nextProps.repos};
-    }
-    else return null;
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    console.log('componentDidUpdate invoked')
-    console.log(prevProps, prevState)
-    if(prevProps.repos !== this.props.repos){
-      //Perform some operation here
-      this.setState({repos: this.props.repos});
-      // this.classMethod();
+  componentDidUpdate() {
+    if(this.state.repos.length !== this.props.repos.length){
+      this.setState({repos: this.props.repos, loading: false});
     }
   }
-
-  // componentWillReceiveProps(nextProps){
-  //   console.log('props recieved', nextProps);
-  //   this.setState({repos: nextProps.repos, loading: false});
-  // }
 
   render() {
     return(

@@ -96,6 +96,10 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, (req, res, next) => 
     .then((message) => {
       if(!message) return next(createError(404, 'no message was found with this id'));
       if(message.authorId != req.user._id) return next(createError(401, 'you are not authorized to remove this post'));
+      if(message.comments.length > 0){
+        Comment.deleteMany({'messageId': message._id})
+
+      }
       Message.findByIdAndRemove(req.params.id)
         .then(() => res.status(204).send())
         .catch(next);
