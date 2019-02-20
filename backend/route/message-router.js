@@ -26,21 +26,8 @@ messageRouter.post('/api/message/post', bearerAuth, jsonParser, (req, res) => {
       title: req.body.title || null,
       // NOTE: probably need some sort of method to handle photo uploads
       photos: req.body.photos || [],
-    })
-      // .then((message) => {
-      //   // NOTE: not sure if this is really nessessary, I may come back and fiddle
-      //   // with it to see if there is a better way.
-      //   if(req.body.text) message.text = req.body.text;
-      //   if(req.body.title) message.title = req.body.title;
-      //   if(req.body.parentId){
-      //     Message.findById({'_id': req.body.parentId})
-      //       .then((parent) => {
-      //         if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
-      //         parent.addComment(message);
-      //       });
-      //   }
-      //   return message;
-      // })
+    });
+
     if(req.body.parentId){
       Message.findById({'_id': req.body.parentId})
         .then((parent) => {
@@ -48,10 +35,11 @@ messageRouter.post('/api/message/post', bearerAuth, jsonParser, (req, res) => {
           parent.addComment(message)
             .then((message) => res.json(message));
         });
+    }else{
+      message.save()
+        .then((message) => res.json(message))
+        .catch((err) => reject(err));
     }
-    message.save()
-      .then((message) => res.json(message))
-      .catch((err) => reject(err));
   });
 });
 

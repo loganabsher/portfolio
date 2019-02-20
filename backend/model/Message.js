@@ -97,7 +97,7 @@ const messageSchema = Schema({
   title: {type: String, required: false},
   text: {type: String, required: false},
   photos: {type: Array, default: []},
-  prev: {type: Object, default: null},
+  prev: {type: String, default: null},
   comments: {type: Array, default: []}
 });
 
@@ -109,13 +109,13 @@ messageSchema.methods.addComment = function(node){
     if(!this || !this.authorId || !this.text) return reject(createError(400, 'invalid node invokation:', this));
 
     this.comments.push(node);
-    node.prev = this;
+    node.prev = this._id;
     console.log(this)
     console.log(node)
     node.save();
     this.save();
     console.log('resolving maybe')
-    resolve(this);
+    resolve(node);
   });
 };
 
