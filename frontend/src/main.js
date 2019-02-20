@@ -7,7 +7,6 @@ import {Provider} from 'react-redux';
 import storeCreate from '../lib/store-create.js';
 import App from './components/app';
 
-
 let store = storeCreate();
 
 let AppContainer = () => {

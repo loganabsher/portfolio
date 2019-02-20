@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {subredditFetchRequest} from '../../../actions/reddit-actions.js';
@@ -12,20 +13,21 @@ class RedditContainer extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      posts: null,
-      error: false
+      error: false,
+      loading: true
     };
 
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  componentWillRevieveProps(nextProps){
-    console.log(nextProps);
-    this.setState({})
+  componentWillReceiveProps(nextProps){
+    console.log('props received:', nextProps);
+    this.setState({posts: nextProps.reddit, loading: false});
+
   }
 
-  handleSubmit(queries){
-    return this.props.fetchSubreddit(queries);
+  handleSubmit(reddit){
+    return this.props.fetchSubreddit(reddit);
   }
 
   render(){
@@ -33,22 +35,32 @@ class RedditContainer extends React.Component{
       <div className='reddit-container'>
         <h1>Reddit</h1>
         <RedditForm onComplete={this.handleSubmit} />
-        {this.state.posts ? this.state.posts.map((post, index) => {
-          console.log(post);
-          return(<RedditTemplate key={index} post={post} />);
-        }) : <p>welcome to the reddit side of things</p>}
+        {!this.state.loading ?
+          <ul>
+            {this.state.posts.map((post, index) => {
+              console.log(post);
+              return(
+                <RedditTemplate key={index} post={post} />
+              );
+            })}
+          </ul> : <p>welcome to the reddit side of things</p>}
       </div>
     );
   }
 }
 
+RedditContainer.PropTypes = {
+  fetchSubreddit: PropTypes.func,
+  reddit: PropTypes.object
+};
+
 const mapStateToProps = (state) => ({
-  posts: state.posts,
+  reddit: state.reddit,
 });
 
 const mapDispatchToProps = (dispatch) => {
   return{
-    fetchSubreddit: (queries) => dispatch(subredditFetchRequest(queries))
+    fetchSubreddit: (reddit) => dispatch(subredditFetchRequest(reddit))
   };
 };
 

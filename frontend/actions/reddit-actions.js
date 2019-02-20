@@ -2,19 +2,22 @@
 
 import superagent from 'superagent';
 
-export const subredditFetch = (subreddit) => ({
+import {readCookie} from '../lib/util.js';
+
+export const subredditFetch = (reddit) => ({
   type: 'SUBREDDIT_FETCH',
-  payload: subreddit
+  payload: reddit
 });
 
-export const subredditFetchRequest = (queries) => (dispatch) => {
+export const subredditFetchRequest = (reddit) => (dispatch) => {
+  let token = readCookie('portfolio-login-token');
+
   return superagent.get(`${process.env.API_URL}/api/reddit/subreddit`)
-    .withCredentials()
-    .send(queries)
+    .set('Authorization', `Bearer ${token}`)
+    .query(reddit)
     .then((res) => {
-      console.log(res.body);
       dispatch(subredditFetch(res.body));
-      return res.body;
+      return res;
     })
     .catch((err) => console.error(err));
 };

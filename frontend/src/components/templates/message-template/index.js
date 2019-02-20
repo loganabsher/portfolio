@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import commentTempalte from '../comment-template';
 
@@ -36,5 +37,11 @@ class MessageTemplate extends React.Component{
     );
   }
 }
+
+MessageTemplate.PropTypes = {
+  title: PropTypes.string,
+  text: PropTypes.string,
+  comments: PropTypes.array
+};
 
 export default MessageTemplate;

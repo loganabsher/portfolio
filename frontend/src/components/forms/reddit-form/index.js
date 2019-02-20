@@ -1,6 +1,7 @@
 'use strict';
 
 import React from 'react';
+import PropTypes from 'prop-types';
 
 class RedditForm extends React.Component{
   constructor(){
@@ -23,8 +24,8 @@ class RedditForm extends React.Component{
   handleSubmit(e){
     e.preventDefault();
     if(!this.state.error){
-      this.props.onComplete(this.state)
-        .then(() => this.setState({subreddit: '', limit: 25}))
+      this.props.onComplete({subreddit: this.state.subreddit, limit: this.state.limit})
+        .then(() => this.setState({subreddit: '', limit: 25, error: false}))
         .catch((err) => {
           console.error(err);
           this.setState({error: true});
@@ -54,5 +55,9 @@ class RedditForm extends React.Component{
     );
   }
 }
+
+RedditForm.PropTypes = {
+  onComplete: PropTypes.func
+};
 
 export default RedditForm;

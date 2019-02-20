@@ -1,15 +1,10 @@
 'use strict';
 
-import React from 'react';
-
 import './_navbar.scss';
 
+import React from 'react';
+
 class NavbarContainer extends React.Component{
-  constructor(props){
-    super(props);
-
-  }
-
   render(){
     return(
       <div className='navbar'>
