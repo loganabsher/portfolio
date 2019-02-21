@@ -25,7 +25,6 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res) => {
       text: req.body.text || null,
       title: req.body.title || null,
       // NOTE: probably need some sort of method to handle photo uploads
-      photos: req.body.photos || [],
     });
 
     if(req.body.parentId){
@@ -99,8 +98,13 @@ messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res) =>
         if(!message) return reject(createError(404, 'not found: no message was found:', message));
         if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-        if(req.body.)
-      });
+        if(req.body.title) message.title = req.body.title;
+        if(req.body.text) message.text = req.body.text;
+        message.updated_at = Date.now();
+        message.save();
+        return message;
+      })
+      .then((message) => resolve(res.json(message)));
   });
 });
 
@@ -110,11 +114,35 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser, (req, re
   return new Promise((resolve, reject) => {
     if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-    Message.findById({'_id'})
+    Message.findById({'_id': req.params.id})
+      .then((message) => {
+        if(!message) return reject(createError(404, 'not found: no message was found:', message));
+        if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+        if(!message.prev){
+          if(message.comments > 0){
+            message.deleteSelfAndAllComments()
+              .then(() => resolve(res.status(204).send()))
+              .catch((err) => reject(err));
+          }else{
+            message.deleteSelf()
+              .then(() => resolve(res.status(204).send()))
+              .catch((err) => reject(err));
+          }
+        }else{
+          if(message.comments > 0){
+            message.removeComment()
+              .then((message) => resolve(res.json(message)))
+              .catch((err) => reject(err));
+          }else{
+            message.deleteSelf()
+              .then(() => resolve(res.status(204).send()))
+              .catch((err) => reject(err));
+          }
+        }
+      });
   });
 });
-
-// if(req.user._id !== ) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
 //
 // messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {

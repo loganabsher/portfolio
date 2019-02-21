@@ -101,7 +101,7 @@ const messageSchema = Schema({
   comments: {type: Array, default: []},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
-  delete: {type: String, default: null}
+  delete: {type: Boolean, default: false}
 });
 
 messageSchema.methods.addComment = function(node){
@@ -109,8 +109,8 @@ messageSchema.methods.addComment = function(node){
 
   return new Promise((resolve, reject) => {
     // NOTE: these error catches are pretty bad, I need to break them up a little more I think.
-    if(!node || !node.authorId || !node.prev || (!node.text && !node.title)) return reject(createError(400, 'invalid node:', node));
-    if(!this || !this.authorId || !this.comments || (!node.text && !node.title)) return reject(createError(400, 'invalid node invokation:', this));
+    if(!node || !node.authorId || !node.prev) return reject(createError(400, 'invalid node:', node));
+    if(!this || !this.authorId || !this.comments) return reject(createError(400, 'invalid node invokation:', this));
 
     this.comments.push(node);
     node.prev = this._id;
@@ -130,22 +130,51 @@ messageSchema.methods.addPhoto = function(photo){
   })
 };
 
-messageSchema.methods.removeComment = function(node){
+const Message = module.exports = mongoose.model('messages', messageSchema);
+
+messageSchema.methods.removeComment = function(){
   debug('removeComment');
 
   return new Promise((resolve, reject) => {
+    if(!this || !this.authorId) return reject(createError(400, 'bad request: invalid invokation of node:', this));
 
-
-  })
+    this.delete = true;
+    this.save();
+    resolve(this);
+  });
 };
 
-messageSchema.methods.deleteAllComments = function(){
-  debug('deleteAllComments');
+messageSchema.methods.deleteSelf = function(){
+  debug('deleteSelf');
 
   return new Promise((resolve, reject) => {
+    if(!this || !this.authorId) return reject(createError(400, 'bad request: invalid invokation of node:', this));
+    if(this.comments > 0) return reject(createError(500, 'server error: this method is for permenantly deleting nodes, this node has comments attached to it, please use removeComment instead:', this, this.comments));
 
-
-  })
+    Message.deleteOne({'_id': this._id})
+      .then(() => resolve())
+      .catch((err) => reject(err));
+  });
 };
 
-module.exports = mongoose.model('messages', messageSchema);
+messageSchema.methods.deleteSelfAndAllComments = function(){
+  debug('deleteSelfAndAllComments');
+
+  return new Promise((resolve, reject) => {
+    if(!this || !this.authorId) return reject(createError(400, 'bad request: invalid invokation of node:', this));
+    if(this.prev) return reject(createError(500, 'server error: this is not the root node:', this, this.prev));
+
+    if(this.comments > 0){
+      this.comments.map((node) => {
+        if(node.comments > 0){
+          node.deleteSelfAndAllComments();
+        }else{
+          node.deleteSelf();
+        }
+      });
+    }else{
+      reject(createError(500, 'server error: this method should not be called on elements that do not have comments:', this, this.comments));
+    }
+    resolve();
+  });
+};
