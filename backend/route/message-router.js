@@ -119,6 +119,8 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser, (req, re
         if(!message) return reject(createError(404, 'not found: no message was found:', message));
         if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
+        console.log(message)
+
         if(!message.prev){
           if(message.comments > 0){
             message.deleteSelfAndAllComments()

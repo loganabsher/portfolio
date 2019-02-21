@@ -109,7 +109,7 @@ messageSchema.methods.addComment = function(node){
 
   return new Promise((resolve, reject) => {
     // NOTE: these error catches are pretty bad, I need to break them up a little more I think.
-    if(!node || !node.authorId || !node.prev) return reject(createError(400, 'invalid node:', node));
+    if(!node || !node.authorId || this.prev) return reject(createError(400, 'invalid node:', node));
     if(!this || !this.authorId || !this.comments) return reject(createError(400, 'invalid node invokation:', this));
 
     this.comments.push(node);
