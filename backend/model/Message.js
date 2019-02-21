@@ -132,7 +132,7 @@ messageSchema.methods.addPhoto = function(photo){
 
 const Message = module.exports = mongoose.model('messages', messageSchema);
 
-messageSchema.methods.removeComment = function(){
+Message.removeComment = function(){
   debug('removeComment');
 
   return new Promise((resolve, reject) => {
@@ -144,20 +144,62 @@ messageSchema.methods.removeComment = function(){
   });
 };
 
-messageSchema.methods.deleteSelf = function(){
+Message.handleEdit = function(){
+  debug('handleEdit');
+
+  return new Promise((resolve, reject) => {
+    if(!this.prev) return reject(createError(400, 'there is no previous comment to edit:', this));
+
+    let message = this;
+    Message.findById({'_id': this.prev})
+      .then((parent) => {
+        return parent.map((node) => {
+          return node._id != message._id;
+        });
+      })
+      .then((parent) => {
+        parent.save();
+        resolve(parent);
+      })
+      .catch((err) => reject(err));
+  });
+};
+
+Message.deleteSelf = function(){
   debug('deleteSelf');
 
   return new Promise((resolve, reject) => {
     if(!this || !this.authorId) return reject(createError(400, 'bad request: invalid invokation of node:', this));
     if(this.comments > 0) return reject(createError(500, 'server error: this method is for permenantly deleting nodes, this node has comments attached to it, please use removeComment instead:', this, this.comments));
 
-    Message.deleteOne({'_id': this._id})
-      .then(() => resolve())
-      .catch((err) => reject(err));
+    let message = this;
+    if(this.prev){
+      Message.findById({'_id': this.prev})
+        .then((parent) => {
+          if(!parent || !parent.comments > 0) reject(createError(500, 'server error: parent node does not match child node', parent, message));
+          return parent.comments.filter((node) => {
+            return node._id != message._id;
+          });
+        })
+        .then((parent) => {
+          parent.save()
+            .then(() => {
+              Message.deleteOne({'_id': this._id})
+                .then(() => resolve())
+                .catch((err) => reject(err));
+            })
+            .catch((err) => reject(err));
+        })
+        .catch((err) => reject(err));
+    }else{
+      Message.deleteOne({'_id': this._id})
+        .then(() => resolve())
+        .catch((err) => reject(err));
+    }
   });
 };
 
-messageSchema.methods.deleteSelfAndAllComments = function(){
+Message.deleteSelfAndAllComments = function(){
   debug('deleteSelfAndAllComments');
 
   return new Promise((resolve, reject) => {
@@ -169,7 +211,7 @@ messageSchema.methods.deleteSelfAndAllComments = function(){
         if(node.comments > 0){
           node.deleteSelfAndAllComments();
         }else{
-          node.deleteSelf();
+          Message.deleteOne({'_id': node._id});
         }
       });
     }else{
