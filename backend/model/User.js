@@ -124,12 +124,11 @@ User.handleOauth = function(type, data){
     return User.findOne({'email': data.email})
       .then((user) => {
         if(user){
+          debug(`GET: /api/auth/${type}`);
           if(user[type].authenticated){
-            debug(`GET: /api/auth/${type}`);
             debug(`returning ${type} user signin:`, data.email);
             return user.comparePasswordHash(type, data.password);
           }else{
-            debug(`GET: /api/auth/${type}`);
             debug(`setting existing user with ${type}:`, data.email);
             user[type].authenticated = true;
             return user.generatePasswordHash(type, data.password);
