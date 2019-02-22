@@ -23,15 +23,18 @@ const newUser = {
 
 describe('POST: /api/signup', () => {
   describe('with valid credentials', () => {
-    afterEach(() => User.deleteOne({'email': testUser.email}));
+    afterEach((done) => {
+      User.deleteOne({'email': testUser.email})
+        .then(() => done)
+        .catch((err) => done(err));
+    });
 
     console.log(`${url}/api/signup`);
-    it('should return a status code of 200', () => {
+    it('should return a status code of 200', (done) => {
       superagent.post(`${url}/api/signup`)
         .send(testUser)
-        .then((res) => {
-          // if(err) return done(err);
-          // console.log(res);
+        .end((res, err) => {
+          if(err) return done(err);
           expect(res).to.be.an('object');
           expect(res.status).to.equal(200);
         })
