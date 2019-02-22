@@ -6,7 +6,7 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route} from 'react-router-dom';
 
-import {tokenSet} from '../../../actions/auth-actions';
+import {tokenSet, tokenCheck} from '../../../actions/auth-actions';
 
 import '../../style/footer.scss';
 
@@ -19,6 +19,17 @@ import CowsayContainer from '../cowsay-container';
 import RedditContainer from '../reddit-container';
 
 class App extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      token: false
+    };
+  }
+
+  componentDidMount(){
+    return this.props.tokenCheck();
+  }
+
   render(){
     return(
       <div className='app'>
@@ -41,7 +52,8 @@ class App extends React.Component{
 const mapStateToProps = (state) => ({auth: state.auth});
 
 const mapDispatchToProps = (dispatch) => ({
-  tokenSet: (token) => dispatch(tokenSet(token))
+  tokenSet: (token) => dispatch(tokenSet(token)),
+  tokenCheck: () => dispatch(tokenCheck())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);

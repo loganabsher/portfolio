@@ -8,6 +8,7 @@ const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
+const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
 const Message = require('../model/Message.js');
@@ -114,3 +115,5 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
   })
     .then((status) => res.status(status).send());
 });
+
+userRouter.get('/api/checkCookie', bearerAuth, (req, res) => res.status(204).send());

@@ -7,6 +7,8 @@ export default (state=null, action) => {
     return payload;
   case 'LOGOUT':
     return null;
+  case 'TOKEN_CHECK':
+    return payload;
   default:
     return state;
   }
