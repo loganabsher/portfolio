@@ -92,16 +92,35 @@ messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res) =>
   return new Promise((resolve, reject) => {
     if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return reject(createError(400, 'bad request: missing minimum content requirments'));
     if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
-
     Message.findById({'_id': req.params.id})
       .then((message) => {
         if(!message) return reject(createError(404, 'not found: no message was found:', message));
         if(req.user._id != message.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-        if(req.body.title) message.title = req.body.title;
-        if(req.body.text) message.text = req.body.text;
-        message.updated_at = Date.now();
-        message.save();
+        if(message.prev){
+          Message.findById({'_id': message.prev})
+            .then((parent) => {
+              console.log(parent)
+              parent.comments.map((node) => {
+                console.log('node._id:', node._id, 'message._id', message._id)
+                console.log(typeof node._id, typeof message._id)
+                if(node._id == message._id){
+                  console.log('matching node found')
+                  if(req.body.title) message.title = req.body.title;
+                  if(req.body.text) message.text = req.body.text;
+                  message.updated_at = Date.now();
+                  message.save();
+                  parent.save();
+                }
+              });
+            })
+            .catch((err) => reject(err));
+        }else{
+          if(req.body.title) message.title = req.body.title;
+          if(req.body.text) message.text = req.body.text;
+          message.updated_at = Date.now();
+          message.save();
+        }
         return message;
       })
       .then((message) => resolve(res.json(message)));
