@@ -17,8 +17,6 @@ redditRouter.get('/api/reddit/subreddit', bearerAuth, jsonParser, (req, res, nex
   // NOTE: this probably needs a few more catches
   if(!req.query || !req.query.subreddit || !req.query.limit) return next(createError(400, 'need valid subreddit and limit'));
   superagent.get(`http://reddit.com/r/${req.query.subreddit}.json?limit=${req.query.limit}`)
-    .then((response) => {
-      res.json(response.body.data.children)
-    })
+    .then((response) => res.json(response.body.data.children))
     .catch((err) => console.error(err));
 });

@@ -24,7 +24,6 @@ userRouter.post('/api/signup', jsonParser, (req, res) => {
   return new Promise((resolve, reject) => {
     User.findOne({'email': req.body.email})
       .then((user) => {
-        // NOTE: this is just temporary until I create something to authenticate their email
         if(user){
           if(user.authenticated){
             // NOTE: maybe update all error codes and texts to be very specific
