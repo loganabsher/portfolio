@@ -20,7 +20,7 @@ module.exports = (req, res, next) => {
   jwt.verify(token, process.env.APP_SECRET, (err, decoded) => {
     if(err) return next(err);
 
-    User.findOne({ findHash: decoded.token })
+    User.findOne({findHash: decoded.token})
       .then((user) => {
         req.user = user;
         next();

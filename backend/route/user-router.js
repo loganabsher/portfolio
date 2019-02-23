@@ -6,6 +6,7 @@ const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
 const Promise = require('bluebird');
 const createError = require('http-errors');
+const jwt = require('jsonwebtoken');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
@@ -116,4 +117,20 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
     .then((status) => res.status(status).send());
 });
 
-userRouter.get('/api/checkCookie', bearerAuth, (req, res) => res.status(204).send());
+userRouter.get('/api/checkCookie', (req, res) => {
+  debug('GET: /api/checkCookie');
+
+  let authHeader = req.headers.authorization;
+  if(authHeader){
+    let token = authHeader.split('Bearer ')[1];
+    jwt.verify(token, process.env.APP_SECRET, (err, decoded) => {
+      console.log(err, decoded)
+      if(err) return res.status(400).send();
+      User.findOne({findHash: decoded.token})
+        .then(() => res.json(token))
+        .catch(() => res.status(400).send());
+    });
+  }else{
+    res.status(400).send();
+  }
+});

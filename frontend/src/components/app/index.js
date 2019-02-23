@@ -6,7 +6,8 @@ import React from 'react';
 import {connect} from 'react-redux';
 import {BrowserRouter, Route} from 'react-router-dom';
 
-import {tokenSet, tokenCheck} from '../../../actions/auth-actions';
+import {tokenSet, tokenCheckRequest} from '../../../actions/auth-actions';
+import {readCookie} from '../../../lib/util.js';
 
 import '../../style/footer.scss';
 
@@ -27,8 +28,17 @@ class App extends React.Component{
   }
 
   componentDidMount(){
-    return this.props.tokenCheck();
+    let token = readCookie('portfolio-login-token');
+    return this.props.tokenCheckRequest(token)
+      // .then(() => )
   }
+
+  // componentWillReceiveProps(nextProps){
+  //   console.log('props recieved', nextProps);
+  //   if(nextProps.token){
+  //     this.setState({token: true});
+  //   }
+  // }
 
   render(){
     return(
@@ -42,6 +52,7 @@ class App extends React.Component{
             <Route exact path='/repo' component={RepositoryContainer} />
             <Route exact path='/cowsay' component={CowsayContainer} />
             <Route exact path='/reddit' component={RedditContainer} />
+            {this.state.token ? this.props.history.push('/') : this.props.history.push('/auth')}
           </section>
         </BrowserRouter>
       </div>
@@ -53,7 +64,7 @@ const mapStateToProps = (state) => ({auth: state.auth});
 
 const mapDispatchToProps = (dispatch) => ({
   tokenSet: (token) => dispatch(tokenSet(token)),
-  tokenCheck: () => dispatch(tokenCheck())
+  tokenCheckRequest: (token) => dispatch(tokenCheckRequest(token))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(App);
