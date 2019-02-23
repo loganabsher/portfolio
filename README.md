@@ -1,9 +1,7 @@
-# portfolio
-a react.js web app listing my accomplishments as a coder, leveraging the github API
+# Logan Absher's Portfolio
 
-// NOTE: this needs to be removed before production, but I'm too lazy to put this somewhere else
-plans / ideas for my project:
+a react.js web app listing my accomplishments as a coder.
 
-* make repository page a sortable table
-* add a button to skip login / signup feature
-* add sarcastic remarks everywhere
+Note: this is still in development, I am the only contributor so it may move slowly
+
+Yes, I am very aware that it is stupid to have a login page for a portfolio, but it is more of a showcase of my skills and I had a lot of fun working with the authentication for my web app. I'm planning to add a guest user account so if anyone visits and can't be bothered to make a fake account they can just push a link to skip all that nonsense.
