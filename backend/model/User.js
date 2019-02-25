@@ -153,7 +153,6 @@ User.handleOauth = function(type, data){
   });
 };
 
-// NOTE: seems slightly unnessessary
 User.googleStrategy = function(profile){
   debug('googleStrategy');
 
