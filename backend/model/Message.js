@@ -33,7 +33,7 @@ messageSchema.methods.addComment = function(node){
     node.prev = this._id;
     this.save();
     node.save();
-    resolve(node);
+    resolve(this);
   });
 };
 
