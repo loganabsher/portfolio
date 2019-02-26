@@ -7,7 +7,7 @@ class RedditForm extends React.Component{
   constructor(){
     super();
     this.state = {
-      subreddit: '',
+      subreddit: 'aww',
       limit: 25,
       error: false
     };
@@ -24,8 +24,8 @@ class RedditForm extends React.Component{
   handleSubmit(e){
     e.preventDefault();
     if(!this.state.error){
-      this.props.onComplete({subreddit: this.state.subreddit, limit: this.state.limit})
-        .then(() => this.setState({subreddit: '', limit: 25, error: false}))
+      this.props.onComplete({subreddit: this.state.subreddit, limit: this.state.limit - 1})
+        .then(() => this.setState({error: false}))
         .catch((err) => {
           console.error(err);
           this.setState({error: true});
@@ -42,12 +42,14 @@ class RedditForm extends React.Component{
             name='subreddit'
             value={this.state.text}
             onChange={this.handleChange}
+            placeholder={this.state.subreddit}
           />
           <input
             type='number'
             name='limit'
             value={this.state.text}
             onChange={this.handleChange}
+            placeholder={this.state.limit}
           />
           <button type='submit' onClick={this.handleSubmit}>GO</button>
         </form>

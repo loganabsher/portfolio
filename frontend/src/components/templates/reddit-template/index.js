@@ -12,10 +12,11 @@ class RedditTemplate extends React.Component{
   }
 
   render(){
+    console.log(this.state.post);
     return(
       <li className='reddit-template'>
-        <h4>{this.state.post.data.title}</h4>
-        <p>by: <a>{this.state.post.data.author}</a></p>
+        <h4>{this.state.post.title}</h4>
+        <p>by: <a href={`https://www.reddit.com/user/${this.state.post.author}`} >{`u/${this.state.post.author}`}</a></p>
       </li>
     );
   }
