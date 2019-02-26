@@ -24,7 +24,9 @@ messageSchema.methods.addComment = function(node){
   debug('addComment');
 
   return new Promise((resolve, reject) => {
-    if(!node || !node.authorId || this.prev) return reject(createError(400, 'invalid node:', node));
+    console.log(node)
+    console.log(this)
+    if(!node || !node.authorId || node.prev) return reject(createError(400, 'invalid node:', node));
     if(!this || !this.authorId || !this.comments) return reject(createError(400, 'invalid node invokation:', this));
 
     this.comments.push(node);

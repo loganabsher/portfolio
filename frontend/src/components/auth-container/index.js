@@ -17,8 +17,6 @@ class AuthContainer extends React.Component{
   }
 
   handleAuth(user){
-    // NOTE: signup and login are reversed here because of the button text in the auth form
-    console.log('hey we got to the handleauth', user)
     if(user.type === 'login'){
       return this.props.login(user)
         .then(() => this.props.history.push('/'));

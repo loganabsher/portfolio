@@ -20,7 +20,7 @@ class Dashboard extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      loading: true
+      messages: null
     };
 
     this.handleNewMessage = this.handleNewMessage.bind(this);
@@ -35,7 +35,7 @@ class Dashboard extends React.Component{
 
   componentWillReceiveProps(nextProps){
     console.log('props recieved', nextProps);
-    this.setState({message: JSON.parse(nextProps.message), loading: false});
+    this.setState({messages: nextProps.messages, loading: false});
   }
 
   handleNewMessage(message){
@@ -66,9 +66,8 @@ class Dashboard extends React.Component{
       <div className='dashboard'>
         <p>hey you made it to the dashboard</p>
         <MessageForm onComplete={this.handleNewMessage} />
-        {this.state.message ? this.state.message.map((ele, index) => {
-          console.log(this.state);
-          return(<MessageTemplate key={index} title={ele.title} text={ele.text} comments={ele.comments} />);
+        {this.state.messages ? this.state.messages.map((ele, index) => {
+          return(<MessageTemplate key={index} message={ele} />);
         }) : <p>no messages</p>
         }
       </div>
@@ -87,7 +86,7 @@ Dashboard.PropTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  message: state.message
+  messages: state.messages
 });
 
 // NOTE: the update request should maybe be moved to the individual message templates
