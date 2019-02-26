@@ -45,15 +45,15 @@ profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) 
   if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
   if(!req.body || (!req.body.firstName && !req.body.lastName && !req.body.userName)) return next(createError(400, 'request did not meet minimum information requirements'));
 
-  Profile.findById({'_id': req.user.profileId})
+  let fields = {};
+
+  if(req.body.firstName) fields.firstName = req.body.firstName;
+  if(req.body.lastName) fields.lastName = req.body.lastName;
+  if(req.body.userName) fields.userName = req.body.userName;
+
+  Profile.findOneAndUpdate({'_id': req.user.profileId}, fields)
     .then((profile) => {
       if(!profile) return next(createError(500, 'no profile found'));
-      if(profile._id != req.user.profileId) return next(createError(401, 'you are not authorized to edit this profile'));
-
-      if(req.body.firstName) profile.firstName = req.body.firstName;
-      if(req.body.lastName) profile.lastName = req.body.lastName;
-      if(req.body.userName) profile.userName = req.body.userName;
-      profile.save();
       res.json(profile);
     })
     .catch(next);
@@ -70,8 +70,9 @@ profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res,ne
       if(!profile) return next(createError(500, 'no profile found'));
       if(profile._id != req.user.profileId) return next(createError(401, 'you are not authorized to delete this profile'));
 
+      let profileId = req.user.profileId;
       profile.disconnectProfileAndUser(req.user._id)
-        .then(() => Profile.findByIdAndRemove({'_id': req.user._id}))
+        .then(() => Profile.findByIdAndRemove({'_id': profileId}))
         .then(() => res.status(204).send())
         .catch(next);
     })
