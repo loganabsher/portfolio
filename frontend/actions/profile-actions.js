@@ -31,7 +31,7 @@ export const profileCreateRequest = (profile) => (dispatch) => {
     .set('Authorization', `Bearer ${token}`)
     .send(profile)
     .then((res) => {
-      dispatch(profileCreate(JSON.parse(res.text)));
+      dispatch(profileCreate(res.body));
       return res;
     })
     .catch((err) => console.error(err));
@@ -57,7 +57,7 @@ export const profileUpdateRequest = (profile) => (dispatch) => {
     .send(profile)
     .then((res) => {
       console.log('profile update', res);
-      dispatch(profileFetch(res.body));
+      dispatch(profileUpdate(res.body));
       return res;
     })
     .catch((err) => console.error(err));
@@ -70,7 +70,7 @@ export const profileDeleteRequest = () => (dispatch) => {
     .set('Authorization', `Bearer ${token}`)
     .then((res) => {
       console.log('profile delete', res);
-      dispatch(profileFetch(JSON.parse(res.text)));
+      dispatch(profileDelete());
       return res;
     })
     .catch((err) => console.error(err));

@@ -19,20 +19,20 @@ class ProfileForm extends React.Component{
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('hey we got those props down here');
     this.setState({profile: nextProps.profile});
   }
 
   handleChange(e){
     let {name, value} = e.target;
-    console.log(this.state);
     this.setState({[name]: value});
   }
+
+  // NOTE: could probably combine these two very similar methods
 
   handleSubmit(e){
     e.preventDefault();
     if(!this.state.error){
-      this.props.onComplete(this.state)
+      this.props.onComplete(this.state, e.target.value)
         .then(() => this.setState({firstName: '', lastName: '', userName: ''}))
         .catch((error) => {
           console.error(error);
@@ -42,6 +42,7 @@ class ProfileForm extends React.Component{
         });
     }
   }
+
 // NOTE: I'm wondering if I should make more of a change if there is an existing profile?
 // NOTE: very overlycomplicated? I think so
   render(){
@@ -70,8 +71,8 @@ class ProfileForm extends React.Component{
               value={this.state.text}
               onChange={this.handleChange}
             />
-            <button type='submit' onClick={this.handleSubmit}>submit</button>
-            <button onClick={this.props.handleDelete}>delete</button>
+            <button type='submit' value='submit' onClick={this.handleSubmit}>submit</button>
+            <button value='delete' onClick={this.handleSubmit}>delete</button>
           </form> :
 
           <form>
@@ -96,7 +97,7 @@ class ProfileForm extends React.Component{
               value={this.state.text}
               onChange={this.handleChange}
             />
-            <button type='submit' onClick={this.handleSubmit}>submit</button>
+            <button type='submit' value='submit' onClick={this.handleSubmit}>submit</button>
           </form>
         }
       </div>

@@ -25,24 +25,28 @@ class ProfileContainer extends React.Component{
     this.props.profileFetch();
   }
 
-  handleSubmit(profile){
-    if(this.state.profile){
-      return this.props.profileUpdate(profile);
+  handleSubmit(profile, type){
+    console.log(this)
+    console.log(this.props)
+    if(type == 'submit'){
+      if(this.state.profile){
+        return this.props.profileUpdate(profile);
+      }else{
+        return this.props.profileCreate(profile)
+          .then(() => this.props.history.push('/'));
+      }
+    }else if(type == 'delete'){
+      return this.props.profileDelete();
     }else{
-      return this.props.profileCreate(profile)
-        .then(() => this.props.history.push('/'));
+      console.error('unsupported type', type);
     }
-  }
-
-  handleDelete(){
-    return this.props.profileDelete();
   }
 
   render(){
     return(
       <div className='profile-container'>
         <p>settings page</p>
-        <ProfileForm onComplete={this.handleSubmit} profile={this.state.profile ? this.state.profile : null} delete={this.handleDelete} />
+        <ProfileForm onComplete={this.handleSubmit} profile={this.state.profile ? this.state.profile : null} />
       </div>
     );
   }
