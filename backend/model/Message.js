@@ -20,23 +20,6 @@ const messageSchema = Schema({
   delete: {type: Boolean, default: false}
 });
 
-messageSchema.methods.addComment = function(node){
-  debug('addComment');
-
-  return new Promise((resolve, reject) => {
-    console.log(node)
-    console.log(this)
-    if(!node || !node.authorId || node.prev) return reject(createError(400, 'invalid node:', node));
-    if(!this || !this.authorId || !this.comments) return reject(createError(400, 'invalid node invokation:', this));
-
-    this.comments.push(node);
-    node.prev = this._id;
-    this.save();
-    node.save();
-    resolve(this);
-  });
-};
-
 // NOTE: needs work
 messageSchema.methods.addPhoto = function(photo){
   debug('addComment');
@@ -48,6 +31,37 @@ messageSchema.methods.addPhoto = function(photo){
 };
 
 const Message = module.exports = mongoose.model('messages', messageSchema);
+
+Message.addComment = function(node){
+  debug('addComment');
+
+  return new Promise((resolve, reject) => {
+    console.log(node)
+    console.log(this)
+    if(!node || !node.authorId || node.prev) return reject(createError(400, 'invalid node:', node));
+    if(!this || !this.authorId || !this.comments) return reject(createError(400, 'invalid node invokation:', this));
+
+    let add = (parent, child) => {
+      if(parent.prev){
+        Message.findById({'_id': parent.prev})
+          .then((node) => {
+            
+          })
+      }else{
+
+      }
+    }
+
+    if(this.prev){
+
+    }
+    this.comments.push(node);
+    node.prev = this._id;
+    this.save();
+    node.save();
+    resolve(this);
+  });
+};
 
 Message.handleEdit = function(){
   debug('handleEdit');
