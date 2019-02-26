@@ -17,15 +17,12 @@ export const logout = () => {
 };
 
 export const tokenCheck = (token) => {
-  console.log('tokencheck', token);
   if(token){
-    console.log('valid')
     return {
       type: 'TOKEN_CHECK',
       payload: token
     };
   }else{
-    console.log('invalid')
     return {
       type: 'TOKEN_CHECK',
       payload: null

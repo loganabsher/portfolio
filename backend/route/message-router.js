@@ -24,16 +24,24 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res) => {
       authorId: req.user._id,
       text: req.body.text || null,
       title: req.body.title || null,
-      // NOTE: probably need some sort of method to handle photo uploads
     });
 
     if(req.body.parentId){
-      Message.findById({'_id': req.body.parentId})
-        .then((parent) => {
-          if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
-          parent.addComment(message)
-            .then((message) => resolve(res.json(message)));
-        });
+      // Message.findById({'_id': req.body.parentId})
+      //   .then((parent) => {
+      //     if(!parent || !parent.comments) reject(createError(404, 'not found: this parent node was either invalid or doesn\'t exist:', parent));
+      //     let add = (node, comment) => {
+      //       node.addComment(comment)
+      //         .then((parent) => {
+      //           console.log('just checking some thigns', parent)
+      //           if(parent.prev){
+      //             add(parent.prev, node);
+      //           }
+      //         });
+      //     };
+      //     add(parent, message);
+      //     resolve(res.json(message));
+      //   });
     }else{
       message.save()
         .then((message) => resolve(res.json(message)))

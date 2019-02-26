@@ -66,8 +66,7 @@ export const messageFetchAllRequest = () => (dispatch) => {
   return superagent.get(`${process.env.API_URL}/api/message/all`)
     .set('Authorization', `Bearer ${token}`)
     .then((res) => {
-      console.log('message-fetch-all working??', res.text);
-      dispatch(messageFetchAll(res.text));
+      dispatch(messageFetchAll(JSON.parse(res.text)));
       return res.text;
     })
     .catch((err) => console.error(err));

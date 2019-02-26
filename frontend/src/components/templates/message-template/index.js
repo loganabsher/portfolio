@@ -3,36 +3,36 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import commentTempalte from '../comment-template';
-
 class MessageTemplate extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      title: this.props.title,
-      text: this.props.text,
-      comments: this.props.comments
+      message: this.props.message
     };
+
+    this.handleComments = this.handleComments.bind(this);
   }
 
-  componentDidMount(){
-    console.log(this.state);
+  handleComments(comments, layer){
+    return comments.map((comment, index) => {
+      // NOTE: gotta fix the keys, its gonna be confusing
+      console.log(comment)
+      return(
+        <div key={index} className={`depth-${layer}`}>
+          <h6>comment.title</h6>
+          <p>comment.text</p>
+          {comment.comments.length > 0 ? this.handleComments(comments, layer++) : <p>reply</p>}
+        </div>
+      );
+    });
   }
 
   render(){
     return(
       <div className='message-template'>
-        <h2>{this.state.title}</h2>
-        <p>{this.state.text}</p>
-        <ul>
-          {this.state.comments.map((comment, index) => {
-            console.log('THIS IS THE COMMENT', comment);
-            if(comment.value){
-              console.log(comment.value);
-              return(<commentTempalte key={index} value={comment.value} />);
-            }
-          })}
-        </ul>
+        <h2>{this.state.message.title}</h2>
+        <p>{this.state.message.text}</p>
+        {this.state.message.comments.length > 0 ? this.handleComments(this.state.message.comments, 1) : <p>reply temp</p>}
       </div>
     );
   }
