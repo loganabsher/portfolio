@@ -39,6 +39,7 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res) => {
               });
           };
           add(parent, message);
+          resolve(res.json(message));
         });
     }else{
       message.save()
