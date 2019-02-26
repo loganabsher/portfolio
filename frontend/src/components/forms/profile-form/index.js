@@ -18,6 +18,11 @@ class ProfileForm extends React.Component{
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
+  componentWillReceiveProps(nextProps){
+    console.log('hey we got those props down here');
+    this.setState({profile: nextProps.profile});
+  }
+
   handleChange(e){
     let {name, value} = e.target;
     console.log(this.state);
@@ -37,34 +42,63 @@ class ProfileForm extends React.Component{
         });
     }
   }
-
+// NOTE: I'm wondering if I should make more of a change if there is an existing profile?
+// NOTE: very overlycomplicated? I think so
   render(){
     return(
       <div className='profile-form'>
-        <form>
-          <input
-            type='text'
-            name='firstName'
-            placeholder='first name'
-            value={this.state.text}
-            onChange={this.handleChange}
-          />
-          <input
-            type='text'
-            name='lastName'
-            placeholder='last name'
-            value={this.state.text}
-            onChange={this.handleChange}
-          />
-          <input
-            type='text'
-            name='userName'
-            placeholder='user name'
-            value={this.state.text}
-            onChange={this.handleChange}
-          />
-          <button type='submit' onClick={this.handleSubmit}>submit</button>
-        </form>
+        {this.state.profile ?
+          <form>
+            <input
+              type='text'
+              name='firstName'
+              placeholder={this.state.profile.firstName ? this.state.profile.firstName : 'first name'}
+              value={this.state.text}
+              onChange={this.handleChange}
+            />
+            <input
+              type='text'
+              name='lastName'
+              placeholder={this.state.profile.lastName ? this.state.profile.lastName : 'last name'}
+              value={this.state.text}
+              onChange={this.handleChange}
+            />
+            <input
+              type='text'
+              name='userName'
+              placeholder={this.state.profile.userName ? this.state.profile.userName : 'user name'}
+              value={this.state.text}
+              onChange={this.handleChange}
+            />
+            <button type='submit' onClick={this.handleSubmit}>submit</button>
+            <button onClick={this.props.handleDelete}>delete</button>
+          </form> :
+
+          <form>
+            <input
+              type='text'
+              name='firstName'
+              placeholder='first name'
+              value={this.state.text}
+              onChange={this.handleChange}
+            />
+            <input
+              type='text'
+              name='lastName'
+              placeholder='last name'
+              value={this.state.text}
+              onChange={this.handleChange}
+            />
+            <input
+              type='text'
+              name='userName'
+              placeholder='user name'
+              value={this.state.text}
+              onChange={this.handleChange}
+            />
+            <button type='submit' onClick={this.handleSubmit}>submit</button>
+          </form>
+        }
       </div>
     );
   }
