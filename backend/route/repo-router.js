@@ -2,13 +2,16 @@
 
 const debug = require('debug')('Backend-Portfolio:repo-router.js');
 
-const superagent = require('superagent');
 const Router = require('express').Router;
+const jsonParser = require('body-parser').json();
+const superagent = require('superagent');
 
 const Repository = require('../model/Repository.js');
 
 const repositoryRouter = module.exports = Router();
 
+
+// NOTE: this should be a route, it needs the body-parser as well
 const loader = function () {
   debug('repoLoader');
   // NOTE: find a way to check the number of repos, replace page=100 with the number of repos

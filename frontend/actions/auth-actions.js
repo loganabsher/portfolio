@@ -52,7 +52,7 @@ export const tokenCheckRequest = (token) => (dispatch) => {
       .set('Authorization', `Bearer ${token}`)
       .then((token) => {
         if(token){
-          return dispatch(tokenCheck(JSON.parse(token.text)));
+          return dispatch(tokenCheck(token.body));
         }else{
           return dispatch(tokenCheck(null));
         }

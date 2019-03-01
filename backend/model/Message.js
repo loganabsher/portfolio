@@ -32,6 +32,8 @@ messageSchema.methods.addPhoto = function(photo){
 
 const Message = module.exports = mongoose.model('messages', messageSchema);
 
+
+// NOTE: this is so broken at the moment, I need to figure out a better way of calling all this nonsense, I guess I'll sleep on it
 Message.addComment = function(node){
   debug('addComment');
 
@@ -45,7 +47,7 @@ Message.addComment = function(node){
       if(parent.prev){
         Message.findById({'_id': parent.prev})
           .then((node) => {
-            
+
           })
       }else{
 
