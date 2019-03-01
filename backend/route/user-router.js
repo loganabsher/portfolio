@@ -9,7 +9,6 @@ const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
 const basicAuth = require('../lib/basic-auth-middleware.js');
-const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
 const Message = require('../model/Message.js');
