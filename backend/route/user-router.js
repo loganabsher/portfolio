@@ -11,7 +11,8 @@ const jwt = require('jsonwebtoken');
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
-const Message = require('../model/Message.js');
+const Posting = require('../model/Posting.js');
+const Comment = require('../model/Comment.js');
 
 const userRouter = module.exports = Router();
 
@@ -104,7 +105,11 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
         return user;
       })
       .then((user) => {
-        Message.deleteMany({'authorId': user._id});
+        Posting.deleteMany({'authorId': user._id});
+        return user;
+      })
+      .then((user) => {
+        Comment.deleteMany({'authorId': user._id});
         return user;
       })
       .then((user) => {

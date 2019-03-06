@@ -9,6 +9,7 @@ const createError = require('http-errors');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
 const Posting = require('../model/Posting.js');
+const Comment = require('../model/Comment.js');
 
 const postingRouter = module.exports = Router();
 
@@ -29,6 +30,7 @@ postingRouter.post('/api/posting', bearerAuth, jsonParser, (req, res) => {
     message.save()
       .then((message) => resolve(res.json(message)))
       .catch((err) => reject(err));
+  });
 });
 
 postingRouter.get('/api/posting/all', bearerAuth, jsonParser, (req, res) => {
@@ -110,9 +112,13 @@ postingRouter.delete('/api/posting/remove/:id', bearerAuth, jsonParser, (req, re
         if(!posting) return reject(createError(404, 'not found: no message was found:', posting));
         if(req.user._id != posting.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
+        if(posting.next.length > 0){
+          
+        }
+
         Posting.deleteOne({'_id': req.params._id})
           .then(() => resolve(res.status(204).send()))
-          .catch((err) => reject(createError(500, 'failed delete')))
+          .catch((err) => reject(createError(500, 'failed delete', err)));
         // NOTE: need to add something that deletes all of the posting's children
       });
   });

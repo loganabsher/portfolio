@@ -8,6 +8,8 @@ const Schema = mongoose.Schema;
 const Promise = require('bluebird');
 const createError = require('http-errors');
 
+const Comment = require('./Comment.js');
+
 const postingSchema = Schema({
   authorId: {type: String, required: true},
   title: {type: String, required: true},
@@ -18,5 +20,11 @@ const postingSchema = Schema({
   updated_at: {type: Date, default: Date.now},
   delete: {type: Boolean, default: false}
 });
+
+postingSchema.methods.removeAllComments = function(id){
+  debug('removeAllComments');
+
+  
+};
 
 module.exports = mongoose.model('postings', postingSchema);
