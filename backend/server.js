@@ -1,6 +1,5 @@
 'use strict';
 
-// NOTE: maybe try removing this dotenv and see if things works still
 require('dotenv').config();
 const cors = require('cors');
 const debug = require('debug')('Backend-Portfolio:server.js');
@@ -15,7 +14,8 @@ const user = require('./route/user-router.js');
 const auth = require('./route/auth-router.js');
 const profile = require('./route/profile-router.js');
 const repository = require('./route/repo-router.js');
-const message = require('./route/message-router.js');
+const posting = require('./route/posting-router.js');
+const comment = require('./route/comment-router.js');
 const reddit = require('./route/reddit-router.js');
 
 const app = express();
@@ -43,7 +43,8 @@ app.use(user);
 app.use(auth);
 app.use(profile);
 app.use(repository);
-app.use(message);
+app.use(posting);
+app.use(comment);
 app.use(reddit);
 
 // NOTE: this probably needs some sort of authentications from an admin
