@@ -18,6 +18,4 @@ const commentSchema = Schema({
   delete: {type: Boolean, default: false}
 });
 
-// NOTE: need to add a method to connect comments and their parents
-
 module.exports = mongoose.model('comments', commentSchema);
