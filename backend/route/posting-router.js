@@ -113,13 +113,18 @@ postingRouter.delete('/api/posting/remove/:id', bearerAuth, jsonParser, (req, re
         if(req.user._id != posting.authorId) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
         if(posting.next.length > 0){
-
+          Posting.deleteAllChildren()
+            .then(() => {
+              Posting.deleteOne({'_id': req.params._id})
+                .then(() => resolve(res.status(204).send()))
+                .catch((err) => reject(createError(500, 'failed delete', err)));
+            })
+            .catch((err) => reject(createError(500, 'failed delete', err)));
+        }else{
+          Posting.deleteOne({'_id': req.params._id})
+            .then(() => resolve(res.status(204).send()))
+            .catch((err) => reject(createError(500, 'failed delete', err)));
         }
-
-        Posting.deleteOne({'_id': req.params._id})
-          .then(() => resolve(res.status(204).send()))
-          .catch((err) => reject(createError(500, 'failed delete', err)));
-        // NOTE: need to add something that deletes all of the posting's children
       });
   });
 });

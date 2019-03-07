@@ -5,6 +5,7 @@ const debug = require('debug')('Backend-Portfolio:repo-router.js');
 const Router = require('express').Router;
 const jsonParser = require('body-parser').json();
 const superagent = require('superagent');
+const createError = require('http-errors');
 
 const Repository = require('../model/Repository.js');
 
@@ -18,6 +19,7 @@ const loader = function () {
   superagent.get('https://api.github.com/user/repos?per_page=100&type=owner/')
     .set({'Authorization': 'token ' + process.env.GITHUB_TOKEN})
     .end((req, res) => {
+      if(!res || !res.body || res.body.length < 1) return createError(500, 'couldn\'t connect to github api');
       res.body.forEach((ele) => {
         Repository.findOne({name: ele.name})
           .then((repo) => {
