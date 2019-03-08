@@ -21,8 +21,8 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res) => {
 
     let comment = new Comment({
       authorId: req.user._id,
-      text: req.body.text || null,
-      title: req.body.title || null,
+      text: req.body.text,
+      prev: req.body.prev,
     });
 
     comment.save()

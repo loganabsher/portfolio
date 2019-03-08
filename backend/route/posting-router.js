@@ -82,7 +82,7 @@ postingRouter.put('/api/posting/edit/:id', bearerAuth, jsonParser, (req, res) =>
   debug('PUT: /api/posting/edit/:id');
 
   return new Promise((resolve, reject) => {
-    if(!req.params._id) return reject(createError(400, 'an _id must be provided, got:', req.params._id));
+    if(!req.params.id) return reject(createError(400, 'an _id must be provided, got:', req.params._id));
     if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return reject(createError(400, 'bad request: missing minimum content requirments'));
     if(!req.user || !req.user._id) return reject(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 

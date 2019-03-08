@@ -21,8 +21,8 @@ const postingSchema = Schema({
   delete: {type: Boolean, default: false}
 });
 
-postingSchema.methods.addComment = function(commentId){
-  debug('addComment');
+postingSchema.methods.addNext = function(commentId){
+  debug('addNext');
 
   let post = this;
   return new Promise((resolve, reject) => {
