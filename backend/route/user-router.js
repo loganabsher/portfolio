@@ -11,7 +11,8 @@ const jwt = require('jsonwebtoken');
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
-const Message = require('../model/Message.js');
+const Posting = require('../model/Posting.js');
+const Comment = require('../model/Comment.js');
 
 const userRouter = module.exports = Router();
 
@@ -28,7 +29,7 @@ userRouter.post('/api/signup', jsonParser, (req, res) => {
         if(user){
           if(user.authenticated){
             // NOTE: maybe update all error codes and texts to be very specific
-            reject(createError(400, 'this email is already used, please log in with your password'));
+            reject(createError(400, 'bad request: this email is already used, please log in with your password'));
           }else{
             user.generatePasswordHash('normal', password)
               .then((user) => user.generateToken())
@@ -49,10 +50,10 @@ userRouter.post('/api/signup', jsonParser, (req, res) => {
           user.generatePasswordHash('normal', password)
             .then((user) => user.generateToken())
             .then((token) => resolve(res.json(token)))
-            .catch((err) => reject(console.error(err)));
+            .catch((err) => reject(res.json(err)));
         }
       })
-      .catch((err) => reject(console.error(err)));
+      .catch((err) => reject(res.json(err)));
   });
 });
 
@@ -104,7 +105,11 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
         return user;
       })
       .then((user) => {
-        Message.deleteMany({'authorId': user._id});
+        Posting.deleteMany({'authorId': user._id});
+        return user;
+      })
+      .then((user) => {
+        Comment.deleteMany({'authorId': user._id});
         return user;
       })
       .then((user) => {

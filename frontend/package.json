@@ -6,7 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack",
-    "watch": "webpack-dev-server --inline --hot",
+    "watch": "webpack-dev-server --inline --hot"
   },
   "keywords": [
     "react"

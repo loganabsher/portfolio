@@ -14,6 +14,8 @@ const passport = require('passport');
 const FacebookStrategy = require('passport-facebook');
 const TwitterStrategy = require('passport-twitter');
 
+const Posting = require('./Posting.js');
+
 const userSchema = Schema({
   profileId: String,
   googlePermissions: {
@@ -109,6 +111,20 @@ userSchema.methods.generateToken = function(){
     this.generateFindHash()
       .then((findHash) => resolve(jsonwebtoken.sign({token: findHash}, process.env.APP_SECRET)))
       .catch((err) => reject(err));
+  });
+};
+
+userSchema.handleUserDelete = function(){
+  debug('handleUserDelete');
+
+  // NOTE: this is so bad, I need to think about this more logically
+  return new Promise((resolve, reject) => {
+    Posting.find({'authorId': this._id})
+      .then((posts) => {
+        if(!posts) resolve(this);
+        Posting.deleteAllChildren()
+          .then((posts) => resolve(posts))
+      })
   });
 };
 
