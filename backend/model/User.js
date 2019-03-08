@@ -117,11 +117,13 @@ userSchema.methods.generateToken = function(){
 userSchema.handleUserDelete = function(){
   debug('handleUserDelete');
 
+  // NOTE: this is so bad, I need to think about this more logically
   return new Promise((resolve, reject) => {
     Posting.find({'authorId': this._id})
       .then((posts) => {
         if(!posts) resolve(this);
-        
+        Posting.deleteAllChildren()
+          .then((posts) => resolve(posts))
       })
   });
 };
