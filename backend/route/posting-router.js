@@ -30,8 +30,8 @@ postingRouter.post('/api/posting', bearerAuth, jsonParser, (req, res, next) => {
     .catch((err) => next(err));
 });
 
-postingRouter.get('/api/posting/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/posting/:id');
+postingRouter.get('/api/posting/find/:id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/posting/find/:id');
 
   if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
