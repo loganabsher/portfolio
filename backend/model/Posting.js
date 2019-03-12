@@ -21,27 +21,6 @@ const postingSchema = Schema({
   delete: {type: Boolean, default: false}
 });
 
-postingSchema.methods.addNext = function(commentId){
-  debug('addNext');
-
-  let post = this;
-  return new Promise((resolve, reject) => {
-    if(!commentId) return reject(createError(400, 'bad request: no id feild was provided', commentId));
-
-    Comment.findById({'_id': commentId})
-      .then((comment) => {
-        if(!comment) return reject(createError(404, 'not found: this comment doesnt exist', commentId, comment));
-
-        // NOTE: this should maybe be a method chain
-        comment.prev = post._id;
-        comment.save();
-        post.next.push(commentId);
-        post.save();
-        resolve(post);
-      });
-  });
-};
-
 // NOTE: this should probably be in the comment.js model
 // postingSchema.methods.removeComment = function(commentId){
 //   debug('removeComment');
@@ -75,11 +54,10 @@ postingSchema.methods.deleteAllChildren = function(){
     Comment.find({'prev': post._id})
       .then((postings) => {
         if(!postings) reject(createError(409, 'database error: the items in the database do not match the item requested for deletion', post.next, postings));
-        postings.map((ele) => {
-          deleteLoop(ele)
-            .then(() => resolve(post));
-        });
+        return postings.map((ele) => deleteLoop(ele));
       })
+      // NOTE: should probably either rename the method or hove it set it's next to just an empty array
+      .then((post) => resolve(post))
       .catch((err) => reject(createError(500, 'failed to delete', err)));
   });
 };

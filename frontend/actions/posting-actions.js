@@ -50,7 +50,7 @@ export const postingCreateRequest = (posting) => (dispatch) => {
 export const postingFetchRequest = (postingId) => (dispatch) => {
   let token = readCookie('portfolio-login-token');
 
-  return superagent.get(`${process.env.API_URL}/api/posting/${postingId}`)
+  return superagent.get(`${process.env.API_URL}/api/posting/find/${postingId}`)
     .set('Authorization', `Bearer ${token}`)
     .then((res) => {
       console.log('message-fetch working??', res.body);
