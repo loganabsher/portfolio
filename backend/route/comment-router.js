@@ -48,8 +48,8 @@ commentRouter.get('/api/comment/find/:id', bearerAuth, jsonParser, (req, res, ne
     .catch((err) => next(err));
 });
 
-commentRouter.get('/api/posting/self', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/posting/self');
+commentRouter.get('/api/comment/self', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/comment/self');
 
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 

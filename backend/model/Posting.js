@@ -54,11 +54,10 @@ postingSchema.methods.deleteAllChildren = function(){
     Comment.find({'prev': post._id})
       .then((postings) => {
         if(!postings) reject(createError(409, 'database error: the items in the database do not match the item requested for deletion', post.next, postings));
-        postings.map((ele) => {
-          deleteLoop(ele)
-            .then(() => resolve(post));
-        });
+        return postings.map((ele) => deleteLoop(ele));
       })
+      // NOTE: should probably either rename the method or hove it set it's next to just an empty array
+      .then((post) => resolve(post))
       .catch((err) => reject(createError(500, 'failed to delete', err)));
   });
 };

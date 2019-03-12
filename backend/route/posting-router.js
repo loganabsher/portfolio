@@ -104,7 +104,7 @@ postingRouter.delete('/api/posting/remove/:id', bearerAuth, jsonParser, (req, re
       if(req.user._id != posting.authorId) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
       if(posting.next.length > 0){
-        Posting.deleteAllChildren()
+        posting.deleteAllChildren()
           .then(() => {
             Posting.deleteOne({'_id': req.params.id})
               .then(() => res.status(204).send())
