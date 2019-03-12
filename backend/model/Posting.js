@@ -21,27 +21,6 @@ const postingSchema = Schema({
   delete: {type: Boolean, default: false}
 });
 
-postingSchema.methods.addNext = function(commentId){
-  debug('addNext');
-
-  let post = this;
-  return new Promise((resolve, reject) => {
-    if(!commentId) return reject(createError(400, 'bad request: no id feild was provided', commentId));
-
-    Comment.findById({'_id': commentId})
-      .then((comment) => {
-        if(!comment) return reject(createError(404, 'not found: this comment doesnt exist', commentId, comment));
-
-        // NOTE: this should maybe be a method chain
-        comment.prev = post._id;
-        comment.save();
-        post.next.push(commentId);
-        post.save();
-        resolve(post);
-      });
-  });
-};
-
 // NOTE: this should probably be in the comment.js model
 // postingSchema.methods.removeComment = function(commentId){
 //   debug('removeComment');

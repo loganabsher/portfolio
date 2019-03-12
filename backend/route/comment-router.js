@@ -7,6 +7,7 @@ const jsonParser = require('body-parser').json();
 const createError = require('http-errors');
 
 const bearerAuth = require('../lib/bearer-auth-middleware.js');
+const Posting = require('../model/Posting.js');
 const Comment = require('../model/Comment.js');
 
 const commentRouter = module.exports = Router();
@@ -17,20 +18,24 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
   if(!req.body || !req.body.text || !req.body.prev) return next(createError(400, 'bad request: missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  let comment = new Comment({
-    authorId: req.user._id,
-    text: req.body.text,
-    prev: req.body.prev,
-  });
-
-  comment.save()
+  Posting.findById({'_id': req.body.prev})
+    .then((posting) => {
+      if(!posting) return next(createError(404, 'the post you are trying to comment on doesn\'t exist', posting, req.body.prev));
+      let comment = new Comment({
+        authorId: req.user._id,
+        text: req.body.text,
+        prev: req.body.prev,
+      });
+      return comment.addNext(posting);
+    })
+    .then((comment) => comment.save())
     .then((comment) => res.json(comment))
     .catch((err) => next(err));
 });
 
 
-commentRouter.get('/api/comment/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/comment/:id');
+commentRouter.get('/api/comment/find/:id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/comment/find/:id');
 
   if(!req.params || !req.params.id) return next(createError(400, 'bad request: no comment id was provided', req.params.id));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
