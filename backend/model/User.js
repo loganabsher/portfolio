@@ -114,7 +114,7 @@ userSchema.methods.generateToken = function(){
   });
 };
 
-userSchema.handleUserDelete = function(){
+userSchema.methods.handleUserDelete = function(){
   debug('handleUserDelete');
 
   let user = this;
@@ -124,8 +124,8 @@ userSchema.handleUserDelete = function(){
         if(!posts) resolve(this);
         posts.map((ele) => ele.deleteAllChildren());
       })
-      .then(() => Posting.deleteMany({'_authorId': user._id}))
-      .theb(() => resolve(user))
+      .then(() => Posting.deleteMany({'authorId': user._id}))
+      .then(() => resolve(user))
       .catch((err) => reject(err));
 
   });
