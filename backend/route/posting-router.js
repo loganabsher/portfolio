@@ -33,7 +33,7 @@ postingRouter.post('/api/posting', bearerAuth, jsonParser, (req, res, next) => {
 postingRouter.get('/api/posting/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/posting/:id');
 
-  if(!req.params._id) return next(createError(400, 'an _id must be provided, got:', req.params._id));
+  if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
   Posting.findById({'_id': req.params.id})
@@ -73,7 +73,7 @@ postingRouter.get('/api/posting/self', bearerAuth, jsonParser, (req, res, next) 
 postingRouter.put('/api/posting/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/posting/edit/:id');
 
-  if(!req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params._id));
+  if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
   if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return next(createError(400, 'bad request: missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
@@ -95,6 +95,7 @@ postingRouter.put('/api/posting/edit/:id', bearerAuth, jsonParser, (req, res, ne
 postingRouter.delete('/api/posting/remove/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('DELETE: /api/posting/remove/:id');
 
+  if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
   Posting.findById({'_id': req.params.id})
@@ -105,13 +106,13 @@ postingRouter.delete('/api/posting/remove/:id', bearerAuth, jsonParser, (req, re
       if(posting.next.length > 0){
         Posting.deleteAllChildren()
           .then(() => {
-            Posting.deleteOne({'_id': req.params._id})
+            Posting.deleteOne({'_id': req.params.id})
               .then(() => res.status(204).send())
               .catch((err) => next(createError(500, 'failed delete', err)));
           })
           .catch((err) => next(createError(500, 'failed delete', err)));
       }else{
-        Posting.deleteOne({'_id': req.params._id})
+        Posting.deleteOne({'_id': req.params.id})
           .then(() => res.status(204).send())
           .catch((err) => next(createError(500, 'failed delete', err)));
       }

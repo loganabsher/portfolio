@@ -10,8 +10,8 @@ const jwt = require('jsonwebtoken');
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
-const Posting = require('../model/Posting.js');
-const Comment = require('../model/Comment.js');
+// const Posting = require('../model/Posting.js');
+// const Comment = require('../model/Comment.js');
 
 const userRouter = module.exports = Router();
 
@@ -101,8 +101,6 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res, next) => {
       User.deleteOne({'_id': user._id})
         .then(() => res.status(204).send());
     })
-    // NOTE: not sure wtf is going on here, but this seems unnessessary
-    .then((status) => res.status(status).send())
     .catch((err) => next(console.error(err)));
 });
 
