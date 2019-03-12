@@ -4,7 +4,6 @@ const debug = require('debug')('Backend-Portfolio:user-router.js');
 
 const jsonParser = require('body-parser').json();
 const Router = require('express').Router;
-const Promise = require('bluebird');
 const createError = require('http-errors');
 const jwt = require('jsonwebtoken');
 
@@ -17,110 +16,105 @@ const Comment = require('../model/Comment.js');
 const userRouter = module.exports = Router();
 
 // NOTE: need to add some sort of email authentication
-userRouter.post('/api/signup', jsonParser, (req, res) => {
+userRouter.post('/api/signup', jsonParser, (req, res, next) => {
   debug('POST: /api/signup');
 
   let password = req.body.password;
   delete req.body.password;
 
-  return new Promise((resolve, reject) => {
-    User.findOne({'email': req.body.email})
-      .then((user) => {
-        if(user){
-          if(user.authenticated){
-            // NOTE: maybe update all error codes and texts to be very specific
-            reject(createError(400, 'bad request: this email is already used, please log in with your password'));
-          }else{
-            user.generatePasswordHash('normal', password)
-              .then((user) => user.generateToken())
-              .then((token) => resolve(res.json(token)))
-              .catch((err) => reject(console.error(err)));
-          }
-        }
-        else{
-          debug('setting up new user');
-          let user = new User({
-            googlePermissions: {authenticated: false, password: null},
-            facebookPermissions: {authenticated: false, password: null},
-            twitterPermissions: {authenticated: false, password: null},
-            authenticated: true,
-            email: req.body.email
-          });
-
+  User.findOne({'email': req.body.email})
+    .then((user) => {
+      if(user){
+        if(user.authenticated){
+          // NOTE: maybe update all error codes and texts to be very specific
+          next(createError(400, 'bad request: this email is already used, please log in with your password'));
+        }else{
           user.generatePasswordHash('normal', password)
             .then((user) => user.generateToken())
-            .then((token) => resolve(res.json(token)))
-            .catch((err) => reject(res.json(err)));
+            .then((token) => res.json(token))
+            // NOTE: should come back a revisit this, see if there is any real difference between having console.error(err) rather than just returning err
+            .catch((err) => next(console.error(err)));
         }
-      })
-      .catch((err) => reject(res.json(err)));
-  });
+      }
+      else{
+        debug('setting up new user');
+        let user = new User({
+          googlePermissions: {authenticated: false, password: null},
+          facebookPermissions: {authenticated: false, password: null},
+          twitterPermissions: {authenticated: false, password: null},
+          authenticated: true,
+          email: req.body.email
+        });
+
+        user.generatePasswordHash('normal', password)
+          .then((user) => user.generateToken())
+          .then((token) => res.json(token))
+          .catch((err) => next(console.error(err)));
+      }
+    })
+    .catch((err) => next(console.error(err)));
 });
 
-userRouter.get('/api/login', basicAuth, (req, res) => {
+userRouter.get('/api/login', basicAuth, (req, res, next) => {
   debug('GET: /api/login');
 
-  return new Promise((resolve, reject) => {
-    User.findOne({'email': req.auth.email})
-      .then((user) => {
-        if(!user) reject(createError(401, 'user not found'));
-        return user.comparePasswordHash('normal', req.auth.password);
-      })
-      .then((user) => user.generateToken())
-      .then((token) => resolve(token))
-      .catch((err) => reject(console.error(err)));
-  })
-    .then((token) => res.json(token));
+  User.findOne({'email': req.auth.email})
+    .then((user) => {
+      if(!user) next(createError(401, 'user not found'));
+      return user.comparePasswordHash('normal', req.auth.password);
+    })
+    .then((user) => user.generateToken())
+    .then((token) => res.json(token))
+    .catch((err) => next(console.error(err)));
 });
 
-userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res) => {
+userRouter.put('/api/updatepassword', basicAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/updatepassword');
 
-  return new Promise((resolve, reject) => {
-    User.findOne({'email': req.auth.email})
-      .then((user) => {
-        if(!user) reject(createError(404, 'not found'));
-        return user.comparePasswordHash('normal', req.auth.password);
-      })
-      .then((user) => user.generatePasswordHash('normal', req.body.password))
-      .then((user) => user.generateToken())
-      .then((token) => resolve(token))
-      .catch((err) => reject(console.error(err)));
-  })
-    .then((token) => res.json(token));
+  User.findOne({'email': req.auth.email})
+    .then((user) => {
+      // NOTE: the inconsistancy here is killing me, come through here later and make everything uniform
+      if(!user) next(createError(404, 'not found'));
+      return user.comparePasswordHash('normal', req.auth.password);
+    })
+    .then((user) => user.generatePasswordHash('normal', req.body.password))
+    .then((user) => user.generateToken())
+    .then((token) => res.json(token))
+    .catch((err) => next(console.error(err)));
 });
 
 // NOTE: should probably add some sort of wait method that waits a few weeks before actually deleting the account and rather just have it be disabled, kinda like what facebook does
-userRouter.delete('/api/deleteaccount', basicAuth, (req, res) => {
+userRouter.delete('/api/deleteaccount', basicAuth, (req, res, next) => {
   debug('DELETE: /api/deleteaccount');
 
-  return new Promise((resolve, reject) => {
-    User.findOne({'email': req.auth.email})
-      .then((user) => {
-        if(!user) reject(createError(404, 'not found'));
-        return user.comparePasswordHash('normal', req.auth.password);
-      })
-      .then((user) => {
-        if(user.profileId) Profile.deleteOne({'_id': user.profileId});
-        return user;
-      })
-      .then((user) => {
-        Posting.deleteMany({'authorId': user._id});
-        return user;
-      })
-      .then((user) => {
-        Comment.deleteMany({'authorId': user._id});
-        return user;
-      })
-      .then((user) => {
-        User.deleteOne({'_id': user._id})
-          .then(() => resolve(204));
-      })
-      .catch((err) => reject(console.error(err)));
-  })
-    .then((status) => res.status(status).send());
+  User.findOne({'email': req.auth.email})
+    .then((user) => {
+      if(!user) next(createError(404, 'not found'));
+      return user.comparePasswordHash('normal', req.auth.password);
+    })
+    .then((user) => {
+      if(user.profileId) Profile.deleteOne({'_id': user.profileId});
+      return user;
+    })
+    // NOTE: was working on a user method to handle the deletion of everything related to this user, havent gotten it to work yet however
+    .then((user) => {
+      Posting.deleteMany({'authorId': user._id});
+      return user;
+    })
+    .then((user) => {
+      Comment.deleteMany({'authorId': user._id});
+      return user;
+    })
+    .then((user) => {
+      User.deleteOne({'_id': user._id})
+        .then(() => res.status(204).send());
+    })
+    // NOTE: not sure wtf is going on here, but this seems unnessessary
+    .then((status) => res.status(status).send())
+    .catch((err) => next(console.error(err)));
 });
 
+// NOTE: this seems to be a bad way of checking if someone is authenticated
 userRouter.get('/api/checkCookie', (req, res) => {
   debug('GET: /api/checkCookie');
 

@@ -59,7 +59,7 @@ profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) 
     .catch(next);
 });
 
-profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res,next) => {
+profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res, next) => {
   debug('DELETE: /api/profile/delete');
 
   if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));

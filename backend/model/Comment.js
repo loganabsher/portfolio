@@ -5,8 +5,8 @@ const debug = require('debug')('Backend-Portfolio:Comment.js');
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-const Promise = require('bluebird');
-const createError = require('http-errors');
+// const Promise = require('bluebird');
+// const createError = require('http-errors');
 
 const commentSchema = Schema({
   authorId: {type: String, required: true},
