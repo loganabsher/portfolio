@@ -3,17 +3,17 @@
 export default (state=null, action) => {
   let {type, payload} = action;
   switch(type){
-  case 'MESSAGE_CREATE':
+  case 'POSTING_CREATE':
     return [payload, ...state];
-  case 'MESSAGE_FETCH':
+  case 'POSTING_FETCH':
     return payload;
-  case 'MESSAGE_FETCH_ALL':
+  case 'POSTING_FETCH_ALL':
     return payload;
-  case 'MESSAGE_FETCH_ALL_USER':
+  case 'POSTING_FETCH_ALL_USER':
     return payload;
-  case 'MESSAGE_UPDATE':
+  case 'POSTING_UPDATE':
     return state.map((item) => item._id === payload._id ? payload : item);
-  case 'MESSAGE_DELETE':
+  case 'POSTING_DELETE':
     return state.filter((item) => item._id !== payload._id);
   default:
     return state;
