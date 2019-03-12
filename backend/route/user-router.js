@@ -96,15 +96,7 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res, next) => {
       if(user.profileId) Profile.deleteOne({'_id': user.profileId});
       return user;
     })
-    // NOTE: was working on a user method to handle the deletion of everything related to this user, havent gotten it to work yet however
-    .then((user) => {
-      Posting.deleteMany({'authorId': user._id});
-      return user;
-    })
-    .then((user) => {
-      Comment.deleteMany({'authorId': user._id});
-      return user;
-    })
+    .then((user) => user.handleUserDelete())
     .then((user) => {
       User.deleteOne({'_id': user._id})
         .then(() => res.status(204).send());
@@ -122,7 +114,7 @@ userRouter.get('/api/checkCookie', (req, res) => {
   if(authHeader){
     let token = authHeader.split('Bearer ')[1];
     jwt.verify(token, process.env.APP_SECRET, (err, decoded) => {
-      console.log(err, decoded)
+      console.log(err, decoded);
       if(err) return res.status(400).send();
       User.findOne({findHash: decoded.token})
         .then(() => res.json(token))
