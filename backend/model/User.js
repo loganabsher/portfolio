@@ -19,20 +19,20 @@ const Posting = require('./Posting.js');
 const userSchema = Schema({
   profileId: String,
   googlePermissions: {
-    authenticated: {type: Boolean, required: true},
-    password: String
+    authenticated: {type: Boolean, default: false},
+    password: {type: String, default: null}
   },
   facebookPermissions: {
-    authenticated: {type: Boolean, required: true},
-    password: String
+    authenticated: {type: Boolean, default: false},
+    password: {type: String, default: null}
   },
   twitterPermissions: {
-    authenticated: {type: Boolean, required: true},
-    password: String
+    authenticated: {type: Boolean, default: false},
+    password: {type: String, default: null}
   },
   email: {type: String, required: true, unique: true},
-  authenticated: {type: Boolean, required: true},
-  password: String,
+  authenticated: {type: Boolean, default: false},
+  password: {type: String, default: null},
   findHash: {type: String, unique: true}
 });
 
@@ -155,13 +155,8 @@ User.handleOauth = function(type, data){
         }else{
           debug(`POST: /api/auth/${type}`);
           debug(`new user signup with ${type}:`, data.email);
-          let newUser = new User({
-            googlePermissions: {authenticated: false, password: null},
-            facebookPermissions: {authenticated: false, password: null},
-            twitterPermissions: {authenticated: false, password: null},
-            authenticated: false,
-            email: data.email
-          });
+
+          let newUser = new User({email: data.email});
           newUser[type].authenticated = true;
           return newUser.generatePasswordHash(type, data.password);
         }

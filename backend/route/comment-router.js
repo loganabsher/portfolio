@@ -30,9 +30,22 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
     })
     .then((comment) => comment.save())
     .then((comment) => res.json(comment))
-    .catch((err) => next(err));
+    .catch(() => {
+      Comment.findById({'_id': req.body.prev})
+        .then((posting) => {
+          if(!posting) return next(createError(404, 'the post you are trying to comment on doesn\'t exist', posting, req.body.prev));
+          let comment = new Comment({
+            authorId: req.user._id,
+            text: req.body.text,
+            prev: req.body.prev,
+          });
+          return comment.addNext(posting);
+        })
+        .then((comment) => comment.save())
+        .then((comment) => res.json(comment))
+        .catch((err) => next(err));
+    });
 });
-
 
 commentRouter.get('/api/comment/find/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/comment/find/:id');
