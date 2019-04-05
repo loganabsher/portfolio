@@ -1,7 +1,6 @@
 'use strict';
 
 import React from 'react';
-import {connect} from 'react-redux';
 
 import Cowsay from 'cowsay-browser';
 import Promise from 'bluebird';
@@ -40,8 +39,4 @@ class CowsayContainer extends React.Component{
   }
 }
 
-const mapStateToProps = (state) => ({
-  cowOptions: state.cowOptions
-});
-
-export default connect(mapStateToProps)(CowsayContainer);
+export default CowsayContainer;
