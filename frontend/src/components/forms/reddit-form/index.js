@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 class RedditForm extends React.Component{
   constructor(){
@@ -58,8 +58,8 @@ class RedditForm extends React.Component{
   }
 }
 
-RedditForm.PropTypes = {
-  onComplete: PropTypes.func
+RedditForm.propTypes = {
+  onComplete: propTypes.func
 };
 
 export default RedditForm;

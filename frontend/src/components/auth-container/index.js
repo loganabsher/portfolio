@@ -3,8 +3,8 @@
 import './_auth-container.scss';
 
 import React from 'react';
-import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
+import propTypes from 'prop-types';
 
 import {signupRequest, loginRequest} from '../../../actions/auth-actions.js';
 import AuthForm from '../forms/auth-form';
@@ -53,9 +53,10 @@ class AuthContainer extends React.Component{
   }
 }
 
-AuthContainer.PropTypes = {
-  login: PropTypes.func,
-  signup: PropTypes.func
+AuthContainer.propTypes = {
+  history: propTypes.object,
+  login: propTypes.func,
+  signup: propTypes.func
 };
 
 const mapStateToProps = (state) => ({

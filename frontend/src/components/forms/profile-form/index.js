@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 class ProfileForm extends React.Component{
   constructor(props){
@@ -105,9 +105,9 @@ class ProfileForm extends React.Component{
   }
 }
 
-ProfileForm.PropTypes = {
-  onComplete: PropTypes.func,
-  profile: PropTypes.object
+ProfileForm.propTypes = {
+  onComplete: propTypes.func,
+  profile: propTypes.object
 };
 
 export default ProfileForm;

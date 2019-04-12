@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 class MessageTemplate extends React.Component{
   constructor(props){
@@ -38,10 +38,8 @@ class MessageTemplate extends React.Component{
   }
 }
 
-MessageTemplate.PropTypes = {
-  title: PropTypes.string,
-  text: PropTypes.string,
-  comments: PropTypes.array
+MessageTemplate.propTypes = {
+  message: propTypes.object
 };
 
 export default MessageTemplate;

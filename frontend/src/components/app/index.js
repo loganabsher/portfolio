@@ -4,6 +4,7 @@ import '../../style/main.scss';
 
 import React from 'react';
 import {connect} from 'react-redux';
+import propTypes from 'prop-types';
 import {BrowserRouter, Route} from 'react-router-dom';
 
 import {tokenSet, tokenCheckRequest} from '../../../actions/auth-actions';
@@ -60,6 +61,11 @@ class App extends React.Component{
     );
   }
 }
+
+App.propTypes = {
+  auth: propTypes.object,
+  tokenCheckRequest: propTypes.func
+};
 
 const mapStateToProps = (state) => ({auth: state.auth});
 

@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 import Cowsay from 'cowsay-browser';
 import Faker from 'faker';
@@ -73,8 +73,8 @@ class CowForm extends React.Component{
   }
 }
 
-CowForm.PropTypes = {
-  cowOptions: PropTypes.array
+CowForm.propTypes = {
+  cowOptions: propTypes.array
 };
 
 export default CowForm;
