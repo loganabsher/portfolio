@@ -4,7 +4,7 @@ const debug = require('debug')('Backend-Portfolio:auth-router.js');
 
 const Router = require('express').Router;
 const superagent = require('superagent');
-const passport = require('passport');
+// const passport = require('passport');
 
 const User = require('../model/User.js');
 
@@ -43,46 +43,57 @@ authRouter.get('/oauth/google/code', (req, res) => {
   }
 });
 
-// authRouter.get('/oauth/facebook/code', (req, res) => {
-//   debug('GET: /oauth/facebook/code');
+authRouter.get('/oauth/facebook/code', (req, res) => {
+  debug('GET: /oauth/facebook/code');
+
+  if(!req.query.code){
+    res.redirect(process.env.CLIENT_URL);
+  }else{
+    return superagent.get('https://graph.facebook.com/v3.2/oauth/access_token')
+      .query({
+        client_id: process.env.FACEBOOK_APP_ID,
+        client_secret: process.env.FACEBOOK_APP_SECRET,
+        redirect_uri: `${process.env.API_URL}/oauth/facebook/code`,
+        code: req.query.code
+
+      })
+      .then((res) => {
+        // console.log(res)
+        return superagent.get('https://graph.facebook.com/me')
+          .query({
+            feilds: 'email,id',
+            access_token: res.body.access_token
+          })
+      })
+      .then((res) => {
+        console.log(res)
+        User.facebookStrategy(res.body)
+      })
+      .then((token) => {
+        console.log(token)
+      })
+  }
+});
+
+// authRouter.get('/auth/facebook', passport.authenticate('facebook'));
 //
-//   if(!req.query.code){
-//     res.redirect(process.env.CLIENT_URL);
-//   }else{
-//     debug('POST: facebook');
-//     return superagent.get('https://www.facebook.com/v3.2/dialog/oauth')
-//       .type('form')
-//       .send({
-//         code: req.query.code,
-//         client_id: process.env.FACEBOOK_APP_ID,
-//         client_secret: process.env.FACEBOOK_APP_SECRET,
-//         redirect_uri: `${process.env.API_URL}/oauth/facebook/code`
-//       })
-//       .then((res) => {
-//         console.log('hey we made it past the first thing', res);
-//       })
-//   }
-// });
+// authRouter.get('/auth/facebook/callback',
+//   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
+//   function(req, res){
+//     debug('GET: /auth/facebook/callback');
+//
+//     res.cookie('portfolio-login-token', res.req.user);
+//     res.redirect(`${process.env.CLIENT_URL}/settings`);
+//   });
 
-authRouter.get('/auth/facebook', passport.authenticate('facebook'));
-
-authRouter.get('/auth/facebook/callback',
-  passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
-  function(req, res){
-    debug('GET: /auth/facebook/callback');
-
-    res.cookie('portfolio-login-token', res.req.user);
-    res.redirect(`${process.env.CLIENT_URL}/settings`);
-  });
-
-authRouter.get('/auth/twitter',
-  passport.authenticate('twitter'));
-
-authRouter.get('/auth/twitter/callback',
-  passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
-  function(req, res) {
-    debug('GET: /auth/twitter/callback');
-
-    res.cookie('portfolio-login-token', res.req.user);
-    res.redirect(`${process.env.CLIENT_URL}/settings`);
-  });
+// authRouter.get('/auth/twitter',
+//   passport.authenticate('twitter'));
+//
+// authRouter.get('/auth/twitter/callback',
+//   passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
+//   function(req, res) {
+//     debug('GET: /auth/twitter/callback');
+//
+//     res.cookie('portfolio-login-token', res.req.user);
+//     res.redirect(`${process.env.CLIENT_URL}/settings`);
+//   });

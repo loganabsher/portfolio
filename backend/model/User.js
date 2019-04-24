@@ -10,9 +10,9 @@ const crypto = require('crypto');
 const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
-const passport = require('passport');
-const FacebookStrategy = require('passport-facebook');
-const TwitterStrategy = require('passport-twitter');
+// const passport = require('passport');
+// const FacebookStrategy = require('passport-facebook');
+// const TwitterStrategy = require('passport-twitter');
 
 const Posting = require('./Posting.js');
 
@@ -174,39 +174,57 @@ User.googleStrategy = function(profile){
   return User.handleOauth('googlePermissions', data);
 };
 
-passport.serializeUser((token, done) => {
-  debug(`serializeUser: ${token}`);
-  return done(null, token);
-});
-passport.deserializeUser((token, done) => {
-  debug(`deserializeUser: ${token}`);
-  return done(null, token);
-});
-
-passport.use(new FacebookStrategy({
-  clientID: process.env.FACEBOOK_APP_ID,
-  clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
-  profileFields: ['id', 'email']
-},
-function(accessToken, refreshToken, profile, done){
+// NOTE: these two wont work till I get the http calls working for their Oauths,
+// but I'm so tired of using passport and all it's unsupported dependancies
+User.facebookStrategy = function(profile){
   debug('facebookStrategy');
 
-  User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id})
-    .then((token) => done(null, token));
-}
-));
+  console.log(profile);
+  let data = {email: 'email', password: 'password'};
+  return User.handleOauth('facebookPermissions', data);
+};
 
-passport.use(new TwitterStrategy({
-  consumerKey: process.env.TWITTER_APP_ID,
-  consumerSecret: process.env.TWITTER_APP_SECRET,
-  userProfileURL: 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
-  callbackURL: `${process.env.API_URL}/auth/twitter/callback`,
-},
-function(token, tokenSecret, profile, done) {
+User.twitterPermissions = function(profile){
   debug('twitterStrategy');
 
-  User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id})
-    .then((token) => done(null, token));
-}
-));
+  console.log(profile);
+  let data = {email: profile.email, password: profile.id};
+  return User.handleOauth('twitterPermissions', data);
+};
+
+// passport.serializeUser((token, done) => {
+//   debug(`serializeUser: ${token}`);
+//   return done(null, token);
+// });
+// passport.deserializeUser((token, done) => {
+//   debug(`deserializeUser: ${token}`);
+//   return done(null, token);
+// });
+
+// passport.use(new FacebookStrategy({
+//   clientID: process.env.FACEBOOK_APP_ID,
+//   clientSecret: process.env.FACEBOOK_APP_SECRET,
+//   callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
+//   profileFields: ['id', 'email']
+// },
+// function(accessToken, refreshToken, profile, done){
+//   debug('facebookStrategy');
+//
+//   User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id})
+//     .then((token) => done(null, token));
+// }
+// ));
+
+// passport.use(new TwitterStrategy({
+//   consumerKey: process.env.TWITTER_APP_ID,
+//   consumerSecret: process.env.TWITTER_APP_SECRET,
+//   userProfileURL: 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
+//   callbackURL: `${process.env.API_URL}/auth/twitter/callback`,
+// },
+// function(token, tokenSecret, profile, done) {
+//   debug('twitterStrategy');
+//
+//   User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id})
+//     .then((token) => done(null, token));
+// }
+// ));
