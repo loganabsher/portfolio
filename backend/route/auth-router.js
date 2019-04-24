@@ -43,6 +43,27 @@ authRouter.get('/oauth/google/code', (req, res) => {
   }
 });
 
+// authRouter.get('/oauth/facebook/code', (req, res) => {
+//   debug('GET: /oauth/facebook/code');
+//
+//   if(!req.query.code){
+//     res.redirect(process.env.CLIENT_URL);
+//   }else{
+//     debug('POST: facebook');
+//     return superagent.get('https://www.facebook.com/v3.2/dialog/oauth')
+//       .type('form')
+//       .send({
+//         code: req.query.code,
+//         client_id: process.env.FACEBOOK_APP_ID,
+//         client_secret: process.env.FACEBOOK_APP_SECRET,
+//         redirect_uri: `${process.env.API_URL}/oauth/facebook/code`
+//       })
+//       .then((res) => {
+//         console.log('hey we made it past the first thing', res);
+//       })
+//   }
+// });
+
 authRouter.get('/auth/facebook', passport.authenticate('facebook'));
 
 authRouter.get('/auth/facebook/callback',
