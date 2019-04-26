@@ -28,24 +28,20 @@ class AuthContainer extends React.Component{
   }
 
   render(){
-    // NOTE: move this to auth actions
-    let AUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
-    let clientIDQuqery = `client_id=${process.env.GOOGLE_CLIENT_ID}.apps.googleusercontent.com`;
-    let responseTypeQuery = 'response_type=code';
-    let scopeQuery = 'scope=openid%20profile%20email';
-    let promptQuery = 'prompt=consent';
-    let redirectURIQuery = 'redirect_uri=http://localhost:8000/oauth/google/code';
+    const GOOGLE_OAUTH_URI = `${process.env.GOOGLE_AUTH_URL}?${process.env.GOOGLE_CLIENT_ID}&${process.env.GOOGLE_RESPONSE_TYPE}&${process.env.GOOGLE_SCOPES}&${process.env.GOOGLE_PROMPT_TYPE}&${process.env.GOOGLE_REDIRECT_URI}`;
+    const FACEBOOK_OAUTH_URI = `${process.env.FACEBOOK_AUTH_URL}?${process.env.FACEBOOK_CLIENT_ID}&${process.env.FACEBOOK_RESPONSE_TYPE}&${process.env.FACEBOOK_SCOPES}&${process.env.FACEBOOK_REDIRECT_URI}&${process.env.FACEBOOK_APP_STATE}`;
 
-    let formatedURI = `${AUTH_URL}?${clientIDQuqery}&${responseTypeQuery}&${scopeQuery}&${promptQuery}&${redirectURIQuery}`;
-
+    console.log(GOOGLE_OAUTH_URI);
+    console.log(FACEBOOK_OAUTH_URI);
+    // NOTE: so I guess twitter API isn't designed to accept an inital URI link so everything needs to be done in the backend route
     return(
       <div className='auth-container'>
         <h1>Welcome to my portfilio!</h1>
         <AuthForm onComplete={this.handleAuth} />
         <ul className='Oauth-links'>
-          <li><a href={formatedURI}>login with google</a></li>
-          <li><a href={`${process.env.API_URL}/auth/facebook`}>login with facebook</a></li>
-          <li><a href={`${process.env.API_URL}/auth/twitter`}>login with twitter</a></li>
+          <li><a href={GOOGLE_OAUTH_URI}>login with google</a></li>
+          <li><a href={FACEBOOK_OAUTH_URI}>login with facebook</a></li>
+          <li><a href={`${process.env.API_URL}/oauth/twitter/code`}>login with twitter</a></li>
         </ul>
         <h3>If you'd like to skip all of this nonsense click <a>here</a></h3>
       </div>

@@ -6,12 +6,12 @@ const {DefinePlugin, EnvironmentPlugin} = require('webpack');
 const HTMLPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
 const UglifyPlugin = require('uglifyjs-webpack-plugin');
-const ExtractPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 let plugins = [
   new Dotenv(),
   new EnvironmentPlugin(['NODE_ENV']),
-  new ExtractPlugin('bundle-[hash].css'),
+  new MiniCssExtractPlugin('bundle-[hash].css'),
   new HTMLPlugin({template: `${__dirname}/src/index.html`}),
   new DefinePlugin({
     __DEBUG__: JSON.stringify(!production),
@@ -40,19 +40,18 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        loader: ExtractPlugin.extract({
-          use: [
-            'css-loader',
-            'resolve-url-loader',
-            {
-              loader: 'sass-loader',
-              options: {
-                sourceMap: true,
-                includePaths: [`${__dirname}/src/style`],
-              }
+        use: [
+          {
+            loader: MiniCssExtractPlugin.loader,
+            options: {
+              sourceMap: true,
+              includePaths: [`${__dirname}/src/style`],
             }
-          ],
-        }),
+          },
+          'css-loader',
+          'sass-loader',
+          'resolve-url-loader'
+        ],
       },
       {
         test: /\.icon.svg$/,
