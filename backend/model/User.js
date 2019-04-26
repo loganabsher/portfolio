@@ -179,8 +179,9 @@ User.googleStrategy = function(profile){
 User.facebookStrategy = function(profile){
   debug('facebookStrategy');
 
+  // NOTE: this is still a little buggy, it wont give me the email for whatever reason
   console.log(profile);
-  let data = {email: 'email', password: 'password'};
+  let data = {email: profile.email, password: profile.id};
   return User.handleOauth('facebookPermissions', data);
 };
 

@@ -4,7 +4,8 @@ const debug = require('debug')('Backend-Portfolio:auth-router.js');
 
 const Router = require('express').Router;
 const superagent = require('superagent');
-// const passport = require('passport');
+const uuidv1 = require('uuid/v1');
+const uuidv4 = require('uuid/v4');
 
 const User = require('../model/User.js');
 
@@ -58,20 +59,44 @@ authRouter.get('/oauth/facebook/code', (req, res) => {
 
       })
       .then((res) => {
-        // console.log(res)
-        return superagent.get('https://graph.facebook.com/me')
-          .query({
-            feilds: 'email,id',
-            access_token: res.body.access_token
-          })
+        return superagent.get('https://graph.facebook.com/v3.2/me')
+          .set('Authorization', `Bearer ${res.body.access_token}`)
+          .query({fields: 'id,email', format: 'text'});
       })
       .then((res) => {
         console.log(res)
-        User.facebookStrategy(res.body)
+        console.log(res.text)
+        console.log(res.body)
+        return User.facebookStrategy(res.text);
       })
       .then((token) => {
-        console.log(token)
-      })
+        res.cookie('portfolio-login-token', token);
+        res.redirect(`${process.env.CLIENT_URL}/settings`);
+      });
+  }
+});
+
+authRouter.get('/oauth/twitter/code', (req, res) => {
+  debug('GET: /oauth/twitter/code');
+
+  console.log(req);
+  let authHeaders = {
+    oauth_consumer_key: 'RHZ2wu6ItPCKzxLFngqKNfcpp',
+    oauth_nonce: uuidv4(),
+    oauth_timestamp: uuidv1()
+  };
+
+  superagent.post('https://api.twitter.com/oauth/request_token')
+    .set({header: authHeaders})
+    .query({
+      x_auth_access_type: 'read',
+      oauth_callback: 'http://localhost:8000/oauth/twitter/code'
+    });
+
+  if(!req.query.code){
+    res.redirect(process.env.CLIENT_URL);
+  }else{
+    console.log(req)
   }
 });
 
