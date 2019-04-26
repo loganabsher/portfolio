@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {
@@ -75,14 +75,14 @@ class Dashboard extends React.Component{
   }
 }
 
-Dashboard.PropTypes = {
-  messageCreate: PropTypes.func,
-  messageFetch: PropTypes.func,
-  messageFetchAll: PropTypes.func,
-  messageFetchAllUser: PropTypes.func,
-  messageUpdate: PropTypes.func,
-  messageDelete: PropTypes.func,
-  message: PropTypes.array
+Dashboard.propTypes = {
+  messageCreate: propTypes.func,
+  messageFetch: propTypes.func,
+  messageFetchAll: propTypes.func,
+  messageFetchAllUser: propTypes.func,
+  messageUpdate: propTypes.func,
+  messageDelete: propTypes.func,
+  message: propTypes.array
 };
 
 const mapStateToProps = (state) => ({

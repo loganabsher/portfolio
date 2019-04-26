@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {profileCreateRequest, profileFetchRequest, profileUpdateRequest, profileDeleteRequest} from '../../../actions/profile-actions.js';
@@ -52,11 +52,11 @@ class ProfileContainer extends React.Component{
   }
 }
 
-ProfileContainer.PropTypes = {
-  history: PropTypes.func,
-  profileFetch: PropTypes.func,
-  profileCreate: PropTypes.func,
-  profile: PropTypes.object
+ProfileContainer.propTypes = {
+  history: propTypes.func,
+  profileFetch: propTypes.func,
+  profileCreate: propTypes.func,
+  profile: propTypes.object
 };
 
 const mapStateToProps = (state) => ({

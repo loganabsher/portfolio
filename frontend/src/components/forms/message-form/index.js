@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 
 class MessageForm extends React.Component{
   constructor(props){
@@ -66,8 +66,8 @@ class MessageForm extends React.Component{
   }
 }
 
-MessageForm.PropTypes = {
-  onComplete: PropTypes.func
+MessageForm.propTypes = {
+  onComplete: propTypes.func
 };
 
 export default MessageForm;

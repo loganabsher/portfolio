@@ -5,7 +5,7 @@ const cors = require('cors');
 const debug = require('debug')('Backend-Portfolio:server.js');
 const express = require('express');
 const session = require('express-session');
-const passport = require('passport');
+// const passport = require('passport');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
@@ -36,8 +36,8 @@ app.use(session({
   secret: process.env.APP_SECRET
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
+// app.use(passport.initialize());
+// app.use(passport.session());
 
 app.use(user);
 app.use(auth);

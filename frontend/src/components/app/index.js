@@ -4,10 +4,10 @@ import '../../style/main.scss';
 
 import React from 'react';
 import {connect} from 'react-redux';
+import propTypes from 'prop-types';
 import {BrowserRouter, Route} from 'react-router-dom';
 
 import {tokenSet, tokenCheckRequest} from '../../../actions/auth-actions';
-import {readCookie} from '../../../lib/util.js';
 
 import '../../style/footer.scss';
 
@@ -25,21 +25,6 @@ class App extends React.Component{
     this.state = {
       auth: false
     };
-  }
-
-  // NOTE: maybe I should just set a localStorage variable to check if they are valid
-  componentDidMount(){
-    let token = readCookie('portfolio-login-token');
-    return this.props.tokenCheckRequest(token);
-  }
-
-
-  // NOTE: pretty sure this will create an infinite loop
-  componentWillReceiveProps(nextProps){
-    console.log('props recieved', nextProps);
-    if(nextProps.auth){
-      this.setState({auth: true});
-    }
   }
 
   render(){
@@ -60,6 +45,11 @@ class App extends React.Component{
     );
   }
 }
+
+App.propTypes = {
+  auth: propTypes.object,
+  tokenCheckRequest: propTypes.func
+};
 
 const mapStateToProps = (state) => ({auth: state.auth});
 

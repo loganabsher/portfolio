@@ -1,7 +1,7 @@
 'use strict';
 
 import React from 'react';
-import PropTypes from 'prop-types';
+import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
 import {allRepositoriesRequest} from '../../../actions/repo-actions.js';
@@ -37,9 +37,9 @@ class RepositoryContainer extends React.Component {
   }
 }
 
-RepositoryContainer.PropTypes = {
-  allRepositories: PropTypes.func,
-  repos: PropTypes.array
+RepositoryContainer.propTypes = {
+  allRepositories: propTypes.func,
+  repos: propTypes.array
 };
 
 const mapStateToProps = (state) => ({
