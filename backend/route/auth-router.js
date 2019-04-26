@@ -61,14 +61,11 @@ authRouter.get('/oauth/facebook/code', (req, res) => {
       .then((res) => {
         return superagent.get('https://graph.facebook.com/v3.2/me')
           .set('Authorization', `Bearer ${res.body.access_token}`)
-          .query({fields: 'id,email', format: 'text'});
+          .set('content-type', 'text/javascript; charset=UTF-8')
+          .query({fields: 'id,email'});
       })
-      .then((res) => {
-        console.log(res)
-        console.log(res.text)
-        console.log(res.body)
-        return User.facebookStrategy(res.text);
-      })
+      .then((res) => JSON.parse(res.text))
+      .then((body) => User.facebookStrategy(body))
       .then((token) => {
         res.cookie('portfolio-login-token', token);
         res.redirect(`${process.env.CLIENT_URL}/settings`);
