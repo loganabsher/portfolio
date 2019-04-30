@@ -19,7 +19,8 @@ const loader = function () {
   superagent.get('https://api.github.com/user/repos?per_page=100&type=owner/')
     .set({'Authorization': 'token ' + process.env.GITHUB_TOKEN})
     .end((req, res) => {
-      if(!res || !res.body || res.body.length < 1) return createError(500, 'couldn\'t connect to github api');
+      if(!res || !res.body) return createError(500, 'couldn\'t connect to github api');
+      if(res.body.length < 1) return createError(404, 'there are no repos for this users to fetch');
       res.body.forEach((ele) => {
         Repository.findOne({name: ele.name})
           .then((repo) => {
@@ -46,8 +47,9 @@ loader();
 repositoryRouter.get('/api/repository/:id', (req, res, next) => {
   debug('GET: /api/repositories/:id');
 
-  Repository.findById(req.params.id)
+  Repository.findById({_id: req.params.id})
     .then((repo) => {
+      console.log(repo)
       res.json(repo);
     })
     .catch(next);
@@ -64,6 +66,12 @@ repositoryRouter.get('/api/repository', (req, res, next) => {
 });
 
 // NOTE: write this!
-// repositoryRoute.get('/api/repositories/branches/:id', (req, res, next) => {
-//   debug('GET: /api/repositories/branches/:id')
-// });
+repositoryRoute.get('/api/repositories/branches/:id', (req, res, next) => {
+  debug('GET: /api/repositories/branches/:id');
+
+  superagent.get('https://api.github.com/user/')
+    .then((reop) => {
+
+    })
+    .catch(next);
+});

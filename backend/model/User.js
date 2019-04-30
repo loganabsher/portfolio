@@ -10,9 +10,6 @@ const crypto = require('crypto');
 const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
-// const passport = require('passport');
-// const FacebookStrategy = require('passport-facebook');
-// const TwitterStrategy = require('passport-twitter');
 
 const Posting = require('./Posting.js');
 
@@ -40,7 +37,7 @@ userSchema.methods.generatePasswordHash = function(type, password){
   debug(`generatePasswordHash:${type}`);
 
   return new Promise((resolve, reject) => {
-    if(!password) reject(createError(400, 'no password was provided'));
+    if(!password) reject(createError(400, 'bad request: no password was provided'));
 
     bcrypt.hash(password, 10, (err, hash) => {
       if(err) return reject(err);
@@ -62,7 +59,7 @@ userSchema.methods.generatePasswordHash = function(type, password){
         resolve(this);
         break;
       default:
-        return reject(createError(400, `unrecognized password type: ${type}`));
+        return reject(createError(400, `bad request: unrecognized password type for user schema: ${type}`));
       }
     });
   });
@@ -73,7 +70,7 @@ userSchema.methods.comparePasswordHash = function(type, password){
 
   let user = this;
   return new Promise((resolve, reject) => {
-    if(!password) reject(createError(400, 'no password was provided'));
+    if(!password) reject(createError(400, 'bad request: no password was provided'));
 
     if(type === 'normal'){
       bcrypt.compare(password, user.password, (err, valid) => {
@@ -88,7 +85,7 @@ userSchema.methods.comparePasswordHash = function(type, password){
         resolve(user);
       });
     }else{
-      reject(createError(400, `unrecognized password type: ${type}`));
+      reject(createError(400, `bad request: unrecognized password type for user schema: ${type}`));
     }
   });
 };
@@ -137,7 +134,7 @@ User.handleOauth = function(type, data){
   debug('handleOauth');
 
   return new Promise((resolve, reject) => {
-    if(!type) reject(createError(400, `need to designate type parameter, ${type} is not valid`));
+    if(!type) reject(createError(400, `bad request : need to designate type parameter, ${type} is not valid`));
     if(!data || !data.email || !data.password) reject(createError(400, 'no data given'));
 
     return User.findOne({'email': data.email})
@@ -174,8 +171,6 @@ User.googleStrategy = function(profile){
   return User.handleOauth('googlePermissions', data);
 };
 
-// NOTE: these two wont work till I get the http calls working for their Oauths,
-// but I'm so tired of using passport and all it's unsupported dependancies
 User.facebookStrategy = function(profile){
   debug('facebookStrategy');
 
@@ -183,6 +178,7 @@ User.facebookStrategy = function(profile){
   return User.handleOauth('facebookPermissions', data);
 };
 
+// NOTE: still struggling to get twitter oauth working properly but the other two work fine
 User.twitterPermissions = function(profile){
   debug('twitterStrategy');
 
@@ -190,40 +186,3 @@ User.twitterPermissions = function(profile){
   let data = {email: profile.email, password: profile.id};
   return User.handleOauth('twitterPermissions', data);
 };
-
-// passport.serializeUser((token, done) => {
-//   debug(`serializeUser: ${token}`);
-//   return done(null, token);
-// });
-// passport.deserializeUser((token, done) => {
-//   debug(`deserializeUser: ${token}`);
-//   return done(null, token);
-// });
-
-// passport.use(new FacebookStrategy({
-//   clientID: process.env.FACEBOOK_APP_ID,
-//   clientSecret: process.env.FACEBOOK_APP_SECRET,
-//   callbackURL: `${process.env.API_URL}/auth/facebook/callback`,
-//   profileFields: ['id', 'email']
-// },
-// function(accessToken, refreshToken, profile, done){
-//   debug('facebookStrategy');
-//
-//   User.handleOauth('facebookPermissions', {email: profile.emails[0].value, password: profile.id})
-//     .then((token) => done(null, token));
-// }
-// ));
-
-// passport.use(new TwitterStrategy({
-//   consumerKey: process.env.TWITTER_APP_ID,
-//   consumerSecret: process.env.TWITTER_APP_SECRET,
-//   userProfileURL: 'https://api.twitter.com/1.1/account/verify_credentials.json?include_email=true',
-//   callbackURL: `${process.env.API_URL}/auth/twitter/callback`,
-// },
-// function(token, tokenSecret, profile, done) {
-//   debug('twitterStrategy');
-//
-//   User.handleOauth('twitterPermissions', {email: profile.emails[0].value, password: profile.id})
-//     .then((token) => done(null, token));
-// }
-// ));
