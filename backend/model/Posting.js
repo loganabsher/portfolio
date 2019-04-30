@@ -42,10 +42,10 @@ postingSchema.methods.deleteAllChildren = function(){
           // NOTE: maybe try deleteSelf and see how that works with deleting the comment chain
           debug('deleting comment: ', post);
           Comment.deleteOne({'_id': post._id})
-            .catch((err) => createError(500, 'failed to delete', post, err));
+            .catch((err) => createError(500, 'internal server error: failed to delete -- ', post, err));
         }
       })
-      .catch((err) => createError(400, 'bad request: ', node, err));
+      .catch((err) => createError(500, 'internal serer error: ', node, err));
   };
 
   let post = this;
@@ -58,7 +58,7 @@ postingSchema.methods.deleteAllChildren = function(){
       })
       // NOTE: should probably either rename the method or hove it set it's next to just an empty array
       .then((post) => resolve(post))
-      .catch((err) => reject(createError(500, 'failed to delete', err)));
+      .catch((err) => reject(createError(500, 'internal sever error: failed to delete -- ', err)));
   });
 };
 

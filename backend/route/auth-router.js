@@ -4,6 +4,7 @@ const debug = require('debug')('Backend-Portfolio:auth-router.js');
 
 const Router = require('express').Router;
 const superagent = require('superagent');
+const createError = require('http-errors');
 const uuidv1 = require('uuid/v1');
 const uuidv4 = require('uuid/v4');
 
@@ -64,7 +65,13 @@ authRouter.get('/oauth/facebook/code', (req, res) => {
           .set('content-type', 'text/javascript; charset=UTF-8')
           .query({fields: 'id,email'});
       })
-      .then((res) => JSON.parse(res.text))
+      .then((res) => {
+        if(res.text){
+          return JSON.parse(res.text)
+        }else{
+          return createError(400, 'bad request: no data was returned from facebook\'s oauth')
+        }
+      })
       .then((body) => User.facebookStrategy(body))
       .then((token) => {
         res.cookie('portfolio-login-token', token);
@@ -77,18 +84,26 @@ authRouter.get('/oauth/twitter/code', (req, res) => {
   debug('GET: /oauth/twitter/code');
 
   console.log(req);
-  let authHeaders = {
-    oauth_consumer_key: 'RHZ2wu6ItPCKzxLFngqKNfcpp',
-    oauth_nonce: uuidv4(),
-    oauth_timestamp: uuidv1()
+  // let oauth = new OAuth.OAuth(
+  //   oauth_consumer_key: 'RHZ2wu6ItPCKzxLFngqKNfcpp',
+  //   oauth_nonce: uuidv4(),
+  //   oauth_timestamp: uuidv1()
+  // );
+  const authHeader = {
+    oauth_callback: 'http://localhost:8000/oauth/twitter/code',
+    oauth_consumer_key: process.env.TWITTER_APP_ID,
+    oauth_consumer_secret: process.env.TWITTER_APP_SECRET
   };
 
   superagent.post('https://api.twitter.com/oauth/request_token')
-    .set({header: authHeaders})
-    .query({
-      x_auth_access_type: 'read',
-      oauth_callback: 'http://localhost:8000/oauth/twitter/code'
-    });
+    .set({'Authorization': `OAuth oauth_consumer_key="${process.env.TWITTER_APP_ID}",
+oauth_consumer_secret="${process.env.TWITTER_APP_SECRET}",
+oauth_nonce="${uuidv4()}",
+oauth_callback="http://localhost:8000/oauth/twitter/code"`
+    })
+    .then((res) => {
+      console.log(res)
+    })
 
   if(!req.query.code){
     res.redirect(process.env.CLIENT_URL);
@@ -96,26 +111,3 @@ authRouter.get('/oauth/twitter/code', (req, res) => {
     console.log(req)
   }
 });
-
-// authRouter.get('/auth/facebook', passport.authenticate('facebook'));
-//
-// authRouter.get('/auth/facebook/callback',
-//   passport.authenticate('facebook', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
-//   function(req, res){
-//     debug('GET: /auth/facebook/callback');
-//
-//     res.cookie('portfolio-login-token', res.req.user);
-//     res.redirect(`${process.env.CLIENT_URL}/settings`);
-//   });
-
-// authRouter.get('/auth/twitter',
-//   passport.authenticate('twitter'));
-//
-// authRouter.get('/auth/twitter/callback',
-//   passport.authenticate('twitter', {failureRedirect: `${process.env.CLIENT_URL}/auth`}),
-//   function(req, res) {
-//     debug('GET: /auth/twitter/callback');
-//
-//     res.cookie('portfolio-login-token', res.req.user);
-//     res.redirect(`${process.env.CLIENT_URL}/settings`);
-//   });

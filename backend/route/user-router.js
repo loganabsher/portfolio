@@ -10,8 +10,6 @@ const jwt = require('jsonwebtoken');
 const basicAuth = require('../lib/basic-auth-middleware.js');
 const User = require('../model/User.js');
 const Profile = require('../model/Profile.js');
-// const Posting = require('../model/Posting.js');
-// const Comment = require('../model/Comment.js');
 
 const userRouter = module.exports = Router();
 
