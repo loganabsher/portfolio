@@ -30,9 +30,12 @@ class AuthContainer extends React.Component{
   render(){
     const GOOGLE_OAUTH_URI = `${process.env.GOOGLE_AUTH_URL}?${process.env.GOOGLE_CLIENT_ID}&${process.env.GOOGLE_RESPONSE_TYPE}&${process.env.GOOGLE_SCOPES}&${process.env.GOOGLE_PROMPT_TYPE}&${process.env.GOOGLE_REDIRECT_URI}`;
     const FACEBOOK_OAUTH_URI = `${process.env.FACEBOOK_AUTH_URL}?${process.env.FACEBOOK_CLIENT_ID}&${process.env.FACEBOOK_RESPONSE_TYPE}&${process.env.FACEBOOK_SCOPES}&${process.env.FACEBOOK_REDIRECT_URI}&${process.env.FACEBOOK_APP_STATE}`;
+    // const TWITTER_OAUTH_URI = `${process.env.TWITTER_AUTH_URL}?${process.env.TWITTER_CONSUMER_KEY}&${process.env.TWITTER_CALLBACK_URI}`;
+    const TWITTER_OAUTH_URI = `${process.env.TWITTER_AUTH_URL}?${process.env.TWITTER_AUTH_TOKEN}`;
 
     console.log(GOOGLE_OAUTH_URI);
     console.log(FACEBOOK_OAUTH_URI);
+    console.log(TWITTER_OAUTH_URI);
     // NOTE: so I guess twitter API isn't designed to accept an inital URI link so everything needs to be done in the backend route
     return(
       <div className='auth-container'>

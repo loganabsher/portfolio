@@ -21,7 +21,7 @@ profileSchema.methods.connectProfileAndUser = function(userId){
 
   let profile = this;
   return new Promise((resolve, reject) => {
-    if(!userId) return reject(createError(400, 'missing userId'));
+    if(!userId) return reject(createError(400, 'bad request: missing userId parameter'));
     User.findById({'_id': userId})
       .then((user) => {
         if(!user) return reject(createError(404, 'no user with this id was found'));
