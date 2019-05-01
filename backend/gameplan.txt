@@ -1,0 +1,68 @@
+
+I think the user methods are fine at this point, I still need to perfect the post / comment relationship
+
+the repo router still needs more work, it need more error handling as well as more functionality
+
+
+
+
+
+
+User model:
+
+{
+  // id obviously makes sense as a unique identifier
+  _id: String,
+  // since profiles are unique and tied to the user it makes sense to have a reference in the user object
+  profileId: String,
+  // all authentication properties are necessary to handle different login types
+  googlePermissions: {
+    authenticated: {type: Boolean, default: false},
+    password: {type: String, default: null}
+  },
+  facebookPermissions: {
+    authenticated: {type: Boolean, default: false},
+    password: {type: String, default: null}
+  },
+  twitterPermissions: {
+    authenticated: {type: Boolean, default: false},
+    password: {type: String, default: null}
+  },
+  // having an email as a unique identifier as well as for verification purposes makes sense
+  // although I'm wondering if creating an auth property with an object containing both an email
+  // as well as a phone linked to the account
+  email: {type: String, required: true, unique: true},
+  // the rest is fine, pretty self explanatory
+  authenticated: {type: Boolean, default: false},
+  password: {type: String, default: null},
+  findHash: {type: String, unique: true}
+
+  // any additions?:
+
+  perhaps a created_at field?
+}
+
+Profile model:
+
+{
+  // pretty simple model, but I think as the app becomes more complex more can be added to this in terms of customization
+  _id: String,
+  firstName: String,
+  lastName: String,
+  userName: String
+}
+
+Message model:
+
+{
+
+}
+
+
+
+
+
+
+
+
+/

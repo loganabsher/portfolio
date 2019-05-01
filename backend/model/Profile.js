@@ -25,7 +25,7 @@ profileSchema.methods.connectProfileAndUser = function(userId){
     User.findById({'_id': userId})
       .then((user) => {
         if(!user) return reject(createError(404, 'no user with this id was found'));
-        if(user.profileId) reject(createError(500, 'a profile already exists for this user'));
+        if(user.profileId) return reject(createError(500, 'a profile already exists for this user'));
         else{
           user.profileId = profile._id;
           user.save();
