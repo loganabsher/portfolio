@@ -15,19 +15,40 @@ const commentSchema = Schema({
   next: {type: Array, default: []},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
-  delete: {type: Boolean, default: false}
+  inactive: {
+    delete: {type: Boolean, default: false},
+    delete_by: {type: String}
+  }
 });
 
-commentSchema.methods.addNext = function(posting){
+commentSchema.methods.addNext = function(parent){
   debug('addNext');
 
   let comment = this;
   return new Promise((resolve, reject) => {
-    if(!posting || !posting.next) return reject(createError(400, 'bad request: the post provided was invalid', posting));
-    if(!comment || !comment._id) return reject(createError(400, 'bad request: the comment that was provided was invalid: ', comment));
-    posting.next.push(comment._id);
-    posting.save();
+    if(!parent || !parent.next) return reject(createError(400, 'bad request: the post provided was invalid -', parent));
+    if(!comment || !comment._id) return reject(createError(400, 'bad request: the comment that was provided was invalid -', comment));
+    parent.next.push(comment._id);
+    parent.save();
     resolve(comment);
+  });
+};
+
+commentSchema.methods.deleteCommentChain = function(){
+  debug('deleteCommentChain');
+
+  let comment = this;
+  return new Promise((resolve, reject) => {
+    if(!comment) return reject(createError(400, 'bad request: no comment was provided -', comment));
+    if(comment.next > 0){
+      comment.next.map((ele) => {
+        ele.deleteCommentChain();
+      });
+    }
+    console.log(this);
+    this.delete({_id: this._id});
+    console.log('after', this);
+    resolve();
   });
 };
 
