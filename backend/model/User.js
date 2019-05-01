@@ -11,7 +11,7 @@ const createError = require('http-errors');
 const jsonwebtoken = require('jsonwebtoken');
 const Promise = require('bluebird');
 
-const Posting = require('./Posting.js');
+const Message = require('./Message.js');
 
 const userSchema = Schema({
   profileId: String,
@@ -116,12 +116,12 @@ userSchema.methods.handleUserDelete = function(){
 
   let user = this;
   return new Promise((resolve, reject) => {
-    Posting.find({'authorId': user._id})
-      .then((posts) => {
-        if(!posts) resolve(this);
-        posts.map((ele) => ele.deleteAllChildren());
+    Message.find({'authorId': user._id})
+      .then((messages) => {
+        if(!messages) resolve(this);
+        messages.map((ele) => ele.handleDelete());
       })
-      .then(() => Posting.deleteMany({'authorId': user._id}))
+      .then(() => Message.deleteMany({'authorId': user._id}))
       .then(() => resolve(user))
       .catch((err) => reject(err));
 

@@ -66,7 +66,7 @@ repositoryRouter.get('/api/repository', (req, res, next) => {
 });
 
 // NOTE: write this!
-repositoryRoute.get('/api/repositories/branches/:id', (req, res, next) => {
+repositoryRouter.get('/api/repositories/branches/:id', (req, res, next) => {
   debug('GET: /api/repositories/branches/:id');
 
   superagent.get('https://api.github.com/user/')
