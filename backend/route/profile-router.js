@@ -14,8 +14,8 @@ const profileRouter = module.exports = Router();
 profileRouter.post('/api/profile', bearerAuth, jsonParser, (req, res, next) => {
   debug('POST: /api/profile');
 
-  if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
-  if(!req.body || (!req.body.firstName && !req.body.lastName && !req.body.userName)) return next(createError(400, 'request did not meet minimum information requirements'));
+  if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
+  if(!req.body || (!req.body.firstName && !req.body.lastName && !req.body.userName)) return next(createError(400, 'bad request: request did not meet minimum information requirements'));
 
   let profile = new Profile(req.body);
 
@@ -27,12 +27,12 @@ profileRouter.post('/api/profile', bearerAuth, jsonParser, (req, res, next) => {
 profileRouter.get('/api/profile/self', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/profile/self');
 
-  if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
-  if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
+  if(!req.user.profileId) return next(createError(404, 'not found: this user has no profile'));
+  if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
   Profile.findById({'_id': req.user.profileId})
     .then((profile) => {
-      if(!profile) return next(createError(500, 'no profile found'));
+      if(!profile) return next(createError(500, 'internal server error: this user has an id, but no profile was found'));
       res.json(profile);
     })
     .catch(next);
@@ -41,9 +41,9 @@ profileRouter.get('/api/profile/self', bearerAuth, jsonParser, (req, res, next) 
 profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/profile/edit');
 
-  if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
-  if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
-  if(!req.body || (!req.body.firstName && !req.body.lastName && !req.body.userName)) return next(createError(400, 'request did not meet minimum information requirements'));
+  if(!req.user.profileId) return next(createError(404, 'not found: this user has no profile'));
+  if(!req.body || (!req.body.firstName && !req.body.lastName && !req.body.userName)) return next(createError(400, 'bad request: request did not meet minimum information requirements'));
+  if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
   let fields = {};
 
@@ -53,7 +53,7 @@ profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) 
 
   Profile.findOneAndUpdate({'_id': req.user.profileId}, fields)
     .then((profile) => {
-      if(!profile) return next(createError(500, 'no profile found'));
+      if(!profile) return next(createError(500, 'internal server error: this user has an id, but no profile was found'));
       res.json(profile);
     })
     .catch(next);
@@ -62,13 +62,13 @@ profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) 
 profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res, next) => {
   debug('DELETE: /api/profile/delete');
 
-  if(!req.user || !req.user._id) return next(createError(404, 'no user found for this token'));
-  if(!req.user.profileId) return next(createError(404, 'this user has no profile'));
+  if(!req.user.profileId) return next(createError(404, 'not found: this user has no profile'));
+  if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
   Profile.findById({'_id': req.user.profileId})
     .then((profile) => {
-      if(!profile) return next(createError(500, 'no profile found'));
-      if(profile._id != req.user.profileId) return next(createError(401, 'you are not authorized to delete this profile'));
+      if(profile._id != req.user.profileId) return next(createError(401, 'unauthorized: you are not authorized to delete this profile'));
+      if(!profile) return next(createError(500, 'internal server error: this user has an id, but no profile was found'));
 
       let profileId = req.user.profileId;
       profile.disconnectProfileAndUser(req.user._id)

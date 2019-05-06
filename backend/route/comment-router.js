@@ -47,32 +47,53 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
     });
 });
 
-commentRouter.get('/api/comment/find/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/comment/find/:id');
+commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/comment/fetch');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'bad request: no comment id was provided', req.params.id));
+  if(!req.params) return next(createError(400, 'bad request: no queries were provided for the route', req.params));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  Comment.findById({'_id': req.params.id})
-    .then((comment) => {
-      if(!comment) return next(createError(404, 'comment could not be found with id', req.params.id, comment));
-      res.json(comment);
-    })
-    .catch((err) => next(err));
-});
+  // NOTE: I was thinking of adding an all parameter, but is seems a little useless, why would you ever want to get all the comments????
+  if(req.params.me){
+    Comment.find({'_id': req.user._id})
+      .then((comments) => {
+        if(!comments) return next(createError(404, 'not found: no items were found'));
+        res.json(comments)
+      })
+      .catch((err) => next(err));
+  }else if(req.params.postId){
 
-commentRouter.get('/api/comment/self', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/comment/self');
+  }else if(req.params.itemId){
 
-  if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
+  }
+})
 
-  Comment.find({'authorId': req.user._id})
-    .then((comments) => {
-      if(!comments) return next(createError(404, 'not found: this user has no comment items'));
-      res.json(comments);
-    })
-    .catch((err) => next(err));
-});
+// commentRouter.get('/api/comment/find/:id', bearerAuth, jsonParser, (req, res, next) => {
+//   debug('GET: /api/comment/find/:id');
+//
+//   if(!req.params || !req.params.id) return next(createError(400, 'bad request: no comment id was provided', req.params.id));
+//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
+//
+//   Comment.findById({'_id': req.params.id})
+//     .then((comment) => {
+//       if(!comment) return next(createError(404, 'comment could not be found with id', req.params.id, comment));
+//       res.json(comment);
+//     })
+//     .catch((err) => next(err));
+// });
+//
+// commentRouter.get('/api/comment/self', bearerAuth, jsonParser, (req, res, next) => {
+//   debug('GET: /api/comment/self');
+//
+//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
+//
+//   Comment.find({'authorId': req.user._id})
+//     .then((comments) => {
+//       if(!comments) return next(createError(404, 'not found: this user has no comment items'));
+//       res.json(comments);
+//     })
+//     .catch((err) => next(err));
+// });
 
 commentRouter.put('/api/comment/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/posting/edit/:id');

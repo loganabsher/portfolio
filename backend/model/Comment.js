@@ -16,8 +16,8 @@ const commentSchema = Schema({
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
   inactive: {
-    delete: {type: Boolean, default: false},
-    delete_by: {type: String}
+    delete_at: {type: String, default: null},
+    delete_by: {type: String, default: null}
   }
 });
 

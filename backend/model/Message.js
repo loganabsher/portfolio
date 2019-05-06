@@ -16,8 +16,10 @@ const messageSchema = Schema({
   next: {type: Array, default: []},
   created_at: {type: Date, default: Date.now},
   updated_at: {type: Date, default: Date.now},
-  delete: {type: Boolean, default: false}
-});
+  inactive: {
+    delete_at: {type: String, default: null},
+    delete_by: {type: String, default: null}
+  }});
 
 messageSchema.methods.handleDelete = function(){
   debug('handleDelete');

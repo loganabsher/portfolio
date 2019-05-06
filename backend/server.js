@@ -18,7 +18,9 @@ const comment = require('./route/comment-router.js');
 const reddit = require('./route/reddit-router.js');
 
 const app = express();
-const PORT = process.env.PORT || 8000;
+// const PORT = process.env.PORT || 8000;
+// NOTE: for whatever reason this is always defaulting to 8080 causing conflict with the frontend port
+const PORT = 8000;
 
 mongoose.connect(process.env.MONGODB_URI);
 

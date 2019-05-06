@@ -32,53 +32,39 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 // based on certain query parameters that can be handed in
 
 messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: /api/message/find/:id');
+  debug('GET: /api/message/fetch');
+
+  if(!req.params) return next(createError(400, 'bad request: no queries were provided for the route', req.params));
+  if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+
+  if(req.query.all){
+    Message.find({})
+      .then((messages) => {
+        if(!messages) return next(createError(404, 'not found: no items were found'));
+        return res.json(messages);
+      })
+      .catch((err) => next(err));
+  }else if(req.query.me){
+    Message.find({'authorId': req.user._id})
+      .then((messages) => {
+        if(!messages) return next(createError(404, 'not found: no items were found'));
+        return res.json(messages);
+      })
+      .catch((err) => next(err));
+  }else if(req.query.itemId){
+    Message.findById({'_id': req.query.itemId})
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
+      })
+      .catch((err) => next(err));
+  }
 
   // query parameter:
   // id: if an id is provided we just try to fetch that message and return it
   // self: if this is provided we return all items with this user's id
   // all: if this is provided we return all messages
 });
-
-// messageRouter.get('/api/message/find/:id', bearerAuth, jsonParser, (req, res, next) => {
-//   debug('GET: /api/message/find/:id');
-//
-//   if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
-//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
-//
-//   Message.findById({'_id': req.params.id})
-//     .then((posting) => {
-//       if(!posting) return next(createError(404, 'not found: no message was found:', posting));
-//       res.json(posting);
-//     })
-//     .catch((err) => next(err));
-// });
-//
-// messageRouter.get('/api/message/all', bearerAuth, jsonParser, (req, res, next) => {
-//   debug('GET: /api/message/all');
-//
-//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
-//
-//   Message.find({})
-//     .then((postings) => {
-//       if(!postings) return next(createError(404, 'not found: no messages were found:', postings));
-//       res.json(postings);
-//     })
-//     .catch((err) => next(err));
-// });
-//
-// messageRouter.get('/api/posting/self', bearerAuth, jsonParser, (req, res, next) => {
-//   debug('GET: /api/posting/self');
-//
-//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
-//
-//   Posting.find({'authorId': req.user._id})
-//     .then((postings) => {
-//       if(!postings) return next(createError(404, 'not found: no messages were found:', postings));
-//       res.json(postings);
-//     })
-//     .catch((err) => next(err));
-// });
 
 messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/message/edit/:id');
