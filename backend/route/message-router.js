@@ -34,7 +34,7 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/message/fetch');
 
-  if(!req.params) return next(createError(400, 'bad request: no queries were provided for the route', req.params));
+  if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
   if(req.query.all){

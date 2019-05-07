@@ -50,50 +50,38 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
 commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/comment/fetch');
 
-  if(!req.params) return next(createError(400, 'bad request: no queries were provided for the route', req.params));
+  console.log('got here')
+  console.log(req.user)
+  console.log(req.query)
+  console.log(req.query.me)
+  if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
+  console.log(req.query)
   // NOTE: I was thinking of adding an all parameter, but is seems a little useless, why would you ever want to get all the comments????
-  if(req.params.me){
-    Comment.find({'_id': req.user._id})
+  if(req.query.me){
+    Comment.find({'authorId': req.user._id})
       .then((comments) => {
         if(!comments) return next(createError(404, 'not found: no items were found'));
-        res.json(comments)
+        res.json(comments);
       })
       .catch((err) => next(err));
-  }else if(req.params.postId){
-
-  }else if(req.params.itemId){
-
+  }else if(req.query.postId){
+    Comment.find({'prev': req.query.postId})
+      .then((comments) => {
+        if(!comments) return next(createError(404, 'not found: no items were found'));
+        res.json(comments);
+      })
+      .catch((err) => next(err));
+  }else if(req.query.itemId){
+    Comment.findById({'_id': req.query.itemId})
+      .then((comment) => {
+        if(!comment) return next(createError(404, 'not found: no items were found'));
+        res.json(comment);
+      })
+      .catch((err) => next(err));
   }
-})
-
-// commentRouter.get('/api/comment/find/:id', bearerAuth, jsonParser, (req, res, next) => {
-//   debug('GET: /api/comment/find/:id');
-//
-//   if(!req.params || !req.params.id) return next(createError(400, 'bad request: no comment id was provided', req.params.id));
-//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
-//
-//   Comment.findById({'_id': req.params.id})
-//     .then((comment) => {
-//       if(!comment) return next(createError(404, 'comment could not be found with id', req.params.id, comment));
-//       res.json(comment);
-//     })
-//     .catch((err) => next(err));
-// });
-//
-// commentRouter.get('/api/comment/self', bearerAuth, jsonParser, (req, res, next) => {
-//   debug('GET: /api/comment/self');
-//
-//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
-//
-//   Comment.find({'authorId': req.user._id})
-//     .then((comments) => {
-//       if(!comments) return next(createError(404, 'not found: this user has no comment items'));
-//       res.json(comments);
-//     })
-//     .catch((err) => next(err));
-// });
+});
 
 commentRouter.put('/api/comment/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('PUT: /api/posting/edit/:id');
@@ -108,12 +96,30 @@ commentRouter.put('/api/comment/edit/:id', bearerAuth, jsonParser, (req, res, ne
       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
       if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
       comment.text = req.body.text;
+      comment.updated_at = Date.now();
       return comment;
     })
     .then((comment) => comment.save())
     .then((comment) => res.json(comment))
     .catch((err) => next(err));
 });
+
+// commentRouter.delete('/api/comment/remove/:id', bearerAuth, jsonParser, (req, res, next) => {
+//   debug('DELETE: /api/comment/remove/:id');
+//
+//   if(!req.params || !req.params.id) return next(createError(400, 'bad request: no id parameter was provided', req.params.id));
+//   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
+//
+//   Comment.findById({'_id': req.params.id})
+//     .then((comment) => {
+//       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
+//       if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
+//       comment.delete = true;
+//     })
+//     .then((comment) => comment.save())
+//     .then((comment) => res.json(comment))
+//     .catch((err) => next(err));
+// });
 
 commentRouter.delete('/api/comment/remove/:id', bearerAuth, jsonParser, (req, res, next) => {
   debug('DELETE: /api/comment/remove/:id');
@@ -125,9 +131,21 @@ commentRouter.delete('/api/comment/remove/:id', bearerAuth, jsonParser, (req, re
     .then((comment) => {
       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
       if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
-      comment.delete = true;
+      if(comment.next.length < 1){
+        Comment.deleteOne({'_id': req.params.id})
+          .then(() => res.status(204).send())
+          .catch((err) => next(err));
+      }else{
+        // NOTE: I'm a little torn about what I am doing here, I don't think I should delete
+        // all the comments in the chain especially if they belong to another user
+
+        // will probably end up changing this later
+
+        comment.deleteCommentChain()
+          .then(() => Comment.deleteOne({'_id': req.params.id}))
+          .then(() => res.status(204).send())
+          .catch((err) => next(err));
+      }
     })
-    .then((comment) => comment.save())
-    .then((comment) => res.json(comment))
     .catch((err) => next(err));
 });
