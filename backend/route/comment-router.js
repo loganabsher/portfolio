@@ -50,14 +50,9 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
 commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/comment/fetch');
 
-  console.log('got here')
-  console.log(req.user)
-  console.log(req.query)
-  console.log(req.query.me)
   if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  console.log(req.query)
   // NOTE: I was thinking of adding an all parameter, but is seems a little useless, why would you ever want to get all the comments????
   if(req.query.me){
     Comment.find({'authorId': req.user._id})
@@ -136,7 +131,7 @@ commentRouter.delete('/api/comment/remove/:id', bearerAuth, jsonParser, (req, re
           .then(() => res.status(204).send())
           .catch((err) => next(err));
       }else{
-        // NOTE: I'm a little torn about what I am doing here, I don't think I should delete
+        // NOTE: I'm a little torn about what I am doing here, I don't think I shouldnt delete
         // all the comments in the chain especially if they belong to another user
 
         // will probably end up changing this later

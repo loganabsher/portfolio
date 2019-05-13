@@ -1,7 +1,12 @@
 'use strict';
 
 const Dotenv = require('dotenv-webpack');
+
 const production = process.env.NODE_ENV === 'development';
+const CDN_URL = process.env.CDN_URL || '/';
+
+console.log(CDN_URL);
+
 const {DefinePlugin, EnvironmentPlugin} = require('webpack');
 const HTMLPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
@@ -27,9 +32,10 @@ module.exports = {
   },
   devtool: production ? undefined : 'cheap-module-eval-source-map',
   output: {
-    path: `${__dirname}/build`,
-    filename: 'bundle-[hash].js',
-    publicPath: process.env.CDN_URL,
+    // path: `${__dirname}/build`,
+    path: `${__dirname}/src/index.html`,
+    publicPath: CDN_URL,
+    filename: 'bundle-[hash].js'
   },
   module: {
     rules: [
