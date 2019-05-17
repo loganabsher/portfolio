@@ -5,21 +5,22 @@ const cors = require('cors');
 const debug = require('debug')('Backend-Portfolio:server.js');
 const express = require('express');
 const session = require('express-session');
-// const passport = require('passport');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-const user = require('./route/user-router.js');
+const article = require('./route/article-router.js');
 const auth = require('./route/auth-router.js');
-const profile = require('./route/profile-router.js');
-const repository = require('./route/repo-router.js');
-const posting = require('./route/posting-router.js');
 const comment = require('./route/comment-router.js');
+const message = require('./route/message-router.js');
+const profile = require('./route/profile-router.js');
 const reddit = require('./route/reddit-router.js');
+const repository = require('./route/repo-router.js');
+const user = require('./route/user-router.js');
 
 const app = express();
-const PORT = 8000;
+const PORT = process.env.PORT || 8000;
+// NOTE: for whatever reason this is always defaulting to 8080 causing conflict with the frontend port
 
 mongoose.connect(process.env.MONGODB_URI);
 
@@ -36,16 +37,14 @@ app.use(session({
   secret: process.env.APP_SECRET
 }));
 
-// app.use(passport.initialize());
-// app.use(passport.session());
-
-app.use(user);
+app.use(article);
 app.use(auth);
-app.use(profile);
-app.use(repository);
-app.use(posting);
 app.use(comment);
+app.use(message);
+app.use(profile);
 app.use(reddit);
+app.use(repository);
+app.use(user);
 
 // NOTE: this probably needs some sort of authentications from an admin
 app.get('/quit', (req, res) => {

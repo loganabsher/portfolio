@@ -67,9 +67,9 @@ authRouter.get('/oauth/facebook/code', (req, res) => {
       })
       .then((res) => {
         if(res.text){
-          return JSON.parse(res.text)
+          return JSON.parse(res.text);
         }else{
-          return createError(400, 'bad request: no data was returned from facebook\'s oauth')
+          return createError(400, 'bad request: no data was returned from facebook\'s oauth');
         }
       })
       .then((body) => User.facebookStrategy(body))
@@ -79,6 +79,8 @@ authRouter.get('/oauth/facebook/code', (req, res) => {
       });
   }
 });
+
+// NOTE: still working on this request
 
 authRouter.get('/oauth/twitter/code', (req, res) => {
   debug('GET: /oauth/twitter/code');

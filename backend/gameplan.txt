@@ -60,6 +60,13 @@ Message model:
 
 
 
+im going to try to change versions of node as well as nvm, if things go wrong I have the old versions here:
+
+node default : v6.11.1
+its / argon : v4.8.4
+nvm : v0.32.1
+npm : v4.1.2
+
 
 
 

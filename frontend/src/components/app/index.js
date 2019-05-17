@@ -34,8 +34,8 @@ class App extends React.Component{
         <BrowserRouter>
           <section>
             <Route exact path='/auth' component={AuthContainer} />
-            <Route exact path='/settings' component={ProfileContainer} />
-            <Route exact path='/' component={Dashboard} />
+            <Route path='/settings' component={ProfileContainer} />
+            <Route path='/' component={Dashboard} />
             <Route exact path='/repo' component={RepositoryContainer} />
             <Route exact path='/cowsay' component={CowsayContainer} />
             <Route exact path='/reddit' component={RedditContainer} />

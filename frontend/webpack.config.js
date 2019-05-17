@@ -1,17 +1,22 @@
 'use strict';
 
 const Dotenv = require('dotenv-webpack');
-const production = process.env.NODE_ENV === 'development';
+
+const production = process.env.NODE_ENV || 'development';
+const CDN_URL = process.env.CDN_URL || '/';
+
 const {DefinePlugin, EnvironmentPlugin} = require('webpack');
 const HTMLPlugin = require('html-webpack-plugin');
 const CleanPlugin = require('clean-webpack-plugin');
 const UglifyPlugin = require('uglifyjs-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ExtractPlugin = require('mini-css-extract-plugin');
+
+// NOTE: for whatever reason, .env variables dont get defined till after the dotenv plugin is called making it difficult to get the NODE_ENV enviroment variable
 
 let plugins = [
   new Dotenv(),
   new EnvironmentPlugin(['NODE_ENV']),
-  new MiniCssExtractPlugin('bundle-[hash].css'),
+  new ExtractPlugin('bundle-[hash].css'),
   new HTMLPlugin({template: `${__dirname}/src/index.html`}),
   new DefinePlugin({
     __DEBUG__: JSON.stringify(!production),
@@ -28,8 +33,8 @@ module.exports = {
   devtool: production ? undefined : 'cheap-module-eval-source-map',
   output: {
     path: `${__dirname}/build`,
-    filename: 'bundle-[hash].js',
-    publicPath: process.env.CDN_URL,
+    publicPath: CDN_URL,
+    filename: 'bundle-[hash].js'
   },
   module: {
     rules: [
@@ -40,18 +45,23 @@ module.exports = {
       },
       {
         test: /\.scss$/,
-        use: [
-          {
-            loader: MiniCssExtractPlugin.loader,
-            options: {
-              sourceMap: true,
-              includePaths: [`${__dirname}/src/style`],
+        use: [{
+          loader: 'style-loader', // inject CSS to page
+        }, {
+          loader: 'css-loader', // translates CSS into CommonJS modules
+        }, {
+          loader: 'postcss-loader', // Run post css actions
+          options: {
+            plugins: function () { // post css plugins, can be exported to postcss.config.js
+              return [
+                require('precss'),
+                require('autoprefixer')
+              ];
             }
-          },
-          'css-loader',
-          'sass-loader',
-          'resolve-url-loader'
-        ],
+          }
+        }, {
+          loader: 'sass-loader' // compiles Sass to CSS
+        }],
       },
       {
         test: /\.icon.svg$/,
