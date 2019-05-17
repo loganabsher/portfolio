@@ -91,7 +91,7 @@ userRouter.delete('/api/deleteaccount', basicAuth, (req, res, next) => {
       return user.comparePasswordHash('normal', req.auth.password);
     })
     .then((user) => {
-      if(user.profileId) Profile.deleteOne({'_id': user.profileId});
+      if(user.profile_id) Profile.deleteOne({'_id': user.profile_id});
       return user;
     })
     .then((user) => user.handleUserDelete())

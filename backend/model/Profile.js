@@ -11,9 +11,9 @@ const createError = require('http-errors');
 const User = require('./User.js');
 
 const profileSchema = Schema({
-  firstName: String,
-  lastName: String,
-  userName: String
+  first_name: String,
+  last_name: String,
+  user_name: String
 });
 
 profileSchema.methods.connectProfileAndUser = function(userId){
@@ -25,9 +25,9 @@ profileSchema.methods.connectProfileAndUser = function(userId){
     User.findById({'_id': userId})
       .then((user) => {
         if(!user) return reject(createError(404, 'no user with this id was found'));
-        if(user.profileId) return reject(createError(500, 'a profile already exists for this user'));
+        if(user.profile_id) return reject(createError(500, 'a profile already exists for this user'));
         else{
-          user.profileId = profile._id;
+          user.profile_id = profile._id;
           user.save();
           profile.save();
           resolve(profile);
@@ -45,7 +45,7 @@ profileSchema.methods.disconnectProfileAndUser = function(userId){
     User.findById({'_id': userId})
       .then((user) => {
         if(!user) return reject(createError(404, 'no user with this id was found'));
-        if(user.profileId){
+        if(user.profile_id){
           user.set('profileId', null);
           user.save();
           resolve(profile);

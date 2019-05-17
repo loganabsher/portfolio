@@ -9,7 +9,7 @@ const Promise = require('bluebird');
 const createError = require('http-errors');
 
 const commentSchema = Schema({
-  authorId: {type: String, required: true},
+  author_id: {type: String, required: true},
   text: {type: String, required: true},
   prev: {type: String, required: true},
   next: {type: Array, default: []},

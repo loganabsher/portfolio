@@ -61,15 +61,15 @@ commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next)
         res.json(comments);
       })
       .catch((err) => next(err));
-  }else if(req.query.postId){
-    Comment.find({'prev': req.query.postId})
+  }else if(req.query.message_id){
+    Comment.find({'prev': req.query.message_id})
       .then((comments) => {
         if(!comments) return next(createError(404, 'not found: no items were found'));
         res.json(comments);
       })
       .catch((err) => next(err));
-  }else if(req.query.itemId){
-    Comment.findById({'_id': req.query.itemId})
+  }else if(req.query.comment_id){
+    Comment.findById({'_id': req.query.comment_id})
       .then((comment) => {
         if(!comment) return next(createError(404, 'not found: no items were found'));
         res.json(comment);
@@ -78,15 +78,15 @@ commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next)
   }
 });
 
-commentRouter.put('/api/comment/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/posting/edit/:id');
+commentRouter.put('/api/comment/edit/:comment_id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/posting/edit/:comment_id');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'bad request: no id parameter was provided', req.params.id));
+  if(!req.params || !req.params.comment_id) return next(createError(400, 'bad request: no id parameter was provided', req.params.id));
   if(!req.body || !req.body.text) return next(createError(400, 'bad request: insuficient information provided to make change request'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
   // NOTE: I'm curious if just using findOneAndUpdate would make things less messy without sacraficing accuracy and the potential for error
-  Comment.findById({'_id': req.params.id})
+  Comment.findById({'_id': req.params.comment_id})
     .then((comment) => {
       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
       if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
@@ -116,13 +116,13 @@ commentRouter.put('/api/comment/edit/:id', bearerAuth, jsonParser, (req, res, ne
 //     .catch((err) => next(err));
 // });
 
-commentRouter.delete('/api/comment/remove/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('DELETE: /api/comment/remove/:id');
+commentRouter.delete('/api/comment/remove/:comment_id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('DELETE: /api/comment/remove/:comment_id');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'bad request: no id parameter was provided', req.params.id));
+  if(!req.params || !req.params.comment_id) return next(createError(400, 'bad request: no id parameter was provided', req.params.id));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  Comment.findById({'_id': req.params.id})
+  Comment.findById({'_id': req.params.comment_id})
     .then((comment) => {
       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
       if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
@@ -131,13 +131,13 @@ commentRouter.delete('/api/comment/remove/:id', bearerAuth, jsonParser, (req, re
           .then(() => res.status(204).send())
           .catch((err) => next(err));
       }else{
-        // NOTE: I'm a little torn about what I am doing here, I don't think I shouldnt delete
+        // NOTE: I'm a little torn about what I am doing here, I don't think I should delete
         // all the comments in the chain especially if they belong to another user
 
         // will probably end up changing this later
 
         comment.deleteCommentChain()
-          .then(() => Comment.deleteOne({'_id': req.params.id}))
+          .then(() => Comment.deleteOne({'_id': req.params.comment_id}))
           .then(() => res.status(204).send())
           .catch((err) => next(err));
       }

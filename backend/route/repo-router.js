@@ -28,13 +28,13 @@ const loader = function () {
               return new Repository(ele).save();
             }
             if(repo.updated_at !== ele.updated_at) {
-              console.log('changes noticed');
-              console.log(ele.name, '--', ele.updated_at);
-              console.log(repo.name, '--', repo.updated_at);
+              // console.log('changes noticed');
+              // console.log(ele.name, '--', ele.updated_at);
+              // console.log(repo.name, '--', repo.updated_at);
               let newRepo = {name: ele.name, language: ele.language, forks: ele.forks, watchers: ele.watchers, size: ele.size, created_at: ele.created_at, updated_at: ele.updated_at, branches_url: ele.branches_url};
               Repository.findOneAndUpdate({name: ele.name}, newRepo)
                 .then((res) => {
-                  console.log(res);
+                  // console.log(res);
                 });
             }
           });

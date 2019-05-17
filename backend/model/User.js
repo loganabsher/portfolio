@@ -14,7 +14,7 @@ const Promise = require('bluebird');
 const Message = require('./Message.js');
 
 const userSchema = Schema({
-  profileId: String,
+  profile_id: String,
   googlePermissions: {
     authenticated: {type: Boolean, default: false},
     password: {type: String, default: null}

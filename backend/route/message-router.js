@@ -51,8 +51,8 @@ messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next)
         return res.json(messages);
       })
       .catch((err) => next(err));
-  }else if(req.query.itemId){
-    Message.findById({'_id': req.query.itemId})
+  }else if(req.query.message_id){
+    Message.findById({'_id': req.query.message_id})
       .then((message) => {
         if(!message) return next(createError(404, 'not found: no items were found'));
         return res.json(message);
@@ -66,17 +66,17 @@ messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next)
   // all: if this is provided we return all messages
 });
 
-messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('PUT: /api/message/edit/:id');
+messageRouter.put('/api/message/edit/:message_id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/message/edit/:message_id');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
+  if(!req.params || !req.params.message_id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
   if(!req.body || (!req.body.photos && (!req.body.title && !req.body.text))) return next(createError(400, 'bad request: missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-  Message.findById({'_id': req.params.id})
+  Message.findById({'_id': req.params.message_id})
     .then((message) => {
       if(!message) return next(createError(404, 'not found: no message was found:', message));
-      if(req.user._id != message.authorId) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+      if(req.user._id != message.author_id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
       if(req.body.title) message.title = req.body.title;
       if(req.body.text) message.text = req.body.text;
@@ -88,13 +88,13 @@ messageRouter.put('/api/message/edit/:id', bearerAuth, jsonParser, (req, res, ne
     .catch((err) => next(err));
 });
 
-messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('DELETE: /api/message/remove/:id');
+messageRouter.delete('/api/message/remove/:message_id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('DELETE: /api/message/remove/:message_id');
 
-  if(!req.params || !req.params.id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
+  if(!req.params || !req.params.message_id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-  Message.findById({'_id': req.params.id})
+  Message.findById({'_id': req.params.message_id})
     .then((message) => {
       if(!message) return next(createError(404, 'not found: no message was found:', message));
       if(req.user._id != message.authorId) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
@@ -102,13 +102,13 @@ messageRouter.delete('/api/message/remove/:id', bearerAuth, jsonParser, (req, re
       if(message.next.length > 0){
         message.handleDelete()
           .then(() => {
-            Message.deleteOne({'_id': req.params.id})
+            Message.deleteOne({'_id': req.params.message_id})
               .then(() => res.status(204).send())
               .catch((err) => next(createError(500, 'failed delete', err)));
           })
           .catch((err) => next(createError(500, 'failed delete', err)));
       }else{
-        Message.deleteOne({'_id': req.params.id})
+        Message.deleteOne({'_id': req.params.message_id})
           .then(() => res.status(204).send())
           .catch((err) => next(createError(500, 'failed delete', err)));
       }
