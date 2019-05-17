@@ -41,24 +41,24 @@ class Dashboard extends React.Component{
   handleNewMessage(message){
     return this.props.messageCreate(message);
   }
-  fetchMessage(messageId){
-    return this.props.messageFetch(messageId);
+  fetchMessage(message_id){
+    return this.props.messageFetch(message_id);
   }
   // NOTE: shoule maybe add a limit to the number of messages that are fetched at once??
   fetchAllMessages(){
     return this.props.messageFetchAll();
   }
 
-  fetchAllFromUser(userId){
-    return this.props.messageFetchAllUser(userId);
+  fetchAllFromUser(user_id){
+    return this.props.messageFetchAllUser(user_id);
   }
 
   handleUpdateMessage(message){
     return this.props.messageUpdate(message);
   }
 
-  handleRemoveMessage(messageId){
-    return this.props.messageDelete(messageId);
+  handleRemoveMessage(message_id){
+    return this.props.messageDelete(message_id);
   }
 
   render(){
@@ -93,11 +93,11 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => {
   return{
     messageCreate: (message) => dispatch(messageCreateRequest(message)),
-    messageFetch: (messageId) => dispatch(messageFetchRequest(messageId)),
+    messageFetch: (message_id) => dispatch(messageFetchRequest(message_id)),
     messageFetchAll: () => dispatch(messageFetchAllRequest()),
-    messageFetchAllUser: (userId) => dispatch(messageFetchAllUserRequest(userId)),
+    messageFetchAllUser: (user_id) => dispatch(messageFetchAllUserRequest(user_id)),
     messageUpdate: (message) => dispatch(messageUpdateRequest(message)),
-    messageDelete: (messageId) => dispatch(messageDeleteRequest(messageId))
+    messageDelete: (message_id) => dispatch(messageDeleteRequest(message_id))
   };
 };
 

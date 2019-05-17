@@ -4,6 +4,15 @@ import React from 'react';
 import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
+// test:
+
+import {Route} from 'react-router-dom';
+
+import testContainer from '../test';
+
+
+
+
 import {profileCreateRequest, profileFetchRequest, profileUpdateRequest, profileDeleteRequest} from '../../../actions/profile-actions.js';
 
 import ProfileForm from '../forms/profile-form';
@@ -43,17 +52,19 @@ class ProfileContainer extends React.Component{
   }
 
   render(){
+    console.log(this);
     return(
       <div className='profile-container'>
         <p>settings page</p>
         <ProfileForm onComplete={this.handleSubmit} profile={this.state.profile ? this.state.profile : null} />
+        <Route exact path='settings/test' component={testContainer} />
       </div>
     );
   }
 }
 
 ProfileContainer.propTypes = {
-  history: propTypes.func,
+  history: propTypes.object,
   profileFetch: propTypes.func,
   profileCreate: propTypes.func,
   profile: propTypes.object

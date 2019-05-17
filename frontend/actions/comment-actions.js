@@ -41,10 +41,10 @@ export const commentCreateRequest = (comment) => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
-export const commentFetchRequest = (commentId) => (dispatch) => {
+export const commentFetchRequest = (comment_id) => (dispatch) => {
   let token = readCookie('portfolio-login-token');
 
-  return superagent.get(`${process.env.API_URL}/api/comment/${commentId}`)
+  return superagent.get(`${process.env.API_URL}/api/comment/${comment_id}`)
     .set('Authorization', `Bearer ${token}`)
     .then((res) => {
       console.log('message-fetch working??', res.body);
@@ -67,10 +67,10 @@ export const commentFetchAllUserRequest = () => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
-export const commentUpdateRequest = (commentId) => (dispatch) => {
+export const commentUpdateRequest = (comment_id) => (dispatch) => {
   let token = readCookie('portfolio-login-token');
 
-  return superagent.put(`${process.env.API_URL}/api/comment/edit/${commentId}`)
+  return superagent.put(`${process.env.API_URL}/api/comment/edit/${comment_id}`)
     .set('Authorization', `Bearer ${token}`)
     .then((res) => {
       console.log('message-update working??', res.body);
@@ -80,10 +80,10 @@ export const commentUpdateRequest = (commentId) => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
-export const commentDeleteRequest = (commentId) => (dispatch) => {
+export const commentDeleteRequest = (comment_id) => (dispatch) => {
   let token = readCookie('portfolio-login-token');
 
-  return superagent.put(`${process.env.API_URL}/api/comment/remove/${commentId}`)
+  return superagent.put(`${process.env.API_URL}/api/comment/remove/${comment_id}`)
     .set('Authorization', `Bearer ${token}`)
     .then((res) => {
       console.log('message-delete working??', res.body);
