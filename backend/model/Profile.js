@@ -16,13 +16,13 @@ const profileSchema = Schema({
   user_name: String
 });
 
-profileSchema.methods.connectProfileAndUser = function(userId){
+profileSchema.methods.connectProfileAndUser = function(user_id){
   debug('connectProfileAndUser');
 
   let profile = this;
   return new Promise((resolve, reject) => {
-    if(!userId) return reject(createError(400, 'bad request: missing userId parameter'));
-    User.findById({'_id': userId})
+    if(!user_id) return reject(createError(400, 'bad request: missing user_id parameter'));
+    User.findById({'_id': user_id})
       .then((user) => {
         if(!user) return reject(createError(404, 'no user with this id was found'));
         if(user.profile_id) return reject(createError(500, 'a profile already exists for this user'));
@@ -36,17 +36,17 @@ profileSchema.methods.connectProfileAndUser = function(userId){
   });
 };
 
-profileSchema.methods.disconnectProfileAndUser = function(userId){
+profileSchema.methods.disconnectProfileAndUser = function(user_id){
   debug('disconnectProfileAndUser');
 
   let profile = this;
   return new Promise((resolve, reject) => {
-    if(!userId) return reject(createError(400, 'missing userId'));
-    User.findById({'_id': userId})
+    if(!user_id) return reject(createError(400, 'missing user_id'));
+    User.findById({'_id': user_id})
       .then((user) => {
         if(!user) return reject(createError(404, 'no user with this id was found'));
         if(user.profile_id){
-          user.set('profileId', null);
+          user.set('profile_id', null);
           user.save();
           resolve(profile);
         }

@@ -36,7 +36,7 @@ userRouter.post('/api/signup', jsonParser, (req, res, next) => {
       }
       else{
         debug('setting up new user');
-        let user = new User({
+        const user = new User({
           googlePermissions: {authenticated: false, password: null},
           facebookPermissions: {authenticated: false, password: null},
           twitterPermissions: {authenticated: false, password: null},

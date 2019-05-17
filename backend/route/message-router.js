@@ -17,8 +17,8 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
   if(!req.body || !req.body.title) return next(createError(400, 'bad request: missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  let message = new Message({
-    authorId: req.user._id,
+  const message = new Message({
+    author_id: req.user._id,
     title: req.body.title,
     text: req.body.text || null
   });
@@ -45,7 +45,7 @@ messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next)
       })
       .catch((err) => next(err));
   }else if(req.query.me){
-    Message.find({'authorId': req.user._id})
+    Message.find({'author_id': req.user._id})
       .then((messages) => {
         if(!messages) return next(createError(404, 'not found: no items were found'));
         return res.json(messages);
@@ -58,6 +58,8 @@ messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next)
         return res.json(message);
       })
       .catch((err) => next(err));
+  }else{
+    return next(createError(400, 'bad request: something went wrong with the query parameters', req.query));
   }
 
   // query parameter:
@@ -88,7 +90,7 @@ messageRouter.put('/api/message/edit/:message_id', bearerAuth, jsonParser, (req,
     .catch((err) => next(err));
 });
 
-messageRouter.delete('/api/message/remove/:message_id', bearerAuth, jsonParser, (req, res, next) => {
+messageRouter.delete('/api/message/remove/:message_id', bearerAuth, (req, res, next) => {
   debug('DELETE: /api/message/remove/:message_id');
 
   if(!req.params || !req.params.message_id) return next(createError(400, 'an _id must be provided, got:', req.params.id));
@@ -97,7 +99,7 @@ messageRouter.delete('/api/message/remove/:message_id', bearerAuth, jsonParser, 
   Message.findById({'_id': req.params.message_id})
     .then((message) => {
       if(!message) return next(createError(404, 'not found: no message was found:', message));
-      if(req.user._id != message.authorId) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
+      if(req.user._id != message.author_id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
       if(message.next.length > 0){
         message.handleDelete()

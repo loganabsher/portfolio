@@ -35,7 +35,7 @@ export const postingDelete = () => ({
 export const postingCreateRequest = (posting) => (dispatch) => {
   let token = readCookie('portfolio-login-token');
 
-  // posting.authorId = readCookie('user');
+  // posting.author_id = readCookie('user');
   return superagent.post(`${process.env.API_URL}/api/posting`)
     .set('Authorization', `Bearer ${token}`)
     .send(posting)

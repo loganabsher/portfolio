@@ -116,12 +116,12 @@ userSchema.methods.handleUserDelete = function(){
 
   let user = this;
   return new Promise((resolve, reject) => {
-    Message.find({'authorId': user._id})
+    Message.find({'author_id': user._id})
       .then((messages) => {
         if(!messages) resolve(this);
         messages.map((ele) => ele.handleDelete());
       })
-      .then(() => Message.deleteMany({'authorId': user._id}))
+      .then(() => Message.deleteMany({'author_id': user._id}))
       .then(() => resolve(user))
       .catch((err) => reject(err));
 

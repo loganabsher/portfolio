@@ -22,7 +22,7 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
     .then((posting) => {
       if(!posting) return next(createError(404, 'the post you are trying to comment on doesn\'t exist', posting, req.body.prev));
       let comment = new Comment({
-        authorId: req.user._id,
+        author_id: req.user._id,
         text: req.body.text,
         prev: req.body.prev,
       });
@@ -34,8 +34,8 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
       Comment.findById({'_id': req.body.prev})
         .then((posting) => {
           if(!posting) return next(createError(404, 'the post you are trying to comment on doesn\'t exist', posting, req.body.prev));
-          let comment = new Comment({
-            authorId: req.user._id,
+          const comment = new Comment({
+            author_id: req.user._id,
             text: req.body.text,
             prev: req.body.prev,
           });
@@ -55,7 +55,7 @@ commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next)
 
   // NOTE: I was thinking of adding an all parameter, but is seems a little useless, why would you ever want to get all the comments????
   if(req.query.me){
-    Comment.find({'authorId': req.user._id})
+    Comment.find({'author_id': req.user._id})
       .then((comments) => {
         if(!comments) return next(createError(404, 'not found: no items were found'));
         res.json(comments);
@@ -75,6 +75,8 @@ commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next)
         res.json(comment);
       })
       .catch((err) => next(err));
+  }else{
+    return next(createError(400, 'bad request: something went wrong with the query parameters', req.query));
   }
 });
 
@@ -89,7 +91,7 @@ commentRouter.put('/api/comment/edit/:comment_id', bearerAuth, jsonParser, (req,
   Comment.findById({'_id': req.params.comment_id})
     .then((comment) => {
       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
-      if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
+      if(comment.author_id != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
       comment.text = req.body.text;
       comment.updated_at = Date.now();
       return comment;
@@ -108,7 +110,7 @@ commentRouter.put('/api/comment/edit/:comment_id', bearerAuth, jsonParser, (req,
 //   Comment.findById({'_id': req.params.id})
 //     .then((comment) => {
 //       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
-//       if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
+//       if(comment.author_id != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
 //       comment.delete = true;
 //     })
 //     .then((comment) => comment.save())
@@ -116,7 +118,7 @@ commentRouter.put('/api/comment/edit/:comment_id', bearerAuth, jsonParser, (req,
 //     .catch((err) => next(err));
 // });
 
-commentRouter.delete('/api/comment/remove/:comment_id', bearerAuth, jsonParser, (req, res, next) => {
+commentRouter.delete('/api/comment/remove/:comment_id', bearerAuth, (req, res, next) => {
   debug('DELETE: /api/comment/remove/:comment_id');
 
   if(!req.params || !req.params.comment_id) return next(createError(400, 'bad request: no id parameter was provided', req.params.id));
@@ -125,7 +127,7 @@ commentRouter.delete('/api/comment/remove/:comment_id', bearerAuth, jsonParser, 
   Comment.findById({'_id': req.params.comment_id})
     .then((comment) => {
       if(!comment) return next(createError(404, 'not found: this item doesn\'t exist anymore'));
-      if(comment.authorId != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
+      if(comment.author_id != req.user._id) return next(createError(401, 'unauthorized: you are not authorized to remove this comment'));
       if(comment.next.length < 1){
         Comment.deleteOne({'_id': req.params.id})
           .then(() => res.status(204).send())

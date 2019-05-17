@@ -17,7 +17,7 @@ profileRouter.post('/api/profile', bearerAuth, jsonParser, (req, res, next) => {
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
   if(!req.body || (!req.body.first_name && !req.body.last_name && !req.body.user_name)) return next(createError(400, 'bad request: request did not meet minimum information requirements'));
 
-  let profile = new Profile(req.body);
+  const profile = new Profile(req.body);
 
   profile.connectProfileAndUser(req.user._id)
     .then((profile) => res.json(profile))
@@ -59,7 +59,7 @@ profileRouter.put('/api/profile/edit', bearerAuth, jsonParser, (req, res, next) 
     .catch(next);
 });
 
-profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res, next) => {
+profileRouter.delete('/api/profile/delete', bearerAuth, (req, res, next) => {
   debug('DELETE: /api/profile/delete');
 
   if(!req.user.profile_id) return next(createError(404, 'not found: this user has no profile'));
@@ -70,9 +70,9 @@ profileRouter.delete('/api/profile/delete', bearerAuth, jsonParser, (req, res, n
       if(profile._id != req.user.profile_id) return next(createError(401, 'unauthorized: you are not authorized to delete this profile'));
       if(!profile) return next(createError(500, 'internal server error: this user has an id, but no profile was found'));
 
-      let profileId = req.user.profile_id;
+      let profile_id = req.user.profile_id;
       profile.disconnectProfileAndUser(req.user._id)
-        .then(() => Profile.findByIdAndRemove({'_id': profileId}))
+        .then(() => Profile.findByIdAndRemove({'_id': profile_id}))
         .then(() => res.status(204).send())
         .catch(next);
     })

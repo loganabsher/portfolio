@@ -9,13 +9,14 @@ const morgan = require('morgan');
 const mongoose = require('mongoose');
 mongoose.Promise = require('bluebird');
 
-const user = require('./route/user-router.js');
+const article = require('./route/article-router.js');
 const auth = require('./route/auth-router.js');
-const profile = require('./route/profile-router.js');
-const repository = require('./route/repo-router.js');
-const message = require('./route/message-router.js');
 const comment = require('./route/comment-router.js');
+const message = require('./route/message-router.js');
+const profile = require('./route/profile-router.js');
 const reddit = require('./route/reddit-router.js');
+const repository = require('./route/repo-router.js');
+const user = require('./route/user-router.js');
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -36,14 +37,14 @@ app.use(session({
   secret: process.env.APP_SECRET
 }));
 
-
-app.use(user);
+app.use(article);
 app.use(auth);
-app.use(profile);
-app.use(repository);
-app.use(message);
 app.use(comment);
+app.use(message);
+app.use(profile);
 app.use(reddit);
+app.use(repository);
+app.use(user);
 
 // NOTE: this probably needs some sort of authentications from an admin
 app.get('/quit', (req, res) => {
