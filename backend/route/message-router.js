@@ -37,6 +37,9 @@ messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next)
   if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
+  // NOTE: what if I updated this again to work with only one query param and change things
+  // based on it's type?
+
   if(req.query.all){
     Message.find({})
       .then((messages) => {

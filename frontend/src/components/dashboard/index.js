@@ -11,7 +11,7 @@ import {
   messageFetchAllUserRequest,
   messageUpdateRequest,
   messageDeleteRequest
-} from '../../../actions/posting-actions.js';
+} from '../../../actions/message-actions.js';
 
 import MessageForm from '../forms/message-form';
 import MessageTemplate from '../templates/message-template';
