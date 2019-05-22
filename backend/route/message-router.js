@@ -45,24 +45,24 @@ messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next)
 
   if(req.query.type == 'all'){
     Message.find({})
-      .then((messages) => {
-        if(!messages) return next(createError(404, 'not found: no items were found'));
-        return res.json(messages);
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
       })
       .catch((err) => next(err));
   }else if(req.query.type == 'me'){
     Message.find({'author_id': req.user._id})
-      .then((messages) => {
-        if(!messages) return next(createError(404, 'not found: no items were found'));
-        return res.json(messages);
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
       })
       .catch((err) => next(err));
     // NOTE: adding aditional query option for finding another user's posts
   }else if(req.query.type == 'user'){
     Message.find({'author_id': req.query.id})
-      .then((messages) => {
-        if(!messages) return next(createError(404, 'not found: no items were found'));
-        return res.json(messages);
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
       })
       .catch((err) => next(err));
   }else if(req.query.type == 'singular'){

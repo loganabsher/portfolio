@@ -56,6 +56,24 @@ export const messageCreateRequest = (message) => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
+export const messageFetchRequest = (message) => (dispatch) => {
+  let token = readCookie('portfolio-login-token');
+
+  return superagent.get(`${process.env.API_URL}/api/message/fetch`)
+    .set('Authorization', `Bearer ${token}`)
+    .query({
+      'type': message.type,
+      'id': message.id
+    })
+    .then((res) => {
+      console.log('message-fetch working??', res.body);
+      res.body.type = message.type.toUpperCase();
+      dispatch(messageFetch(res.body));
+      return res;
+    })
+    .catch((err) => console.error(err));
+};
+
 // export const messageFetchRequest = (messageId) => (dispatch) => {
 //   let token = readCookie('portfolio-login-token');
 //

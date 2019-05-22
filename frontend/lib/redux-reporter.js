@@ -3,6 +3,7 @@
 import {log, logError} from './util.js';
 
 export default store => (next) => (action) => {
+  console.log(action);
   log('__ACTION__', action);
   try{
     let result = next(action);
