@@ -2,6 +2,8 @@
 
 import React from 'react';
 import propTypes from 'prop-types';
+import {connect} from 'react-redux';
+
 
 class MessageTemplate extends React.Component{
   constructor(props){
@@ -39,7 +41,15 @@ class MessageTemplate extends React.Component{
 }
 
 MessageTemplate.propTypes = {
-  message: propTypes.object
+  message: propTypes.array
 };
 
-export default MessageTemplate;
+const mapStateToProps = (state) => ({
+  message: state.message
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  messageCreate: (message) => dispatch(messageCreateRequest(message))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(MessageTemplate);

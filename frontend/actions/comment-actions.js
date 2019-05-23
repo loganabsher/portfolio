@@ -1,7 +1,6 @@
 'use strict';
 
 import superagent from 'superagent';
-
 import {readCookie} from '../lib/util.js';
 
 export const commentCreate = () => ({

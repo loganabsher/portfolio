@@ -60,7 +60,7 @@ class AuthForm extends React.Component{
           <h2>{this.state.type}</h2>
           <input
             className='login'
-            type='text'
+            type='email'
             name='email'
             placeholder='email'
             value={this.state.email}

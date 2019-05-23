@@ -30,28 +30,32 @@ articleRouter.post('api/article', bearerAuth, (req, res, next) => {
 articleRouter.get('api/article/fetch', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: api/article/fetch');
 
-  if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
+  // NOTE: this whole routes still needs a little love
+  if(!req.query || !req.query.type) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  if(req.query.me){
+  console.log(req.query.id)
+  console.log(req.query.type)
+
+  if(req.query.type == 'me'){
     Article.find({'author_id': req.user._id})
-      .then((comments) => {
-        if(!comments) return next(createError(404, 'not found: no items were found'));
-        res.json(comments);
+      .then((articles) => {
+        if(!articles) return next(createError(404, 'not found: no items were found'));
+        res.json(articles);
       })
       .catch((err) => next(err));
-  }else if(req.query.all){
+  }else if(req.query.type == 'all'){
     Article.find({})
-      .then((comments) => {
-        if(!comments) return next(createError(404, 'not found: no items were found'));
-        res.json(comments);
+      .then((articles) => {
+        if(!articles) return next(createError(404, 'not found: no items were found'));
+        res.json(articles);
       })
       .catch((err) => next(err));
-  }else if(req.query.article_id){
-    Article.findById({'_id': req.query.article_id})
-      .then((comment) => {
-        if(!comment) return next(createError(404, 'not found: no items were found'));
-        res.json(comment);
+  }else if(req.query.type == 'singular'){
+    Article.findById({'_id': req.query.id})
+      .then((article) => {
+        if(!article) return next(createError(404, 'not found: no items were found'));
+        res.json(article);
       })
       .catch((err) => next(err));
   }else{
