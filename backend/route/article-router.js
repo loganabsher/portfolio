@@ -14,8 +14,6 @@ const articleRouter = module.exports = Router();
 articleRouter.post('/api/article', bearerAuth, jsonParser, (req, res, next) => {
   debug('POST: /api/article');
 
-  console.log(req.body)
-
   if(!req.body || !req.body.title || !req.body.text) return next(createError(400, 'bad request: missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
@@ -35,9 +33,6 @@ articleRouter.get('/api/article/fetch', bearerAuth, jsonParser, (req, res, next)
   // NOTE: this whole routes still needs a little love
   if(!req.query || !req.query.type) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
-
-  console.log(req.query.id)
-  console.log(req.query.type)
 
   if(req.query.type == 'me'){
     Article.find({'author_id': req.user._id})

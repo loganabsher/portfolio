@@ -40,6 +40,7 @@ class ArticleContainer extends React.Component{
         <p>start of the article page</p>
         <ArticleForm onComplete={this.handleNewArticle} />
         {this.state.article ? this.state.article.map((article, index) => {
+          console.log(article)
           return (<ArticleTemplate article={article} key={index} />);
         }) : <p>...loading</p>}
       </div>
@@ -48,7 +49,7 @@ class ArticleContainer extends React.Component{
 }
 
 ArticleContainer.propTypes = {
-  articles: propTypes.array
+  article: propTypes.array
 };
 
 const mapStateToProps = (state) => ({
