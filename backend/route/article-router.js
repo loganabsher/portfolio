@@ -84,18 +84,21 @@ articleRouter.put('/api/article/edit/:article_id', bearerAuth, jsonParser, (req,
     .catch((err) => next(err));
 });
 
-articleRouter.delete('/api/article/delete/:article_id', bearerAuth, (req, res, next) => {
-  debug('DELETE: /api/article/delete/:article_id');
+articleRouter.delete('/api/article/delete/:id', bearerAuth, (req, res, next) => {
+  debug('DELETE: /api/article/delete/:id');
 
-  if(!req.query || !req.query.article_id) return next(createError(400, 'bad request: no article_id was provided'));
+  console.log('wtf is happening', req);
+  console.log('wtf is happening', req.params, req.params.id);
+
+  if(!req.params || !req.params.id) return next(createError(400, 'bad request: no article_id was provided'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
-  Article.findById({'_id': req.query.article_id})
+  Article.findById({'_id': req.params.id})
     .then((article) => {
       if(!article) return next(createError(404, 'not found: no article was found', article));
       if(req.user._id != article.author_id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
-      Article.deleteOne({'_id': req.query.article_id})
+      Article.deleteOne({'_id': req.params.id})
         .then(() => res.status(204).send())
         .catch((err) => next(err));
     })
