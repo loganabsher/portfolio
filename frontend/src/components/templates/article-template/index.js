@@ -21,7 +21,7 @@ class ArticleTemplate extends React.Component{
     return(
       <div className="article-template">
         <h3>{this.state.article.title}</h3>
-        <p>{this.state.text}</p>
+        <p>{this.state.article.text}</p>
       </div>
     );
   }
