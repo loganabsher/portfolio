@@ -13,7 +13,7 @@ class ArticleContainer extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      articles: null
+      article: null
     };
 
     this.handleNewArticle = this.handleNewArticle.bind(this);
@@ -26,7 +26,7 @@ class ArticleContainer extends React.Component{
 
   componentWillReceiveProps(nextProps){
     console.log('props recieved', nextProps);
-    this.setState({article: nextProps.articles});
+    this.setState({article: nextProps.article});
   }
 
   handleNewArticle(article){
@@ -39,7 +39,7 @@ class ArticleContainer extends React.Component{
       <div className="article-container">
         <p>start of the article page</p>
         <ArticleForm onComplete={this.handleNewArticle} />
-        {this.state.articles ? this.state.articles.map((article, index) => {
+        {this.state.article ? this.state.article.map((article, index) => {
           return (<ArticleTemplate article={article} key={index} />);
         }) : <p>...loading</p>}
       </div>
@@ -52,7 +52,7 @@ ArticleContainer.propTypes = {
 };
 
 const mapStateToProps = (state) => ({
-  articles: state.articles
+  article: state.article
 });
 
 const mapDispatchToProps = (dispatch) => ({

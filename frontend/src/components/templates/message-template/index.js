@@ -16,24 +16,24 @@ class MessageTemplate extends React.Component{
   }
 
   handleComments(comments){
-    return comments.map((comment, index) => {
-      // NOTE: gotta fix the keys, its gonna be confusing
-      console.log(comment);
-      return(
-        <div key={index}>
-          <h6>comment.title</h6>
-          <p>comment.text</p>
-        </div>
-      );
-    });
+  //   return comments.map((comment, index) => {
+  //     // NOTE: gotta fix the keys, its gonna be confusing
+  //     console.log(comment);
+  //     return(
+  //       <div key={index}>
+  //         <h6>comment.title</h6>
+  //         <p>comment.text</p>
+  //       </div>
+  //     );
+  //   });
   }
 
   render(){
+    console.log(this.props)
     return(
       <div className='message-template' id={this.state.message._id}>
         <h2>{this.state.message.title}</h2>
         <p>{this.state.message.text}</p>
-        {this.state.message.next.length > 0 ? this.handleComments(this.state.message.next) : <p>reply temp</p>}
         <hr />
       </div>
     );
@@ -41,15 +41,11 @@ class MessageTemplate extends React.Component{
 }
 
 MessageTemplate.propTypes = {
-  message: propTypes.array
+  message: propTypes.object
 };
-
-const mapStateToProps = (state) => ({
-  message: state.message
-});
 
 const mapDispatchToProps = (dispatch) => ({
   messageCreate: (message) => dispatch(messageCreateRequest(message))
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(MessageTemplate);
+export default connect(mapDispatchToProps)(MessageTemplate);

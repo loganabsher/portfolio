@@ -11,8 +11,10 @@ const Article = require('../model/Article.js');
 
 const articleRouter = module.exports = Router();
 
-articleRouter.post('api/article', bearerAuth, (req, res, next) => {
-  debug('POST: api/article');
+articleRouter.post('/api/article', bearerAuth, jsonParser, (req, res, next) => {
+  debug('POST: /api/article');
+
+  console.log(req.body)
 
   if(!req.body || !req.body.title || !req.body.text) return next(createError(400, 'bad request: missing minimum content requirments'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
@@ -27,8 +29,8 @@ articleRouter.post('api/article', bearerAuth, (req, res, next) => {
     .then((article) => res.json(article));
 });
 
-articleRouter.get('api/article/fetch', bearerAuth, jsonParser, (req, res, next) => {
-  debug('GET: api/article/fetch');
+articleRouter.get('/api/article/fetch', bearerAuth, jsonParser, (req, res, next) => {
+  debug('GET: /api/article/fetch');
 
   // NOTE: this whole routes still needs a little love
   if(!req.query || !req.query.type) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
@@ -63,8 +65,8 @@ articleRouter.get('api/article/fetch', bearerAuth, jsonParser, (req, res, next) 
   }
 });
 
-articleRouter.put('api/article/edit/:article_id', bearerAuth, jsonParser, (req, res, next) => {
-  debug('PUT: api/article/edit/:article_id');
+articleRouter.put('/api/article/edit/:article_id', bearerAuth, jsonParser, (req, res, next) => {
+  debug('PUT: /api/article/edit/:article_id');
 
   if(!req.query || !req.query.article_id) return next(createError(400, 'bad request: no article_id was provided'));
   if(!req.body || (!req.body.title && !req.body.text)) return next(createError(400, 'bad request: did not meet the minimum difference requirements, make sure to provide data to update', req.body));
@@ -87,8 +89,8 @@ articleRouter.put('api/article/edit/:article_id', bearerAuth, jsonParser, (req, 
     .catch((err) => next(err));
 });
 
-articleRouter.delete('api/article/delete/:article_id', bearerAuth, (req, res, next) => {
-  debug('DELETE: api/article/delete/:article_id');
+articleRouter.delete('/api/article/delete/:article_id', bearerAuth, (req, res, next) => {
+  debug('DELETE: /api/article/delete/:article_id');
 
   if(!req.query || !req.query.article_id) return next(createError(400, 'bad request: no article_id was provided'));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
