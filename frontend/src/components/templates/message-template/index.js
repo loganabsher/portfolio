@@ -2,6 +2,10 @@
 
 import React from 'react';
 import propTypes from 'prop-types';
+import {connect} from 'react-redux';
+
+import {messageCreateRequest} from '../../../../actions/message-actions.js';
+
 
 class MessageTemplate extends React.Component{
   constructor(props){
@@ -10,29 +14,29 @@ class MessageTemplate extends React.Component{
       message: this.props.message
     };
 
-    this.handleComments = this.handleComments.bind(this);
+    // this.handleComments = this.handleComments.bind(this);
   }
 
-  handleComments(comments, layer){
-    return comments.map((comment, index) => {
-      // NOTE: gotta fix the keys, its gonna be confusing
-      console.log(comment)
-      return(
-        <div key={index} className={`depth-${layer}`}>
-          <h6>comment.title</h6>
-          <p>comment.text</p>
-          {comment.comments.length > 0 ? this.handleComments(comments, layer++) : <p>reply</p>}
-        </div>
-      );
-    });
-  }
+  // handleComments(comments){
+  //   return comments.map((comment, index) => {
+  //     // NOTE: gotta fix the keys, its gonna be confusing
+  //     console.log(comment);
+  //     return(
+  //       <div key={index}>
+  //         <h6>comment.title</h6>
+  //         <p>comment.text</p>
+  //       </div>
+  //     );
+  //   });
+  // }
 
   render(){
+    console.log(this.props);
     return(
-      <div className='message-template'>
+      <div className='message-template' id={this.state.message._id}>
         <h2>{this.state.message.title}</h2>
         <p>{this.state.message.text}</p>
-        {this.state.message.comments.length > 0 ? this.handleComments(this.state.message.comments, 1) : <p>reply temp</p>}
+        <hr />
       </div>
     );
   }
@@ -42,4 +46,8 @@ MessageTemplate.propTypes = {
   message: propTypes.object
 };
 
-export default MessageTemplate;
+const mapDispatchToProps = (dispatch) => ({
+  messageCreate: (message) => dispatch(messageCreateRequest(message))
+});
+
+export default connect(mapDispatchToProps)(MessageTemplate);

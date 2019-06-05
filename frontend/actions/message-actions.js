@@ -8,26 +8,10 @@ export const messageCreate = () => ({
   type: 'MESSAGE_CREATE'
 });
 
-// NOTE: this is unfinished, but once I update the router I could modify this
-export const messageFetch = (message) => ({
-  type: `MESSAGE_FETCH_${message.type}`,
+export const messageFetch = (message, type) => ({
+  type: `MESSAGE_FETCH_${type}`,
   payload: message
 });
-
-// export const messageFetch = (message) => ({
-//   type: 'MESSAGE_FETCH',
-//   payload: message
-// });
-//
-// export const messageFetchAll = (message) => ({
-//   type: 'MESSAGE_FETCH_ALL',
-//   payload: message
-// });
-//
-// export const messageFetchAllUser = (message) => ({
-//   type: 'MESSAGE_FETCH_ALL_USER',
-//   payload: message
-// });
 
 export const messageUpdate = (message) => ({
   type: 'MESSAGE_UPDATE',
@@ -56,43 +40,22 @@ export const messageCreateRequest = (message) => (dispatch) => {
     .catch((err) => console.error(err));
 };
 
-// export const messageFetchRequest = (messageId) => (dispatch) => {
-//   let token = readCookie('portfolio-login-token');
-//
-//   return superagent.get(`${process.env.API_URL}/api/message/find/${messageId}`)
-//     .set('Authorization', `Bearer ${token}`)
-//     .then((res) => {
-//       console.log('message-fetch working??', res.body);
-//       dispatch(messageFetch(res.body));
-//       return res;
-//     })
-//     .catch((err) => console.error(err));
-// };
-//
-// export const messageFetchAllRequest = () => (dispatch) => {
-//   let token = readCookie('portfolio-login-token');
-//
-//   return superagent.get(`${process.env.API_URL}/api/message/all`)
-//     .set('Authorization', `Bearer ${token}`)
-//     .then((res) => {
-//       dispatch(messageFetchAll(res.body));
-//       return res.body;
-//     })
-//     .catch((err) => console.error(err));
-// };
-//
-// export const messageFetchAllUserRequest = () => (dispatch) => {
-//   let token = readCookie('portfolio-login-token');
-//
-//   return superagent.get(`${process.env.API_URL}/api/message/self`)
-//     .set('Authorization', `Bearer ${token}`)
-//     .then((res) => {
-//       console.log('message-fetch-all-user working??', res.body);
-//       dispatch(messageFetchAllUser(res.body));
-//       return res.body;
-//     })
-//     .catch((err) => console.error(err));
-// };
+export const messageFetchRequest = (message) => (dispatch) => {
+  let token = readCookie('portfolio-login-token');
+
+  return superagent.get(`${process.env.API_URL}/api/message/fetch`)
+    .set('Authorization', `Bearer ${token}`)
+    .query({
+      'type': message.type,
+      'id': message.id
+    })
+    .then((res) => {
+      console.log('message-fetch working??', res.body);
+      dispatch(messageFetch(res.body, message.type.toUpperCase()));
+      return res;
+    })
+    .catch((err) => console.error(err));
+};
 
 export const messageUpdateRequest = (messageId) => (dispatch) => {
   let token = readCookie('portfolio-login-token');

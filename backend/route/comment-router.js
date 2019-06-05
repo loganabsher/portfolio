@@ -50,25 +50,29 @@ commentRouter.post('/api/comment', bearerAuth, jsonParser, (req, res, next) => {
 commentRouter.get('/api/comment/fetch', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/comment/fetch');
 
-  if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
+  // NOTE: might be a good idea to return all comments/messages when no queries are provided
+  if(!req.query || !req.query.type) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token either doesn\'t exist or is invalid'));
 
+  console.log('type', req.query.type);
+  console.log('id', req.query.id);
+
   // NOTE: I was thinking of adding an all parameter, but is seems a little useless, why would you ever want to get all the comments????
-  if(req.query.me){
+  if(req.query.type == 'me'){
     Comment.find({'author_id': req.user._id})
       .then((comments) => {
         if(!comments) return next(createError(404, 'not found: no items were found'));
         res.json(comments);
       })
       .catch((err) => next(err));
-  }else if(req.query.message_id){
+  }else if(req.query.type == 'prev'){
     Comment.find({'prev': req.query.message_id})
       .then((comments) => {
         if(!comments) return next(createError(404, 'not found: no items were found'));
         res.json(comments);
       })
       .catch((err) => next(err));
-  }else if(req.query.comment_id){
+  }else if(req.query.type == 'singular'){
     Comment.findById({'_id': req.query.comment_id})
       .then((comment) => {
         if(!comment) return next(createError(404, 'not found: no items were found'));
