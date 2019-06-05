@@ -4,6 +4,8 @@ import React from 'react';
 import propTypes from 'prop-types';
 import {connect} from 'react-redux';
 
+import {messageCreateRequest} from '../../../../actions/message-actions.js';
+
 
 class MessageTemplate extends React.Component{
   constructor(props){
@@ -12,10 +14,10 @@ class MessageTemplate extends React.Component{
       message: this.props.message
     };
 
-    this.handleComments = this.handleComments.bind(this);
+    // this.handleComments = this.handleComments.bind(this);
   }
 
-  handleComments(comments){
+  // handleComments(comments){
   //   return comments.map((comment, index) => {
   //     // NOTE: gotta fix the keys, its gonna be confusing
   //     console.log(comment);
@@ -26,10 +28,10 @@ class MessageTemplate extends React.Component{
   //       </div>
   //     );
   //   });
-  }
+  // }
 
   render(){
-    console.log(this.props)
+    console.log(this.props);
     return(
       <div className='message-template' id={this.state.message._id}>
         <h2>{this.state.message.title}</h2>

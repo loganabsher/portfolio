@@ -25,7 +25,6 @@ class ArticleContainer extends React.Component{
   }
 
   componentWillReceiveProps(nextProps){
-    console.log('props recieved', nextProps);
     this.setState({article: nextProps.article});
   }
 
@@ -35,6 +34,7 @@ class ArticleContainer extends React.Component{
   }
 
   render(){
+    console.log(this.state.article)
     return(
       <div className="article-container">
         <p>start of the article page</p>
