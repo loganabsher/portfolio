@@ -34,36 +34,92 @@ messageRouter.post('/api/message', bearerAuth, jsonParser, (req, res, next) => {
 messageRouter.get('/api/message/fetch', bearerAuth, jsonParser, (req, res, next) => {
   debug('GET: /api/message/fetch');
 
-  if(!req.query) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
+  if(!req.query || !req.query.type) return next(createError(400, 'bad request: no queries were provided for the route', req.query));
   if(!req.user || !req.user._id) return next(createError(401, 'unauthorized: json web token failure, your token saved in cookies does not match your user id'));
 
   // NOTE: what if I updated this again to work with only one query param and change things
   // based on it's type?
 
-  if(req.query.all){
+  console.log('type', req.query.type);
+  console.log('id', req.query.id);
+
+  if(req.query.type == 'all'){
     Message.find({})
-      .then((messages) => {
-        if(!messages) return next(createError(404, 'not found: no items were found'));
-        return res.json(messages);
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
       })
       .catch((err) => next(err));
-  }else if(req.query.me){
+  }else if(req.query.type == 'me'){
     Message.find({'author_id': req.user._id})
-      .then((messages) => {
-        if(!messages) return next(createError(404, 'not found: no items were found'));
-        return res.json(messages);
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
       })
       .catch((err) => next(err));
-  }else if(req.query.message_id){
-    Message.findById({'_id': req.query.message_id})
+    // NOTE: adding aditional query option for finding another user's posts
+  }else if(req.query.type == 'user'){
+    Message.find({'author_id': req.query.id})
+      .then((message) => {
+        if(!message) return next(createError(404, 'not found: no items were found'));
+        return res.json(message);
+      })
+      .catch((err) => next(err));
+  }else if(req.query.type == 'singular'){
+    Message.findById({'_id': req.query.id})
       .then((message) => {
         if(!message) return next(createError(404, 'not found: no items were found'));
         return res.json(message);
       })
       .catch((err) => next(err));
   }else{
-    return next(createError(400, 'bad request: something went wrong with the query parameters', req.query));
+    // NOTE: throw error?
+    return next(createError(400, `bad request: invalid query type: ${req.query.type}. Query type for this route must be of type: 'all', 'me', 'user' with a valid user id, or 'singular' with a valid item id`));
   }
+
+  // NOTE: switch seems kinda dumb in this situation
+  // switch(req.query.type){
+  // case 'all':
+  //   Message.find({})
+  //     .then((messages) => {
+  //       if(!messages) return next(createError(404, 'not found: no items were found'));
+  //       return res.json(messages);
+  //     })
+  //     .catch((err) => next(err));
+  //   break;
+  // case 'me':
+  //   break;
+  // case 'singular':
+  //   break;
+  // default:
+  //   break;
+  // }
+
+  // NOTE: old method with different query options:
+  // if(req.query.all){
+  //   Message.find({})
+  //     .then((messages) => {
+  //       if(!messages) return next(createError(404, 'not found: no items were found'));
+  //       return res.json(messages);
+  //     })
+  //     .catch((err) => next(err));
+  // }else if(req.query.me){
+  //   Message.find({'author_id': req.user._id})
+  //     .then((messages) => {
+  //       if(!messages) return next(createError(404, 'not found: no items were found'));
+  //       return res.json(messages);
+  //     })
+  //     .catch((err) => next(err));
+  // }else if(req.query.message_id){
+  //   Message.findById({'_id': req.query.message_id})
+  //     .then((message) => {
+  //       if(!message) return next(createError(404, 'not found: no items were found'));
+  //       return res.json(message);
+  //     })
+  //     .catch((err) => next(err));
+  // }else{
+  //   return next(createError(400, 'bad request: something went wrong with the query parameters', req.query));
+  // }
 
   // query parameter:
   // id: if an id is provided we just try to fetch that message and return it

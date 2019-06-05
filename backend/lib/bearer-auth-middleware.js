@@ -10,6 +10,8 @@ const User = require('../model/User.js');
 module.exports = (req, res, next) => {
   debug('bearer-auth');
 
+  if(!req.headers) return next(createError(401, 'authorization header required'));
+
   let authHeader = req.headers.authorization;
   console.log(authHeader);
   if(!authHeader) return next(createError(401, 'authorization header required'));
